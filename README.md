@@ -3,8 +3,6 @@
 **The Water Classroom is a transformative, open-source, AI-driven educational platform designed to democratize access to high-quality education for students from K-12 through undergraduate levels. Our mission is to bridge educational gaps and empower learners globally by providing personalized, scalable, and engaging learning experiences.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Discord](https://img.shields.io/discord/YOUR_DISCORD_SERVER_ID?label=Join%20Chat&logo=discord)](https://discord.gg/YOUR_DISCORD_INVITE_LINK)
-[![Twitter Follow](https://img.shields.io/twitter/follow/YourTwitterHandle?style=social)](https://twitter.com/YourTwitterHandle)
 
 ## Vision: Education Reimagined 🌟
 
@@ -124,9 +122,6 @@ Our vision for Water Classroom is ambitious. Here's a high-level look at what we
 
 ## Community & Support 💬
 
-*   **Discord:** [Join our Discord Server](https://discord.gg/YOUR_DISCORD_INVITE_LINK) - For discussions, help, and community interaction.
-*   **GitHub Issues:** [Report bugs or suggest features](https://github.com/StellariumFoundation/WaterClassroom/issues) (Replace with actual repo link)
-*   **Twitter:** [Follow us @YourTwitterHandle](https://twitter.com/YourTwitterHandle) - For updates and announcements.
 *   **Stellarium Foundation:** Learn more about the vision behind Water Classroom at [Stellarium Foundation Website](https://www.stellarium.ddns-ip.net/home).
 
 ## Guiding Principles (from the Stellarium Foundation) 💖
