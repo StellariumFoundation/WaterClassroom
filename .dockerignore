@@ -1,0 +1,65 @@
+# Node.js dependencies and build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+coverage/
+.cache/
+.npm/
+
+# Git and version control
+.git/
+.gitignore
+.github/
+
+# Environment files (except production)
+.env
+.env.local
+.env.development
+.env.test
+# Keep .env.production for build configuration
+
+# Development files
+*.log
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
+*.sublime-*
+.editorconfig
+
+# Backend files (not needed for frontend build)
+backend/
+*.go
+go.mod
+go.sum
+
+# Documentation and markdown files (except README)
+*.md
+!README.md
+docs/
+*.pdf
+*.txt
+
+# Test files
+__tests__/
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+jest.config.*
+
+# Misc configuration files
+.eslintrc*
+.prettierrc*
+.stylelintrc*
+tsconfig.tsbuildinfo
+.dockerignore
+Dockerfile*
+docker-compose*
