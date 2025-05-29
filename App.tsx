@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { I18nProvider } from './contexts/I18nContext';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import CurriculumPage from './pages/CurriculumPage';
@@ -81,11 +81,13 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <HashRouter>
-      <AuthProvider>
-        <Toaster> {/* Toaster now wraps AppContent to provide context */}
-          <AppContent />
-        </Toaster>
-      </AuthProvider>
+      <I18nProvider initialLanguage="en">
+        <AuthProvider>
+          <Toaster> {/* Toaster now wraps AppContent to provide context */}
+            <AppContent />
+          </Toaster>
+        </AuthProvider>
+      </I18nProvider>
     </HashRouter>
   );
 };

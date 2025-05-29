@@ -1,0 +1,220 @@
+# Default values for auth-svc Helm chart
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Deployment configuration
+replicaCount: 2
+
+image:
+  repository: ghcr.io/stellariumfoundation/wc-auth-svc
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Pod configuration
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+
+# Service configuration
+service:
+  type: ClusterIP
+  httpPort: 8080
+  grpcPort: 50051
+  annotations: {}
+
+# Ingress configuration (if exposing HTTP endpoints directly)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: auth.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Resources configuration
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Autoscaling configuration
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Node selector, tolerations and affinity
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Service account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Environment configuration
+env:
+  # Common environment variables
+  ENV: "production"
+  LOG_LEVEL: "info"
+  SERVER_HOST: "0.0.0.0"
+  SERVER_PORT: "8080"
+  GRPC_PORT: "50051"
+  GRPC_MAX_MESSAGE_SIZE: "4194304"  # 4MB
+  
+  # Database configuration
+  POSTGRES_MAX_OPEN_CONNS: "25"
+  POSTGRES_MAX_IDLE_CONNS: "25"
+  POSTGRES_CONN_MAX_LIFETIME: "5m"
+  
+  # Redis configuration
+  REDIS_DB: "0"
+  REDIS_POOL_SIZE: "10"
+  
+  # JWT configuration
+  JWT_ACCESS_TOKEN_EXPIRY: "15m"
+  JWT_REFRESH_TOKEN_EXPIRY: "7d"
+  JWT_ISSUER: "water-classroom-auth"
+  JWT_AUDIENCE: "water-classroom-api"
+  
+  # Password hashing
+  PASSWORD_HASH_COST: "12"
+  
+  # Rate limiting
+  RATE_LIMIT_REQUESTS: "100"
+  RATE_LIMIT_WINDOW: "1m"
+  
+  # Email verification
+  EMAIL_VERIFICATION_REQUIRED: "true"
+  EMAIL_VERIFICATION_TOKEN_EXPIRY: "24h"
+  
+  # Account recovery
+  PASSWORD_RESET_TOKEN_EXPIRY: "1h"
+  
+  # Telemetry
+  OTEL_SERVICE_NAME: "auth-service"
+  
+  # Security
+  DISABLE_AUTH: "false"
+
+# Secret environment variables (to be provided via Kubernetes secrets)
+secretEnv:
+  # These will be populated from Kubernetes secrets
+  POSTGRES_URI:
+    secretName: auth-db-credentials
+    secretKey: postgres-uri
+  
+  REDIS_ADDR:
+    secretName: auth-redis-credentials
+    secretKey: redis-addr
+  
+  REDIS_PASSWORD:
+    secretName: auth-redis-credentials
+    secretKey: redis-password
+  
+  JWT_PRIVATE_KEY:
+    secretName: auth-jwt-keys
+    secretKey: private-key
+  
+  JWT_PUBLIC_KEY:
+    secretName: auth-jwt-keys
+    secretKey: public-key
+  
+  RABBITMQ_URI:
+    secretName: auth-rabbitmq-credentials
+    secretKey: rabbitmq-uri
+  
+  OAUTH_GOOGLE_CLIENT_ID:
+    secretName: auth-oauth-credentials
+    secretKey: google-client-id
+  
+  OAUTH_GOOGLE_CLIENT_SECRET:
+    secretName: auth-oauth-credentials
+    secretKey: google-client-secret
+  
+  OAUTH_APPLE_CLIENT_ID:
+    secretName: auth-oauth-credentials
+    secretKey: apple-client-id
+  
+  OAUTH_APPLE_CLIENT_SECRET:
+    secretName: auth-oauth-credentials
+    secretKey: apple-client-secret
+  
+  OTEL_EXPORTER_OTLP_ENDPOINT:
+    secretName: auth-telemetry-config
+    secretKey: otlp-endpoint
+
+# Health check probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Volume mounts
+volumes: []
+volumeMounts: []
+
+# Additional configurations
+extraEnv: []
+extraSecretEnv: []
+extraVolumes: []
+extraVolumeMounts: []
+
+# CORS configuration
+corsConfig:
+  allowedOrigins:
+    - https://app.waterclassroom.com
+    - https://staging.waterclassroom.com
+    - http://localhost:5173
+
+# Network policy
+networkPolicy:
+  enabled: false
