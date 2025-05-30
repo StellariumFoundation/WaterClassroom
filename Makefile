@@ -6,7 +6,7 @@
 # Make all targets PHONY to ensure they always run
 .PHONY: help install-frontend build-frontend preview-frontend run-frontend-dev test-frontend build-frontend-prod-image \
         build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend build-auth-svc-prod-image \
-        install build test clean
+        install build test clean cloud-test-build
 
 # Variables
 SHELL := /bin/bash
@@ -30,30 +30,30 @@ help: ## Show this help message
 	@echo -e "${YELLOW}Usage:${NC} make [target]"
 	@echo ""
 	@echo -e "${YELLOW}Available targets:${NC}"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  ${GREEN}%-30s${NC} %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  ${GREEN}%-30s${NC} %s\n", $$1, $$2}"
 
 # Frontend Commands
-install-frontend: ## Install frontend dependencies (npm install)
+install-frontend: ## Install frontend dependencies (npm install --legacy-peer-deps)
 	@echo -e "${BLUE}Installing frontend dependencies...${NC}"
-	@cd $(FRONTEND_DIR) && npm install
+	@cd $(FRONTEND_DIR) && npm install --legacy-peer-deps
 	@echo -e "${GREEN}Frontend dependencies installed successfully!${NC}"
 
-build-frontend: ## Build frontend for production (npm run build)
+build-frontend: install-frontend ## Build frontend for production (npm run build)
 	@echo -e "${BLUE}Building frontend for production...${NC}"
 	@cd $(FRONTEND_DIR) && npm run build
 	@echo -e "${GREEN}Frontend built successfully! Output in dist/ directory.${NC}"
 
-preview-frontend: ## Preview production build (npm run preview)
+preview-frontend: install-frontend ## Preview production build (npm run preview)
 	@echo -e "${BLUE}Starting preview server for production build...${NC}"
 	@cd $(FRONTEND_DIR) && npm run preview
 	@echo -e "${GREEN}Preview server started.${NC}"
 
-run-frontend-dev: ## Run frontend development server (npm run dev)
+run-frontend-dev: install-frontend ## Run frontend development server (npm run dev)
 	@echo -e "${BLUE}Starting frontend development server...${NC}"
 	@cd $(FRONTEND_DIR) && npm run dev
 	@echo -e "${GREEN}Frontend development server started.${NC}"
 
-test-frontend: ## Run frontend tests (npm test)
+test-frontend: install-frontend ## Run frontend tests (npm test)
 	@echo -e "${BLUE}Running frontend tests...${NC}"
 	@cd $(FRONTEND_DIR) && npm test
 	@echo -e "${GREEN}Frontend tests completed.${NC}"
