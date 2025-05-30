@@ -1,0 +1,16 @@
+FROM golang:1.22-alpine
+
+# Install development tools
+RUN apk add --no-cache git curl make gcc libc-dev
+
+# Set working directory
+WORKDIR /app
+
+# Copy the source code
+COPY . .
+
+# Expose API Gateway port
+EXPOSE 8080
+
+# Keep container running for development
+CMD ["tail", "-f", "/dev/null"]
