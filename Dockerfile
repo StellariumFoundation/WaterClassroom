@@ -5,10 +5,10 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Copy package files for better caching
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies - changed from npm ci to npm install to handle missing package-lock.json
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
