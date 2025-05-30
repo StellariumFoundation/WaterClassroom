@@ -1,93 +1,80 @@
-# Water Classroom Documentation Hub 🌊📚
+# Water Classroom Documentation Hub 🌊🚀
 
-**Welcome!** This `docs/` directory is the living knowledge base for the Water Classroom project—an AI-powered, gamified learning ecosystem by the Stellarium Foundation.  
-Start here to understand the vision, dive into the architecture, contribute code, or deploy the platform.
-
----
-
-## 1 · What Is Water Classroom?
-
-Water Classroom turns education into an adventure:  
-• **Personalised AI tutoring** 24/7  
-• **Interactive & multiplayer lessons** for every subject  
-• **Secure assessments & verified credentials**  
-• **All-in-one** companion for homeschoolers, schools, and self-taught learners.
-
-For a concise elevator-pitch, see **Product Overview** below.
+**Welcome!** This `docs/` directory is the living knowledge base for **Water Classroom – the next-generation, Web3-native, metaverse-ready learning universe**.  
+Here you will find everything from future-vision strategy to hands-on developer guides.
 
 ---
 
-## 2 · Documentation Suite at a Glance
+## 1 · Documentation Suite at a Glance
 
-| Doc | Purpose | When to Read |
-|-----|---------|--------------|
-| **PRODUCT_OVERVIEW.md** | Vision, key features, value proposition | First look / Pitch deck |
-| **TECHNICAL_ARCHITECTURE.md** | Deep dive into system design, services, AI mesh, security | Architects & senior engineers |
-| **BUSINESS_STRATEGY.md** | Market analysis, business model, GTM plan | Investors, biz-dev |
-| **IMPLEMENTATION_ROADMAP.md** | Milestones, timelines, QA strategy | Product & engineering leads |
-| **DEVELOPER_GUIDE.md** | Dev setup, code conventions, testing, contributing | Contributors & new hires |
+| Category | Doc | Purpose |
+|----------|-----|---------|
+| **Enhanced Vision & Strategy** | **PRODUCT_OVERVIEW.md** | High-level vision & market narrative |
+| | **METAVERSE_VISION.md** | Immersive 3-D learning & VR roadmap |
+| | **WEB3_STRATEGY.md** | Blockchain credentials, tokenomics, decentralisation |
+| | **AI_TUTORING_EVOLUTION.md** | Next-gen AI avatar tutors & pedagogy |
+| | **TECHNOLOGY_ROADMAP.md** | 2025-2032 technical evolution timeline |
+| | **USER_EXPERIENCE_VISION.md** | Cross-platform UX & design principles |
+| **Implementation & Planning** | IMPLEMENTATION_ROADMAP.md | Milestones & timelines |
+| | IMPLEMENTATION_TASKS.md | Detailed task breakdown (87 items) |
+| **Architecture & Engineering** | TECHNICAL_ARCHITECTURE.md | Full system design |
+| | DEVELOPER_GUIDE.md | Setup & contribution guide |
+| **Business & Market** | BUSINESS_STRATEGY.md | Revenue model & GTM plan |
 
-> Tip: Each file lives in `docs/`—click the name above in GitHub for full content.
-
----
-
-## 3 · Quick Navigation
-
-### Core Concepts
-- 🌟 **High-level vision:** `docs/PRODUCT_OVERVIEW.md`
-- 🏗  **Architecture diagrams & stack:** `docs/TECHNICAL_ARCHITECTURE.md`
-
-### Build & Run
-- 🖥  Local dev commands: `docs/DEVELOPER_GUIDE.md#1-development-environment-setup`
-- 🐳 Docker compose: `make run-backend-dev`
-- 🚀 Kubernetes deploy: `docs/DEVELOPER_GUIDE.md#8-deployment--devops`
-
-### Plan & Roadmap
-- 📅 Upcoming milestones: `docs/IMPLEMENTATION_ROADMAP.md#1--milestones--timeline`
-- ✅ Feature priorities: same file §3
-
-### Business & Partnerships
-- 💼 Revenue streams & pricing: `docs/BUSINESS_STRATEGY.md#3--business-model--revenue-streams`
-- 🤝 GTM phases: `docs/BUSINESS_STRATEGY.md#4--go-to-market-strategy`
-
-### Repository Landmarks
-- `frontend/`  ‑ React TypeScript SPA  
-- `backend/`   ‑ Go micro-services monorepo  
-- `backend/deployments/helm/` ‑ K8s charts  
-- `components/`, `pages/` ‑ UI building blocks  
-- `.github/workflows/ci.yml` ‑ CI pipeline
+> Tip: click any file name above in GitHub to open its full content.
 
 ---
 
-## 4 · Getting Started Guides
+## 2 · Quick Navigation
+
+### Enhanced Vision
+- 🌐 **Metaverse & XR** – see `METAVERSE_VISION.md`
+- 🔗 **Web3 & Credentials** – see `WEB3_STRATEGY.md`
+- 🤖 **AI Avatar Tutors** – see `AI_TUTORING_EVOLUTION.md`
+
+### Technical Deep-Dive
+- 🏗 **Architecture** – `TECHNICAL_ARCHITECTURE.md`
+- 🛠  **Roadmap** – `TECHNOLOGY_ROADMAP.md`
+- 💻 **Developer Setup** – `DEVELOPER_GUIDE.md`
+
+### Implementation Work
+- 📅 **Milestones** – `IMPLEMENTATION_ROADMAP.md`
+- ✅ **Task List** – `IMPLEMENTATION_TASKS.md`
+
+### Business & Growth
+- 💼 **Strategy & Pricing** – `BUSINESS_STRATEGY.md`
+
+---
+
+## 3 · Repository Landmarks
+
+- `frontend/`  – React SPA (web)  
+- `backend/`   – Go micro-services (Auth, Curriculum, Progress…)  
+- `backend/deployments/helm/` – K8s charts  
+- `.github/workflows/` – CI / CD pipelines  
+- `docs/` – (you’re here) product & tech docs
+
+---
+
+## 4 · Getting Started
 
 | Audience | Start Here | Next Steps |
 |----------|-----------|------------|
-| **Students & Parents** | Product Overview §4 (Features) | Sign up on the live demo (link below) |
-| **Educators & Schools** | Product Overview §4 + Business Strategy §1 | Pilot setup guide coming **M1** |
-| **Developers/Contributors** | Developer Guide §1-4 | Pick an issue labelled *good-first-issue* |
-| **Investors & Partners** | Business Strategy full doc | Request financial deck via contact below |
+| Learners/Parents | PRODUCT_OVERVIEW.md §4 | Watch for upcoming demo |
+| Educators | METAVERSE_VISION.md §7 Creator Toolkit | Contact us for pilot |
+| Developers | DEVELOPER_GUIDE.md §1 | Pick a **good-first-issue** |
+| Investors | BUSINESS_STRATEGY.md | Request financial deck |
 
 ---
 
-## 5 · Key Links & Resources
-
-- 🌐 **Live Demo (staging):** _coming soon_  
-- 📝 **Project Board:** <https://github.com/StellariumFoundation/WaterClassroom/projects>  
-- 🐙 **Source Code:** root of this repository  
-- 📜 **License:** Apache-2.0 (see `LICENSE`)
-
----
-
-## 6 · Contact & Support
+## 5 · Contact & Support
 
 | Role | Contact |
 |------|---------|
-| Founder & Vision Lead | **John Victor** – stellar.foundation.us@gmail.com · +55 81 8393-2658 |
-| Engineering Questions | GitHub **Discussions** tab or issues with prefix `[question]` |
-| Security Reports | security@stellarium.foundation (PGP key in `SECURITY.md`) |
-| Community Chat | _#water-classroom-dev_ on Slack (invite link in repo README) |
+| Founder & Vision | **John Victor** · stellar.foundation.us@gmail.com |
+| Engineering | GitHub **Discussions** or issues |
+| Security | security@stellarium.foundation |
 
 ---
 
-Made with 💙 by the Stellarium Foundation.  Contributions welcome—see the [Developer Guide](DEVELOPER_GUIDE.md#9-contributing-guidelines).  
+Together we’re building an **open, immersive, decentralised ocean of knowledge**. Dive in! 🌊
