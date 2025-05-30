@@ -86,7 +86,20 @@ Legend
 
 ---
 
-## 7 · LMS Integrations & Educator Tools  
+## 7 · Creator Marketplace & Monetization  
+
+| ID | Task | Acceptance Criteria | Effort | Deps | Pri |
+|----|------|--------------------|--------|------|-----|
+| CMP-1 | **Marketplace Backend Service** | `creator-svc` CRUD endpoints for listings, purchases, payouts return 2xx; unit tests ≥80 % | L | INF-1, BE-1 | P1 |
+| CMP-2 | **Token Wallet & Payout System** | Internal token ledger; creator balance view; monthly CSV export for finance; test payout dry-run pass | L | CMP-1 | P1 |
+| CMP-3 | **Lesson Editor Tool (Content Creation)** | In-app editor saves new lesson JSON via Curriculum-svc; publish button creates marketplace listing | M | BE-3 | P1 |
+| CMP-4 | **Revenue Sharing Mechanism (70/30)** | Purchase triggers 70 % credit to creator wallet, 30 % platform; verified in integration test | S | CMP-2 | P1 |
+| CMP-5 | **Quality Moderation System** | Automated profanity & plagiarism check + manual review queue; <12 h SLA on review backlog | M | CMP-1 | P2 |
+| CMP-6 | **Creator Analytics Dashboard** | Creator sees sales, views, conversion funnel; powered by ClickHouse; latency <1 s | M | CMP-1, ANA-1 | P2 |
+
+---
+
+## 8 · LMS Integrations & Educator Tools  
 
 | ID | Task | Acceptance Criteria | Effort | Deps | Pri |
 |----|------|--------------------|--------|------|-----|
@@ -96,7 +109,7 @@ Legend
 
 ---
 
-## 8 · Security, QA & Compliance  
+## 9 · Security, QA & Compliance  
 
 | ID | Task | Acceptance Criteria | Effort | Deps | Pri |
 |----|------|--------------------|--------|------|-----|
@@ -107,7 +120,7 @@ Legend
 
 ---
 
-## 9 · Infrastructure & Performance  
+## 10 · Infrastructure & Performance  
 
 | ID | Task | Acceptance Criteria | Effort | Deps | Pri |
 |----|------|--------------------|--------|------|-----|
@@ -120,9 +133,10 @@ Legend
 ### Cross-Dependency Highlights  
 
 * **Auth GA (BE-1, FE-1)** unlocks all protected flows.  
-* **Curriculum CRUD (BE-3)** feeds tutoring, gamification, and mobile offline tasks.  
-* **Progress events (BE-4)** are prerequisites for analytics and badges.  
-* **Infrastructure (INF-1)** must precede GitOps, scaling, and ClickHouse prod readiness.
+* **Curriculum CRUD (BE-3)** feeds tutoring, gamification, **lesson editor (CMP-3)**, and mobile offline tasks.  
+* **Progress events (BE-4)** are prerequisites for analytics, badges, and **creator analytics (CMP-6)**.  
+* **Marketplace backend (CMP-1)** depends on baseline infra (INF-1) and Auth.  
+* **Token wallet & payouts (CMP-2)** must be audited by Security tasks before launch.  
 
 ---
 
