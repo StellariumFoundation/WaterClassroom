@@ -1,7 +1,7 @@
-# Water Classroom Documentation Hub 🌊🚀
+# Water Classroom Documentation Hub 🌊📚
 
-**Welcome!** This `docs/` directory is the living knowledge base for **Water Classroom – the next-generation, Web3-native, metaverse-ready learning universe**.  
-Here you will find everything from future-vision strategy to hands-on developer guides.
+**Welcome!** This `docs/` directory is the living knowledge base for **Water Classroom – the most advanced AI-powered tutoring and learning platform**.  
+Built on a modern **React front-end and Go micro-services backend**, Water Classroom delivers personalised instruction, engaging gamification, secure assessments, and rich analytics—positioning the project at the forefront of practical, scalable EdTech innovation.
 
 ---
 
@@ -9,17 +9,12 @@ Here you will find everything from future-vision strategy to hands-on developer 
 
 | Category | Doc | Purpose |
 |----------|-----|---------|
-| **Enhanced Vision & Strategy** | **PRODUCT_OVERVIEW.md** | High-level vision & market narrative |
-| | **METAVERSE_VISION.md** | Immersive 3-D learning & VR roadmap |
-| | **WEB3_STRATEGY.md** | Blockchain credentials, tokenomics, decentralisation |
-| | **AI_TUTORING_EVOLUTION.md** | Next-gen AI avatar tutors & pedagogy |
-| | **TECHNOLOGY_ROADMAP.md** | 2025-2032 technical evolution timeline |
-| | **USER_EXPERIENCE_VISION.md** | Cross-platform UX & design principles |
-| **Implementation & Planning** | IMPLEMENTATION_ROADMAP.md | Milestones & timelines |
-| | IMPLEMENTATION_TASKS.md | Detailed task breakdown (87 items) |
-| **Architecture & Engineering** | TECHNICAL_ARCHITECTURE.md | Full system design |
-| | DEVELOPER_GUIDE.md | Setup & contribution guide |
-| **Business & Market** | BUSINESS_STRATEGY.md | Revenue model & GTM plan |
+| **Vision & Strategy** | **PRODUCT_OVERVIEW.md** | High-level vision, value proposition, market narrative |
+| **Architecture & Engineering** | **TECHNICAL_ARCHITECTURE.md** | System design, services, security, AI integration |
+| **Implementation & Planning** | **IMPLEMENTATION_ROADMAP.md** | Milestones, timelines, QA strategy |
+| | **IMPLEMENTATION_TASKS.md** | Detailed actionable task list |
+| **Developer Resources** | **DEVELOPER_GUIDE.md** | Local setup, contribution guidelines, deployment |
+| **Business & Market** | **BUSINESS_STRATEGY.md** | Revenue model, pricing, go-to-market plan |
 
 > Tip: click any file name above in GitHub to open its full content.
 
@@ -27,32 +22,31 @@ Here you will find everything from future-vision strategy to hands-on developer 
 
 ## 2 · Quick Navigation
 
-### Enhanced Vision
-- 🌐 **Metaverse & XR** – see `METAVERSE_VISION.md`
-- 🔗 **Web3 & Credentials** – see `WEB3_STRATEGY.md`
-- 🤖 **AI Avatar Tutors** – see `AI_TUTORING_EVOLUTION.md`
+### Core Vision & Features
+- 🌟 **High-level vision** – `PRODUCT_OVERVIEW.md`
+- 🏗 **Architecture deep-dive** – `TECHNICAL_ARCHITECTURE.md`
 
-### Technical Deep-Dive
-- 🏗 **Architecture** – `TECHNICAL_ARCHITECTURE.md`
-- 🛠  **Roadmap** – `TECHNOLOGY_ROADMAP.md`
-- 💻 **Developer Setup** – `DEVELOPER_GUIDE.md`
+### Building & Running
+- 💻 **Developer setup** – `DEVELOPER_GUIDE.md#1-development-environment-setup`
+- 🐳 **Docker compose** – `make run-backend-dev`
+- 🚀 **Kubernetes deployment** – `DEVELOPER_GUIDE.md#8-deployment--devops`
 
-### Implementation Work
+### Planning & Roadmap
 - 📅 **Milestones** – `IMPLEMENTATION_ROADMAP.md`
-- ✅ **Task List** – `IMPLEMENTATION_TASKS.md`
+- ✅ **Task board** – `IMPLEMENTATION_TASKS.md`
 
 ### Business & Growth
-- 💼 **Strategy & Pricing** – `BUSINESS_STRATEGY.md`
+- 💼 **Market & pricing** – `BUSINESS_STRATEGY.md`
 
 ---
 
 ## 3 · Repository Landmarks
 
-- `frontend/`  – React SPA (web)  
-- `backend/`   – Go micro-services (Auth, Curriculum, Progress…)  
-- `backend/deployments/helm/` – K8s charts  
+- `frontend/`  – React SPA (TypeScript)  
+- `backend/`   – Go micro-services (Auth, Curriculum, Progress, Assessment…)  
+- `backend/deployments/helm/` – Kubernetes charts  
 - `.github/workflows/` – CI / CD pipelines  
-- `docs/` – (you’re here) product & tech docs
+- `docs/` – (you’re here) product & tech documentation
 
 ---
 
@@ -60,10 +54,10 @@ Here you will find everything from future-vision strategy to hands-on developer 
 
 | Audience | Start Here | Next Steps |
 |----------|-----------|------------|
-| Learners/Parents | PRODUCT_OVERVIEW.md §4 | Watch for upcoming demo |
-| Educators | METAVERSE_VISION.md §7 Creator Toolkit | Contact us for pilot |
-| Developers | DEVELOPER_GUIDE.md §1 | Pick a **good-first-issue** |
-| Investors | BUSINESS_STRATEGY.md | Request financial deck |
+| Learners & Parents | `PRODUCT_OVERVIEW.md` §4 | Watch for upcoming public demo |
+| Educators & Schools | `PRODUCT_OVERVIEW.md` §4 + `BUSINESS_STRATEGY.md` | Contact us for pilot access |
+| Developers & Contributors | `DEVELOPER_GUIDE.md` §1 | Pick a **good-first-issue** in GitHub |
+| Investors & Partners | `BUSINESS_STRATEGY.md` | Request financial deck via contact below |
 
 ---
 
@@ -72,9 +66,9 @@ Here you will find everything from future-vision strategy to hands-on developer 
 | Role | Contact |
 |------|---------|
 | Founder & Vision | **John Victor** · stellar.foundation.us@gmail.com |
-| Engineering | GitHub **Discussions** or issues |
-| Security | security@stellarium.foundation |
+| Engineering Questions | GitHub **Discussions** or issues |
+| Security Reports | security@stellarium.foundation |
 
 ---
 
-Together we’re building an **open, immersive, decentralised ocean of knowledge**. Dive in! 🌊
+Together we’re building an **engaging, data-driven ocean of knowledge** that empowers every learner. Dive in! 🌊
