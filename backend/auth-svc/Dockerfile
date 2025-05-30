@@ -10,6 +10,9 @@ WORKDIR /build
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
+# Run go mod tidy to ensure go.sum is correct
+RUN go mod tidy
+
 # Download dependencies
 RUN go mod download
 
