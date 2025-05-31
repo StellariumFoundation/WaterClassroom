@@ -100,29 +100,84 @@ const ProfilePage: React.FC = () => {
           {/* Subscription Info */}
           <div className="bg-brand-navy p-6 rounded-lg">
             <h3 className="text-xl font-semibold text-brand-light-blue mb-3 flex items-center">
-              <ShieldCheck size={22} className="mr-2" /> Subscription
+              <ShieldCheck size={22} className="mr-2" /> Subscription Status
             </h3>
+            {/* Data for this section would typically be fetched from an API endpoint like /api/users/me/subscription */}
             {user.subscription ? (
               <>
-                <p className="text-brand-slate-light font-medium">{user.subscription.planName}</p>
+                <p className="text-brand-slate-light font-medium">Current Plan: {user.subscription.planName}</p>
                 <p className={`text-sm ${user.subscription.isActive ? 'text-green-400' : 'text-red-400'}`}>
                   Status: {user.subscription.isActive ? 'Active' : 'Inactive'}
                 </p>
                 {user.subscription.expiryDate && (
                   <p className="text-sm text-brand-slate-medium mt-1 flex items-center">
-                    <CalendarDays size={14} className="mr-1" /> Renews/Expires on: {new Date(user.subscription.expiryDate).toLocaleDateString()}
+                    <CalendarDays size={14} className="mr-1" /> Renews on: {new Date(user.subscription.expiryDate).toLocaleDateString()}
                   </p>
                 )}
-                <button onClick={() => alert('Manage subscription - Placeholder')} className="mt-3 text-sm text-brand-light-blue hover:underline">
+                {/* TODO: Link to actual subscription management page if/when available (e.g. Stripe Customer Portal) */}
+                <button
+                  onClick={() => navigate(APP_ROUTES.PRICING)} // Or a dedicated manage subscription page
+                  className="mt-3 text-sm text-brand-light-blue hover:underline"
+                >
                   Manage Subscription
                 </button>
               </>
             ) : (
-              <p className="text-brand-slate-medium">No subscription details found.</p>
+              <>
+                <p className="text-brand-slate-medium">No active subscription found.</p>
+                <button
+                  onClick={() => navigate(APP_ROUTES.PRICING)}
+                  className="mt-3 text-sm text-brand-light-blue hover:underline"
+                >
+                  View Plans
+                </button>
+              </>
             )}
           </div>
         </div>
         
+        {/* Payment History Section */}
+        <div className="bg-brand-navy p-6 rounded-lg mb-8">
+          <h3 className="text-xl font-semibold text-brand-light-blue mb-4">Payment History</h3>
+          {/* Data for this section would be fetched from an API endpoint like /api/payments/history */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm text-left text-brand-slate-light">
+              <thead className="bg-brand-slate-dark text-xs text-brand-slate-medium uppercase">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Date</th>
+                  <th scope="col" className="px-4 py-3">Amount</th>
+                  <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Placeholder Rows - Replace with dynamic data */}
+                <tr className="border-b border-brand-slate-medium/50">
+                  <td className="px-4 py-3">2024-05-01</td>
+                  <td className="px-4 py-3">$49.99</td>
+                  <td className="px-4 py-3 text-green-400">Succeeded</td>
+                  <td className="px-4 py-3">Homeschool Plan - Monthly</td>
+                </tr>
+                <tr className="border-b border-brand-slate-medium/50">
+                  <td className="px-4 py-3">2024-04-01</td>
+                  <td className="px-4 py-3">$49.99</td>
+                  <td className="px-4 py-3 text-green-400">Succeeded</td>
+                  <td className="px-4 py-3">Homeschool Plan - Monthly</td>
+                </tr>
+                {/* Add more placeholder rows or a message if history is empty */}
+                {/* Example of an empty state:
+                <tr>
+                  <td colSpan="4" className="text-center py-4 text-brand-slate-medium">
+                    No payment history found.
+                  </td>
+                </tr>
+                */}
+              </tbody>
+            </table>
+          </div>
+          {/* Optionally, add pagination if the list can be long */}
+        </div>
+
         {/* Progress & Achievements */}
         <div className="bg-brand-navy p-6 rounded-lg mb-8">
             <h3 className="text-xl font-semibold text-brand-light-blue mb-4">Progress & Achievements</h3>
