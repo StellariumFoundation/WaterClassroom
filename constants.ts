@@ -2,6 +2,8 @@
 export const APP_NAME = "Water Classroom";
 export const API_KEY_INSTRUCTION = "Please ensure your GEMINI_API_KEY is set as an environment variable (e.g., process.env.API_KEY). This app requires it to function.";
 
+export const API_BASE_URL = 'http://localhost:8080'; // TODO: Adjust if your backend runs elsewhere
+
 export enum APP_ROUTES {
   HOME = '/',
   LOGIN = '/login', // Kept for clarity, AuthPage handles both

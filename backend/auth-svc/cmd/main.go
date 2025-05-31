@@ -23,52 +23,55 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/google/uuid"
 )
 
 // Config holds all configuration for the service
 type Config struct {
-	Env                    string        `mapstructure:"ENV"`
-	ServerHost             string        `mapstructure:"SERVER_HOST"`
-	ServerPort             int           `mapstructure:"SERVER_PORT"`
-	GRPCPort               int           `mapstructure:"GRPC_PORT"`
-	GRPCMaxMessageSize     int           `mapstructure:"GRPC_MAX_MESSAGE_SIZE"`
-	LogLevel               string        `mapstructure:"LOG_LEVEL"`
-	PostgresURI            string        `mapstructure:"POSTGRES_URI"`
-	PostgresMaxOpenConns   int           `mapstructure:"POSTGRES_MAX_OPEN_CONNS"`
-	PostgresMaxIdleConns   int           `mapstructure:"POSTGRES_MAX_IDLE_CONNS"`
-	PostgresConnMaxLifetime time.Duration `mapstructure:"POSTGRES_CONN_MAX_LIFETIME"`
-	RedisAddr              string        `mapstructure:"REDIS_ADDR"`
-	RedisPassword          string        `mapstructure:"REDIS_PASSWORD"`
-	RedisDB                int           `mapstructure:"REDIS_DB"`
-	RedisPoolSize          int           `mapstructure:"REDIS_POOL_SIZE"`
-	JWTPrivateKey          string        `mapstructure:"JWT_PRIVATE_KEY"`
-	JWTPublicKey           string        `mapstructure:"JWT_PUBLIC_KEY"`
-	JWTAccessTokenExpiry   time.Duration `mapstructure:"JWT_ACCESS_TOKEN_EXPIRY"`
-	JWTRefreshTokenExpiry  time.Duration `mapstructure:"JWT_REFRESH_TOKEN_EXPIRY"`
-	JWTIssuer              string        `mapstructure:"JWT_ISSUER"`
-	JWTAudience            string        `mapstructure:"JWT_AUDIENCE"`
-	PasswordHashCost       int           `mapstructure:"PASSWORD_HASH_COST"`
-	RateLimitRequests      int           `mapstructure:"RATE_LIMIT_REQUESTS"`
-	RateLimitWindow        time.Duration `mapstructure:"RATE_LIMIT_WINDOW"`
-	OAuthGoogleClientID    string        `mapstructure:"OAUTH_GOOGLE_CLIENT_ID"`
-	OAuthGoogleClientSecret string        `mapstructure:"OAUTH_GOOGLE_CLIENT_SECRET"`
-	OAuthGoogleRedirectURL string        `mapstructure:"OAUTH_GOOGLE_REDIRECT_URL"`
-	OAuthAppleClientID     string        `mapstructure:"OAUTH_APPLE_CLIENT_ID"`
-	OAuthAppleClientSecret string        `mapstructure:"OAUTH_APPLE_CLIENT_SECRET"`
-	OAuthAppleRedirectURL  string        `mapstructure:"OAUTH_APPLE_REDIRECT_URL"`
-	RabbitMQURI            string        `mapstructure:"RABBITMQ_URI"`
-	OTELExporterEndpoint   string        `mapstructure:"OTEL_EXPORTER_OTLP_ENDPOINT"`
-	OTELServiceName        string        `mapstructure:"OTEL_SERVICE_NAME"`
-	CORSAllowedOrigins     []string      `mapstructure:"CORS_ALLOWED_ORIGINS"`
-	TLSCertFile            string        `mapstructure:"TLS_CERT_FILE"`
-	TLSKeyFile             string        `mapstructure:"TLS_KEY_FILE"`
-	EmailVerificationRequired bool        `mapstructure:"EMAIL_VERIFICATION_REQUIRED"`
+	Env                          string        `mapstructure:"ENV"`
+	ServerHost                   string        `mapstructure:"SERVER_HOST"`
+	ServerPort                   int           `mapstructure:"SERVER_PORT"`
+	GRPCPort                     int           `mapstructure:"GRPC_PORT"`
+	GRPCMaxMessageSize           int           `mapstructure:"GRPC_MAX_MESSAGE_SIZE"`
+	LogLevel                     string        `mapstructure:"LOG_LEVEL"`
+	PostgresURI                  string        `mapstructure:"POSTGRES_URI"`
+	PostgresMaxOpenConns         int           `mapstructure:"POSTGRES_MAX_OPEN_CONNS"`
+	PostgresMaxIdleConns         int           `mapstructure:"POSTGRES_MAX_IDLE_CONNS"`
+	PostgresConnMaxLifetime      time.Duration `mapstructure:"POSTGRES_CONN_MAX_LIFETIME"`
+	RedisAddr                    string        `mapstructure:"REDIS_ADDR"`
+	RedisPassword                string        `mapstructure:"REDIS_PASSWORD"`
+	RedisDB                      int           `mapstructure:"REDIS_DB"`
+	RedisPoolSize                int           `mapstructure:"REDIS_POOL_SIZE"`
+	JWTPrivateKey                string        `mapstructure:"JWT_PRIVATE_KEY"`
+	JWTPublicKey                 string        `mapstructure:"JWT_PUBLIC_KEY"`
+	JWTAccessTokenExpiry         time.Duration `mapstructure:"JWT_ACCESS_TOKEN_EXPIRY"`
+	JWTRefreshTokenExpiry        time.Duration `mapstructure:"JWT_REFRESH_TOKEN_EXPIRY"`
+	JWTIssuer                    string        `mapstructure:"JWT_ISSUER"`
+	JWTAudience                  string        `mapstructure:"JWT_AUDIENCE"`
+	PasswordHashCost             int           `mapstructure:"PASSWORD_HASH_COST"`
+	RateLimitRequests            int           `mapstructure:"RATE_LIMIT_REQUESTS"`
+	RateLimitWindow              time.Duration `mapstructure:"RATE_LIMIT_WINDOW"`
+	OAuthGoogleClientID          string        `mapstructure:"OAUTH_GOOGLE_CLIENT_ID"`
+	OAuthGoogleClientSecret      string        `mapstructure:"OAUTH_GOOGLE_CLIENT_SECRET"`
+	OAuthGoogleRedirectURL       string        `mapstructure:"OAUTH_GOOGLE_REDIRECT_URL"`
+	OAuthAppleClientID           string        `mapstructure:"OAUTH_APPLE_CLIENT_ID"`
+	OAuthAppleClientSecret       string        `mapstructure:"OAUTH_APPLE_CLIENT_SECRET"`
+	OAuthAppleRedirectURL        string        `mapstructure:"OAUTH_APPLE_REDIRECT_URL"`
+	RabbitMQURI                  string        `mapstructure:"RABBITMQ_URI"`
+	OTELExporterEndpoint         string        `mapstructure:"OTEL_EXPORTER_OTLP_ENDPOINT"`
+	OTELServiceName              string        `mapstructure:"OTEL_SERVICE_NAME"`
+	CORSAllowedOrigins           []string      `mapstructure:"CORS_ALLOWED_ORIGINS"`
+	TLSCertFile                  string        `mapstructure:"TLS_CERT_FILE"`
+	TLSKeyFile                   string        `mapstructure:"TLS_KEY_FILE"`
+	EmailVerificationRequired    bool          `mapstructure:"EMAIL_VERIFICATION_REQUIRED"`
 	EmailVerificationTokenExpiry time.Duration `mapstructure:"EMAIL_VERIFICATION_TOKEN_EXPIRY"`
-	PasswordResetTokenExpiry time.Duration `mapstructure:"PASSWORD_RESET_TOKEN_EXPIRY"`
-	DisableAuth            bool          `mapstructure:"DISABLE_AUTH"`
+	PasswordResetTokenExpiry     time.Duration `mapstructure:"PASSWORD_RESET_TOKEN_EXPIRY"`
+	DisableAuth                  bool          `mapstructure:"DISABLE_AUTH"`
 }
 
 // Application holds all dependencies
@@ -367,17 +370,17 @@ func (app *Application) initRouter() {
 
 	// Middleware
 	router.Use(gin.Recovery())
-	
+
 	// Logger middleware
 	router.Use(func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
-		
+
 		c.Next()
-		
+
 		end := time.Now()
 		latency := end.Sub(start)
-		
+
 		app.Logger.Info("HTTP Request",
 			zap.String("method", c.Request.Method),
 			zap.String("path", path),
@@ -417,7 +420,7 @@ func (app *Application) initRouter() {
 			auth.POST("/forgot-password", app.handleForgotPassword)
 			auth.POST("/reset-password", app.handleResetPassword)
 			auth.POST("/verify-email", app.handleVerifyEmail)
-			
+
 			// OAuth routes
 			auth.GET("/oauth/google", app.handleGoogleOAuth)
 			auth.GET("/callback/google", app.handleGoogleCallback)
@@ -493,20 +496,20 @@ func (app *Application) startHTTPServer(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
 		app.Logger.Info("Shutting down HTTP server")
-		
+
 		// Create a timeout context for shutdown
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		
+
 		if err := server.Shutdown(shutdownCtx); err != nil {
 			return fmt.Errorf("HTTP server shutdown error: %w", err)
 		}
-		
+
 		// Wait for server to finish processing requests
 		<-serverClosed
 		app.Logger.Info("HTTP server stopped")
 		return nil
-		
+
 	case <-serverClosed:
 		return fmt.Errorf("HTTP server stopped unexpectedly")
 	}
@@ -526,11 +529,11 @@ func (app *Application) startGRPCServer(ctx context.Context) error {
 	// Start server in a goroutine
 	go func() {
 		app.Logger.Info("Starting gRPC server", zap.String("address", addr))
-		
+
 		if err := app.GRPCServer.Serve(listener); err != nil {
 			app.Logger.Error("gRPC server error", zap.Error(err))
 		}
-		
+
 		close(serverClosed)
 	}()
 
@@ -539,26 +542,211 @@ func (app *Application) startGRPCServer(ctx context.Context) error {
 	case <-ctx.Done():
 		app.Logger.Info("Shutting down gRPC server")
 		app.GRPCServer.GracefulStop()
-		
+
 		// Wait for server to finish processing requests
 		<-serverClosed
 		app.Logger.Info("gRPC server stopped")
 		return nil
-		
+
 	case <-serverClosed:
 		return fmt.Errorf("gRPC server stopped unexpectedly")
 	}
 }
 
+// RegisterRequest defines the request body for user registration
+type RegisterRequest struct {
+	Email       string `json:"email" binding:"required,email"`
+	Password    string `json:"password" binding:"required,min=8"`
+	DisplayName string `json:"display_name" binding:"required"`
+}
+
+// RegisterResponse defines the response body for user registration
+type RegisterResponse struct {
+	ID          uuid.UUID `json:"id"`
+	Email       string    `json:"email"`
+	DisplayName string    `json:"display_name"`
+}
+
+// LoginRequest defines the request body for user login
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+// LoginResponse defines the response body for user login
+type LoginResponse struct {
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
+	UserID       uuid.UUID `json:"user_id"`
+	Email        string    `json:"email"`
+	DisplayName  string    `json:"display_name"`
+	Role         string    `json:"role"`
+}
+
 // Handler placeholder functions
 func (app *Application) handleRegister(c *gin.Context) {
-	// TODO: Implement registration logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Check if user already exists
+	var existingUserID string
+	err := app.DB.QueryRow("SELECT id FROM users WHERE email = $1", req.Email).Scan(&existingUserID)
+	if err != nil && err != sql.ErrNoRows {
+		app.Logger.Error("Failed to query user by email", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing user"})
+		return
+	}
+	if existingUserID != "" {
+		app.Logger.Warn("User registration attempt with existing email", zap.String("email", req.Email))
+		c.JSON(http.StatusConflict, gin.H{"error": "User with this email already exists"})
+		return
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash password", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process registration"})
+		return
+	}
+
+	// Create new user
+	newUser := struct {
+		ID          uuid.UUID `db:"id"`
+		Email       string    `db:"email"`
+		Password    string    `db:"password_hash"`
+		DisplayName string    `db:"display_name"`
+		IsVerified  bool      `db:"is_verified"`
+		Role        string    `db:"role"`
+	}{
+		ID:          uuid.New(),
+		Email:       req.Email,
+		Password:    string(hashedPassword),
+		DisplayName: req.DisplayName,
+		IsVerified:  !app.Config.EmailVerificationRequired,
+		Role:        "student", // Default role
+	}
+
+	// Insert user into database
+	_, err = app.DB.Exec("INSERT INTO users (id, email, password_hash, display_name, is_verified, role) VALUES ($1, $2, $3, $4, $5, $6)",
+		newUser.ID, newUser.Email, newUser.Password, newUser.DisplayName, newUser.IsVerified, newUser.Role)
+	if err != nil {
+		app.Logger.Error("Failed to insert new user", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	app.Logger.Info("User registered successfully", zap.String("email", newUser.Email), zap.String("userID", newUser.ID.String()))
+
+	// Return response
+	c.JSON(http.StatusCreated, RegisterResponse{
+		ID:          newUser.ID,
+		Email:       newUser.Email,
+		DisplayName: newUser.DisplayName,
+	})
 }
 
 func (app *Application) handleLogin(c *gin.Context) {
-	// TODO: Implement login logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Retrieve user from database
+	var user struct {
+		ID            uuid.UUID `db:"id"`
+		Email         string    `db:"email"`
+		PasswordHash  string    `db:"password_hash"`
+		DisplayName   string    `db:"display_name"`
+		Role          string    `db:"role"`
+		IsVerified    bool      `db:"is_verified"`    // Added for completeness, may use later
+		AccountLocked bool      `db:"account_locked"` // Added for completeness, may use later
+	}
+	err := app.DB.QueryRow("SELECT id, email, password_hash, display_name, role, is_verified, account_locked FROM users WHERE email = $1", req.Email).Scan(
+		&user.ID, &user.Email, &user.PasswordHash, &user.DisplayName, &user.Role, &user.IsVerified, &user.AccountLocked,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Warn("Login attempt for non-existent user", zap.String("email", req.Email))
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+			return
+		}
+		app.Logger.Error("Failed to query user by email for login", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process login"})
+		return
+	}
+
+	// TODO: Check if user.AccountLocked or !user.IsVerified and handle accordingly if needed
+
+	// Compare password
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
+	if err != nil {
+		app.Logger.Warn("Invalid password attempt", zap.String("email", req.Email))
+		// Increment failed login attempts counter here if implementing account lockout
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// Generate Access Token
+	accessTokenClaims := jwt.MapClaims{
+		"sub":   user.ID.String(),
+		"email": user.Email,
+		"role":  user.Role,
+		"iss":   app.Config.JWTIssuer,
+		"aud":   app.Config.JWTAudience,
+		"exp":   time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
+		"iat":   time.Now().Unix(),
+	}
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, accessTokenClaims)
+	signedAccessToken, err := accessToken.SignedString(app.PrivateKey)
+	if err != nil {
+		app.Logger.Error("Failed to sign access token", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process login"})
+		return
+	}
+
+	// Generate Refresh Token
+	plainRefreshToken := uuid.New().String()
+	hashedRefreshToken, err := bcrypt.GenerateFromPassword([]byte(plainRefreshToken), bcrypt.DefaultCost) // Use default cost for refresh token hashing for now
+	if err != nil {
+		app.Logger.Error("Failed to hash refresh token", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process login"})
+		return
+	}
+
+	// Store hashed refresh token in database
+	refreshTokenExpiry := time.Now().Add(app.Config.JWTRefreshTokenExpiry)
+	_, err = app.DB.Exec("INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET token_hash = $3, expires_at = $4, revoked = FALSE, created_at = NOW()",
+		uuid.New(), user.ID, string(hashedRefreshToken), refreshTokenExpiry)
+	if err != nil {
+		app.Logger.Error("Failed to store refresh token", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process login"})
+		return
+	}
+
+	// Update last_login_at
+	_, err = app.DB.Exec("UPDATE users SET last_login_at = $1 WHERE id = $2", time.Now(), user.ID)
+	if err != nil {
+		// Log error but don't fail the login, as it's not critical
+		app.Logger.Error("Failed to update last_login_at", zap.Error(err), zap.String("userID", user.ID.String()))
+	}
+
+	app.Logger.Info("User logged in successfully", zap.String("email", user.Email), zap.String("userID", user.ID.String()))
+
+	c.JSON(http.StatusOK, LoginResponse{
+		AccessToken:  signedAccessToken,
+		RefreshToken: plainRefreshToken,
+		UserID:       user.ID,
+		Email:        user.Email,
+		DisplayName:  user.DisplayName,
+		Role:         user.Role,
+	})
 }
 
 func (app *Application) handleRefreshToken(c *gin.Context) {

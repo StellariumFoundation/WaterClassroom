@@ -10,6 +10,9 @@ export interface User {
   badges?: Badge[];
   streak?: number;
   points?: number;
+  role?: string; // Added role
+  accessToken?: string; // Added accessToken
+  refreshToken?: string; // Added refreshToken
 }
 
 export interface UserProgress {
@@ -115,4 +118,20 @@ export interface GroundingMetadata {
 export interface GeminiApiResponse {
   text: string;
   groundingMetadata?: GroundingMetadata;
+}
+
+// API Response types (matching backend)
+export interface RegisterResponse {
+  id: string; // uuid.UUID will be a string
+  email: string;
+  display_name: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  user_id: string; // uuid.UUID will be a string
+  email: string;
+  display_name: string;
+  role: string;
 }

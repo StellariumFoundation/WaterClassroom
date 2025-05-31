@@ -21,7 +21,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLoginMode: initialLoginMode = tru
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login } = useAuth(); // Assuming login handles both login/signup for mock
+  const { loginUser, registerUser, user } = useAuth(); // Updated to use specific functions
   const navigate = useNavigate();
   const { addToast } = useToastContext();
 
@@ -32,32 +32,43 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLoginMode: initialLoginMode = tru
 
     if (!isLoginMode && !name) {
       setError('Name is required for signup.');
+      addToast('Name is required for signup.', ToastType.Error);
       setIsLoading(false);
       return;
     }
     if (!email || !password) {
       setError('Email and password are required.');
+      addToast('Email and password are required.', ToastType.Error);
       setIsLoading(false);
       return;
     }
 
     try {
-      // In a real app, login and signup would be different API calls
-      // For this mock, login also creates a user if they don't exist (simplified)
-      await login(email, isLoginMode ? 'Logged In User' : name); // Pass name for signup
-      // Fix: Use ToastType.Success instead of "success"
-      addToast(`Successfully ${isLoginMode ? 'logged in' : 'signed up'}!`, ToastType.Success);
-      if (onSuccess) {
-        onSuccess();
+      if (isLoginMode) {
+        await loginUser(email, password);
+        addToast('Successfully logged in!', ToastType.Success);
+        // Navigate based on whether a curriculum is selected or not.
+        // This check could also live in a useEffect in App.tsx watching the user state.
+        if (user?.selectedCurriculumId) { // user state might not update immediately after loginUser
+          navigate(APP_ROUTES.DASHBOARD);
+        } else {
+          navigate(APP_ROUTES.CURRICULUM_SELECT);
+        }
       } else {
-        // If no curriculum selected, go to selection, else dashboard
-        // This logic should be in AuthContext or App.tsx based on user.selectedCurriculumId
-        navigate(APP_ROUTES.CURRICULUM_SELECT); 
+        await registerUser(email, password, name);
+        addToast('Successfully signed up! Please login to continue.', ToastType.Success);
+        setIsLoginMode(true); // Switch to login mode after successful registration
+        // Optionally clear form fields
+        // setEmail('');
+        // setPassword('');
+        // setName('');
+      }
+      if (onSuccess && isLoginMode) { // Only call onSuccess for login for now, or adjust as needed
+        onSuccess();
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
       setError(errorMessage);
-      // Fix: Use ToastType.Error instead of "error"
       addToast(`Authentication failed: ${errorMessage}`, ToastType.Error);
     } finally {
       setIsLoading(false);
