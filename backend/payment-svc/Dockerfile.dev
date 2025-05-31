@@ -1,0 +1,30 @@
+FROM golang:1.22-alpine
+
+# Install air for hot reloading and other necessary tools
+RUN apk add --no-cache git curl make gcc libc-dev \
+    && go install github.com/cosmtrek/air@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files first for better caching
+COPY go.mod ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy the rest of the code
+COPY . .
+
+# Expose ports
+EXPOSE 8081 50052
+
+# Set environment variable for development
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 \
+    ENV=development
+
+# Command to run when container starts
+ENTRYPOINT ["air"]
