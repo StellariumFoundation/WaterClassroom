@@ -55,7 +55,7 @@ RUN printf '%s\n' \
     '# Start nginx' \
     'nginx -g "daemon off;"' > /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
-
+    
 # Expose port 80
 EXPOSE 80
 
