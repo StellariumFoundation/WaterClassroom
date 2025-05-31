@@ -21,13 +21,28 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/lib/pq"
 	"github.com/rabbitmq/amqp091-go"
+	"encoding/json"
+	"io"
+	"net/url"
+
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
+
+// GoogleUserInfo defines the structure for user information from Google
+type GoogleUserInfo struct {
+	ID      string `json:"id"`
+	Email   string `json:"email"`
+	Name    string `json:"name"`
+	Picture string `json:"picture"`
+}
 
 // RegisterRequest defines the structure for the registration request body
 type RegisterRequest struct {
@@ -110,6 +125,7 @@ type Application struct {
 	PublicKey  *rsa.PublicKey
 	Router     *gin.Engine
 	GRPCServer *grpc.Server
+	googleOAuthConfig *oauth2.Config
 }
 
 func main() {
@@ -141,6 +157,21 @@ func main() {
 	app := &Application{
 		Config: config,
 		Logger: logger,
+	}
+
+	// Initialize Google OAuth config
+	// Ensure OAuthGoogleClientID, OAuthGoogleClientSecret, OAuthGoogleRedirectURL are set in config
+	if config.OAuthGoogleClientID != "" && config.OAuthGoogleClientSecret != "" && config.OAuthGoogleRedirectURL != "" {
+		app.googleOAuthConfig = &oauth2.Config{
+			ClientID:     config.OAuthGoogleClientID,
+			ClientSecret: config.OAuthGoogleClientSecret,
+			RedirectURL:  config.OAuthGoogleRedirectURL,
+			Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+			Endpoint:     google.Endpoint,
+		}
+		logger.Info("Google OAuth configured")
+	} else {
+		logger.Warn("Google OAuth credentials not fully configured. Google OAuth will not be available.")
 	}
 
 	// Initialize database connection
@@ -671,35 +702,10 @@ func (app *Application) handleLogin(c *gin.Context) {
 		return
 	}
 
-	// Generate Access Token
-	accessTokenClaims := jwt.MapClaims{
-		"sub": userID,
-		"aud": app.Config.JWTAudience,
-		"iss": app.Config.JWTIssuer,
-		"exp": time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
-		// You might want to add other claims like role, email, name etc.
-		// "email": userEmail,
-		// "name": userName, // if you fetched it
-	}
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, accessTokenClaims)
-	signedAccessToken, err := accessToken.SignedString(app.PrivateKey)
+	signedAccessToken, signedRefreshToken, err := app.generateTokens(userID, userEmail)
 	if err != nil {
-		app.Logger.Error("Failed to sign access token", zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate access token"})
-		return
-	}
-
-	// Generate Refresh Token
-	refreshTokenClaims := jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(app.Config.JWTRefreshTokenExpiry).Unix(),
-		// Refresh tokens usually have fewer claims and longer expiry
-	}
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, refreshTokenClaims)
-	signedRefreshToken, err := refreshToken.SignedString(app.PrivateKey)
-	if err != nil {
-		app.Logger.Error("Failed to sign refresh token", zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
+		app.Logger.Error("Failed to generate tokens", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
 
@@ -712,6 +718,38 @@ func (app *Application) handleLogin(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, loginResponse)
 }
+
+
+// generateTokens is a helper function to create access and refresh JWTs
+func (app *Application) generateTokens(userID, email string) (string, string, error) {
+	// Generate Access Token
+	accessTokenClaims := jwt.MapClaims{
+		"sub":   userID,
+		"aud":   app.Config.JWTAudience,
+		"iss":   app.Config.JWTIssuer,
+		"exp":   time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
+		"email": email, // Optionally include email or other non-sensitive info
+	}
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, accessTokenClaims)
+	signedAccessToken, err := accessToken.SignedString(app.PrivateKey)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to sign access token: %w", err)
+	}
+
+	// Generate Refresh Token
+	refreshTokenClaims := jwt.MapClaims{
+		"sub": userID,
+		"exp": time.Now().Add(app.Config.JWTRefreshTokenExpiry).Unix(),
+	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, refreshTokenClaims)
+	signedRefreshToken, err := refreshToken.SignedString(app.PrivateKey)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to sign refresh token: %w", err)
+	}
+
+	return signedAccessToken, signedRefreshToken, nil
+}
+
 
 func (app *Application) handleRefreshToken(c *gin.Context) {
 	// TODO: Implement token refresh logic
@@ -734,14 +772,208 @@ func (app *Application) handleVerifyEmail(c *gin.Context) {
 }
 
 func (app *Application) handleGoogleOAuth(c *gin.Context) {
-	// TODO: Implement Google OAuth logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	if app.googleOAuthConfig == nil {
+		app.Logger.Error("Google OAuth not configured")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Google OAuth not configured"})
+		return
+	}
+
+	state := uuid.NewString()
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "oauthstate",
+		Value:    state,
+		Expires:  time.Now().Add(10 * time.Minute),
+		HttpOnly: true,
+		Secure:   app.Config.Env == "production", // Use secure cookies in production
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	url := app.googleOAuthConfig.AuthCodeURL(state)
+	c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func (app *Application) handleGoogleCallback(c *gin.Context) {
-	// TODO: Implement Google OAuth callback logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	if app.googleOAuthConfig == nil {
+		app.Logger.Error("Google OAuth not configured during callback")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Google OAuth not configured"})
+		return
+	}
+
+	// 1. State validation
+	oauthStateCookie, err := c.Cookie("oauthstate")
+	if err != nil {
+		app.Logger.Error("OAuth state cookie not found", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state: cookie not found"})
+		return
+	}
+	// Clear cookie immediately after reading
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "oauthstate",
+		Value:    "",
+		Expires:  time.Now().Add(-1 * time.Hour), // Expire immediately
+		HttpOnly: true,
+		Secure:   app.Config.Env == "production",
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	if c.Query("state") != oauthStateCookie {
+		app.Logger.Error("Invalid OAuth state", zap.String("query_state", c.Query("state")), zap.String("cookie_state", oauthStateCookie))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state value."})
+		return
+	}
+
+	// 2. Code exchange
+	code := c.Query("code")
+	if code == "" {
+		app.Logger.Error("OAuth code not found in query")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Code not found."})
+		return
+	}
+
+	token, err := app.googleOAuthConfig.Exchange(c.Request.Context(), code)
+	if err != nil {
+		app.Logger.Error("Failed to exchange OAuth code for token", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to exchange code for token."})
+		return
+	}
+
+	// 3. Fetch user info from Google
+	client := app.googleOAuthConfig.Client(c.Request.Context(), token)
+	userInfoResp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		app.Logger.Error("Failed to get user info from Google", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user info from Google."})
+		return
+	}
+	defer userInfoResp.Body.Close()
+
+	userInfoBody, err := io.ReadAll(userInfoResp.Body)
+	if err != nil {
+		app.Logger.Error("Failed to read user info response body", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read user info."})
+		return
+	}
+
+	var googleUser GoogleUserInfo
+	if err := json.Unmarshal(userInfoBody, &googleUser); err != nil {
+		app.Logger.Error("Failed to unmarshal Google user info", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse user info."})
+		return
+	}
+
+	if googleUser.Email == "" {
+		app.Logger.Error("Google user info does not contain an email")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email not provided by Google."})
+		return
+	}
+
+
+	// 4. Database interaction (Upsert user)
+	var userID string
+	var userEmail string // Store email from DB for logging/token generation
+
+	// Try to find user by google_id
+	err = app.DB.QueryRowContext(c.Request.Context(),
+		"SELECT id, email FROM users WHERE google_id = $1", googleUser.ID).Scan(&userID, &userEmail)
+
+	if err == sql.ErrNoRows { // No user with this google_id, try by email
+		app.Logger.Info("No user found with google_id, trying email", zap.String("google_id", googleUser.ID), zap.String("email", googleUser.Email))
+		var existingGoogleID sql.NullString // To check if email is already linked to another google_id
+
+		err = app.DB.QueryRowContext(c.Request.Context(),
+			"SELECT id, email, google_id FROM users WHERE email = $1", googleUser.Email).Scan(&userID, &userEmail, &existingGoogleID)
+
+		if err == sql.ErrNoRows { // No user with this email either, create new user
+			app.Logger.Info("No user found with email, creating new user", zap.String("email", googleUser.Email))
+			insertQuery := `
+				INSERT INTO users (email, display_name, avatar_url, google_id)
+				VALUES ($1, $2, $3, $4)
+				RETURNING id, email`
+			err = app.DB.QueryRowContext(c.Request.Context(), insertQuery,
+				googleUser.Email, googleUser.Name, googleUser.Picture, googleUser.ID).Scan(&userID, &userEmail)
+			if err != nil {
+				app.Logger.Error("Failed to insert new Google user", zap.Error(err))
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user."})
+				return
+			}
+			app.Logger.Info("New user created via Google OAuth", zap.String("userID", userID), zap.String("email", userEmail))
+		} else if err != nil { // Other DB error
+			app.Logger.Error("Database error when checking user by email for Google OAuth", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error."})
+			return
+		} else { // User found by email
+			if existingGoogleID.Valid && existingGoogleID.String != googleUser.ID {
+				// Email exists and is linked to a DIFFERENT Google ID
+				app.Logger.Error("Email associated with a different Google account",
+					zap.String("email", googleUser.Email),
+					zap.String("current_google_id", existingGoogleID.String),
+					zap.String("new_google_id", googleUser.ID))
+				c.JSON(http.StatusConflict, gin.H{"error": "This email is already linked to a different Google account."})
+				return
+			}
+			// Link Google ID to existing email account or update info
+			app.Logger.Info("Linking Google ID to existing user by email", zap.String("userID", userID), zap.String("email", userEmail))
+			updateQuery := `
+				UPDATE users SET google_id = $1, display_name = $2, avatar_url = $3, updated_at = NOW()
+				WHERE id = $4 RETURNING email` // make sure display_name and avatar_url are updated
+			_, err = app.DB.ExecContext(c.Request.Context(), updateQuery, googleUser.ID, googleUser.Name, googleUser.Picture, userID)
+			if err != nil {
+				app.Logger.Error("Failed to link Google ID to existing user", zap.Error(err))
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user."})
+				return
+			}
+			// userEmail is already set from the SELECT query
+		}
+	} else if err != nil { // Other DB error when checking by google_id
+		app.Logger.Error("Database error when checking user by google_id", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error."})
+		return
+	} else { // User found by google_id, update their info if necessary
+		app.Logger.Info("User found by google_id, updating info if changed", zap.String("userID", userID), zap.String("email", userEmail))
+		updateQuery := `
+			UPDATE users SET email = $1, display_name = $2, avatar_url = $3, updated_at = NOW()
+			WHERE id = $4 RETURNING email`
+		err = app.DB.QueryRowContext(c.Request.Context(), updateQuery,
+			googleUser.Email, googleUser.Name, googleUser.Picture, userID).Scan(&userEmail)
+		if err != nil {
+			app.Logger.Error("Failed to update existing Google user's info", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user info."})
+			return
+		}
+	}
+
+	// 5. Generate JWTs
+	signedAccessToken, signedRefreshToken, err := app.generateTokens(userID, userEmail)
+	if err != nil {
+		app.Logger.Error("Failed to generate tokens for Google OAuth user", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens."})
+		return
+	}
+
+	app.Logger.Info("User authenticated via Google OAuth successfully", zap.String("userID", userID), zap.String("email", userEmail))
+
+	// 6. Redirect to frontend
+	// The frontend URL should be configurable. For now, hardcoding a common pattern.
+	// TODO: Make this redirect URL configurable, e.g., app.Config.FrontendOAuthCallbackURL
+	redirectTargetURL := "http://localhost:5173/auth/oauth-callback"
+
+	// Add tokens as query parameters
+	parsedURL, err := url.Parse(redirectTargetURL)
+	if err != nil {
+		app.Logger.Error("Failed to parse frontend redirect URL", zap.Error(err), zap.String("url", redirectTargetURL))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error during redirect setup."})
+		return
+	}
+	query := parsedURL.Query()
+	query.Set("access_token", signedAccessToken)
+	query.Set("refresh_token", signedRefreshToken)
+	parsedURL.RawQuery = query.Encode()
+
+	c.Redirect(http.StatusTemporaryRedirect, parsedURL.String())
 }
+
 
 func (app *Application) handleAppleOAuth(c *gin.Context) {
 	// TODO: Implement Apple OAuth logic

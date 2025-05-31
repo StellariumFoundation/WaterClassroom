@@ -16,6 +16,7 @@ interface AuthContextType {
   updateUserCurriculum: (curriculumId: string) => void;
   selectedCurriculumDetails: Curriculum | null;
   clearError: () => void; // Utility to clear error
+  processOAuthTokens: (accessToken: string, refreshToken: string) => Promise<boolean>; // For OAuth callback
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -193,6 +194,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [login]); // Added login as dependency
 
+
+  const processOAuthTokens = useCallback(async (accessToken: string, refreshToken: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    try {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      const fetchedUser = await fetchUserDetails(accessToken);
+      if (fetchedUser) {
+        setUser(fetchedUser);
+        if (fetchedUser.selectedCurriculumId) {
+          const curriculum = MOCK_CURRICULA_DATA.find(c => c.id === fetchedUser.selectedCurriculumId) || null;
+          setSelectedCurriculumDetails(curriculum as Curriculum | null);
+        } else {
+          setSelectedCurriculumDetails(null);
+        }
+        setLoading(false);
+        return true;
+      } else {
+        setError('OAuth login successful, but failed to retrieve user details.');
+        // Tokens are stored, but user details fetch failed. Consider clearing tokens if this is critical.
+        // For now, let's keep tokens and let initAuth or next action try again.
+        // localStorage.removeItem('accessToken');
+        // localStorage.removeItem('refreshToken');
+        setLoading(false);
+        return false;
+      }
+    } catch (err) {
+      console.error('Process OAuth tokens error:', err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred during OAuth processing.');
+      // Clear potentially bad tokens
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setLoading(false);
+      return false;
+    }
+  }, [fetchUserDetails]); // Added fetchUserDetails
+
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -214,7 +254,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, updateUserCurriculum, selectedCurriculumDetails, clearError }}>
+    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, updateUserCurriculum, selectedCurriculumDetails, clearError, processOAuthTokens }}>
       {children}
     </AuthContext.Provider>
   );

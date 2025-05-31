@@ -10,6 +10,7 @@ import TutorPage from './pages/TutorPage';
 import AssessmentPage from './pages/AssessmentPage';
 import ProfilePage from './pages/ProfilePage';
 import AuthPage from './pages/AuthPage';
+import OAuthCallbackPage from './pages/OAuthCallbackPage'; // Import the new page
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { Toaster } from './components/Toaster'; // Toaster now acts as the provider
@@ -41,6 +42,7 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path={APP_ROUTES.HOME} element={<LandingPage />} />
           <Route path={APP_ROUTES.AUTH} element={<AuthPage />} />
+          <Route path={APP_ROUTES.OAUTH_CALLBACK} element={<OAuthCallbackPage />} /> {/* Add OAuth callback route */}
           <Route 
             path={APP_ROUTES.DASHBOARD} 
             element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} 
@@ -82,7 +84,7 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <I18nProvider initialLanguage="en">
-        <AuthProvider>
+        <AuthProvider> {/* AuthProvider should be inside HashRouter but outside Toaster if Toaster uses useAuth or similar */}
           <Toaster> {/* Toaster now wraps AppContent to provide context */}
             <AppContent />
           </Toaster>
