@@ -11,12 +11,12 @@ interface FeatureCardProps {
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, className }) => {
   return (
-    <div className={`bg-brand-slate-dark p-6 rounded-xl shadow-lg hover:shadow-brand-light-blue/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1 ${className}`}>
-      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-brand-light-blue text-brand-navy">
+    <div className={`bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border border-slate-200 ${className}`}>
+      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600">
         {React.cloneElement(icon, { size: 24 })}
       </div>
-      <h3 className="mb-2 text-xl font-semibold text-brand-slate-light">{title}</h3>
-      <p className="text-brand-slate-medium text-sm leading-relaxed">{description}</p>
+      <h3 className="mb-2 text-xl font-semibold text-blue-700">{title}</h3>
+      <p className="text-slate-600 text-sm leading-relaxed">{description}</p>
     </div>
   );
 };

@@ -4,15 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToastContext } from '../../hooks/useToast';
 import { APP_ROUTES } from '../../constants';
 import { ToastType, User } from '../../types'; // Assuming User type might be needed for user.onboarding_complete
-import Spinner from '../../components/Spinner'; // Assuming a Spinner component exists
-
-// Placeholder for AuthContext function - will be implemented later
-interface AuthContextTypeExtended extends ReturnType<typeof useAuth> {
-  updateUserOnboardingDetails?: (userType: string, classroomCode?: string) => Promise<boolean>;
-  // Add user type definition if not already in useAuth's return
-  user: User | null;
-}
-
+import Spinner from '../../components/Spinner';
+import { AuthContextType } from '../../contexts/AuthContext'; // Import full type if needed for explicit casting, or rely on useAuth return type
 
 const OnboardingPage: React.FC = () => {
   const [userType, setUserType] = useState<string>('');
@@ -20,13 +13,14 @@ const OnboardingPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
+  // updateUserOnboardingDetails is now part of AuthContextType from previous step
   const {
     user,
     loading: authLoading,
-    updateUserOnboardingDetails, // Assume this will be added to AuthContext
+    updateUserOnboardingDetails,
     error: authError,
     clearError: clearAuthError
-  } = useAuth() as AuthContextTypeExtended; // Cast for now
+  } = useAuth();
 
   const { addToast } = useToastContext();
   const navigate = useNavigate();
@@ -93,39 +87,38 @@ const OnboardingPage: React.FC = () => {
     }
   };
 
-  if (authLoading || (!user && !authLoading)) { // Show spinner while auth is loading or redirecting
+  if (authLoading || (!user && !authLoading)) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-deep-blue text-white">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 text-slate-700">
         <Spinner size="large" />
         <p className="mt-4 text-xl">Loading user data...</p>
       </div>
     );
   }
 
-  if (user && user.onboarding_complete) { // Should be caught by useEffect, but as a safeguard
+  if (user && user.onboarding_complete) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-deep-blue text-white">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 text-slate-700">
         <p className="mt-4 text-xl">Onboarding already completed. Redirecting...</p>
          <Spinner size="large" />
       </div>
     );
   }
 
-
   return (
-    <div className="min-h-screen bg-brand-deep-blue flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 p-10 bg-brand-slate-dark shadow-xl rounded-xl">
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-xl rounded-xl">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-slate-light">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-800">
             Tell us a bit about yourself
           </h2>
-          <p className="mt-2 text-center text-sm text-brand-slate-medium">
+          <p className="mt-2 text-center text-sm text-slate-600">
             This will help us tailor your learning experience.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="userType" className="block text-sm font-medium text-brand-slate-light mb-1">
+            <label htmlFor="userType" className="block text-sm font-medium text-slate-700 mb-1">
               I am a...
             </label>
             <select
@@ -134,7 +127,7 @@ const OnboardingPage: React.FC = () => {
               value={userType}
               onChange={(e) => setUserType(e.target.value)}
               required
-              className="appearance-none block w-full px-3 py-2 border border-brand-slate-medium bg-brand-navy rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-brand-light-blue focus:border-brand-light-blue sm:text-sm text-white"
+              className="appearance-none block w-full px-3 py-2 border border-slate-300 bg-white rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-slate-900"
             >
               <option value="" disabled>Select your role</option>
               <option value="individual">Individual Learner</option>
@@ -145,7 +138,7 @@ const OnboardingPage: React.FC = () => {
 
           {userType === 'school_student' && (
             <div>
-              <label htmlFor="classroomCode" className="block text-sm font-medium text-brand-slate-light mb-1">
+              <label htmlFor="classroomCode" className="block text-sm font-medium text-slate-700 mb-1">
                 Classroom Code (Optional)
               </label>
               <input
@@ -154,7 +147,7 @@ const OnboardingPage: React.FC = () => {
                 type="text"
                 value={classroomCode}
                 onChange={(e) => setClassroomCode(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-brand-slate-medium bg-brand-navy rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-brand-light-blue focus:border-brand-light-blue sm:text-sm text-white"
+                className="appearance-none block w-full px-3 py-2 border border-slate-300 bg-white rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-slate-900"
                 placeholder="Enter code if you have one"
               />
             </div>
@@ -163,19 +156,18 @@ const OnboardingPage: React.FC = () => {
           {localError && (
             <p className="text-sm text-red-400 text-center">{localError}</p>
           )}
-           {authError && !localError && ( // Show auth error if no local error is more specific
+           {authError && !localError && (
             <p className="text-sm text-red-400 text-center">{authError}</p>
           )}
-
 
           <div>
             <button
               type="submit"
               disabled={isLoading || authLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-brand-light-blue hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-navy focus:ring-brand-light-blue disabled:opacity-50 transition-opacity"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 hover:from-blue-600 hover:via-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-150 ease-in-out relative overflow-hidden button-shimmer"
             >
               {isLoading ? (
-                <Spinner size="small" />
+                <Spinner size="small" color="text-white" />
               ) : (
                 'Continue'
               )}

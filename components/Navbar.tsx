@@ -15,11 +15,11 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-brand-navy shadow-lg sticky top-0 z-50">
+    <nav className="bg-gradient-to-b from-white via-white to-slate-50 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
-            <Link to={user ? APP_ROUTES.DASHBOARD : APP_ROUTES.HOME} className="flex-shrink-0 text-2xl font-bold text-brand-light-blue hover:text-white transition-colors">
+            <Link to={user ? APP_ROUTES.DASHBOARD : APP_ROUTES.HOME} className="flex-shrink-0 text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
               {APP_NAME}
             </Link>
           </div>
@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
                   <NavLink to={APP_ROUTES.PROFILE} icon={<UserCircle size={18}/>} text="Profile" />
                   <button
                     onClick={handleLogout}
-                    className="flex items-center text-brand-slate-medium hover:bg-brand-slate-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    className="flex items-center text-slate-700 hover:bg-red-50 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                   >
                     <LogOut size={18} className="mr-2" /> Logout
                   </button>
@@ -44,7 +44,11 @@ const Navbar: React.FC = () => {
                   <NavLink to={APP_ROUTES.HOME} text="Home" />
                   {/* <NavLink to="/features" text="Features" />
                   <NavLink to="/pricing" text="Pricing" /> */}
-                  <NavLink to={APP_ROUTES.AUTH} text="Login / Sign Up" className="bg-brand-light-blue text-brand-navy hover:bg-opacity-80" />
+                  <NavLink
+                    to={APP_ROUTES.AUTH}
+                    text="Login / Sign Up"
+                    className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white hover:from-blue-600 hover:via-blue-700 hover:to-blue-900 px-4 py-2 transition-all duration-150 ease-in-out relative overflow-hidden button-shimmer"
+                  />
                 </>
               )}
             </div>
@@ -54,14 +58,17 @@ const Navbar: React.FC = () => {
             {user && (
                <button
                 onClick={handleLogout}
-                className="text-brand-slate-medium hover:text-white p-2 rounded-md text-sm font-medium transition-colors"
+                className="text-slate-700 hover:text-red-600 p-2 rounded-md text-sm font-medium transition-colors"
                 aria-label="Logout"
               >
                 <LogOut size={24} />
               </button>
             )}
              {!user && (
-                <Link to={APP_ROUTES.AUTH} className="text-brand-slate-medium hover:text-white bg-brand-light-blue text-brand-navy px-3 py-2 rounded-md text-sm font-medium">
+                <Link
+                  to={APP_ROUTES.AUTH}
+                  className="px-4 py-2 rounded-md text-sm font-medium text-white bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 hover:from-blue-600 hover:via-blue-700 hover:to-blue-900 transition-all duration-150 ease-in-out relative overflow-hidden button-shimmer"
+                >
                   Login
                 </Link>
             )}
@@ -82,7 +89,7 @@ interface NavLinkProps {
 const NavLink: React.FC<NavLinkProps> = ({ to, text, icon, className }) => (
   <Link
     to={to}
-    className={`flex items-center text-brand-slate-medium hover:bg-brand-slate-dark hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors ${className || ''}`}
+    className={`flex items-center text-slate-700 hover:bg-slate-100 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors ${className || ''}`}
   >
     {icon && <span className="mr-2">{icon}</span>}
     {text}

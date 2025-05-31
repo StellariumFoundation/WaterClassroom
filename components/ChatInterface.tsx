@@ -95,12 +95,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) =
 
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)] max-w-3xl mx-auto bg-brand-slate-dark shadow-xl rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-brand-slate-medium flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-brand-slate-light">AI Tutor (Aqua)</h2>
+    <div className="flex flex-col h-full max-w-3xl mx-auto bg-slate-100 shadow-xl rounded-lg overflow-hidden"> {/* Adjusted height for widget context */}
+      <div className="p-4 border-b border-slate-300 flex justify-between items-center">
+        <h2 className="text-xl font-semibold text-slate-800">AI Tutor (Aqua)</h2>
         <label htmlFor="googleSearchToggle" className="flex items-center cursor-pointer">
-          <Search size={18} className={`mr-2 ${useGoogleSearch ? 'text-brand-light-blue': 'text-brand-slate-medium'}`} />
-          <span className={`text-sm mr-2 ${useGoogleSearch ? 'text-brand-light-blue': 'text-brand-slate-medium'}`}>Google Search</span>
+          <Search size={18} className={`mr-2 ${useGoogleSearch ? 'text-blue-600': 'text-slate-500'}`} />
+          <span className={`text-sm mr-2 ${useGoogleSearch ? 'text-blue-600': 'text-slate-600'}`}>Google Search</span>
           <div className="relative">
             <input 
               type="checkbox" 
@@ -109,26 +109,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) =
               checked={useGoogleSearch}
               onChange={() => setUseGoogleSearch(!useGoogleSearch)}
             />
-            <div className={`block w-10 h-6 rounded-full ${useGoogleSearch ? 'bg-brand-light-blue' : 'bg-gray-600'}`}></div>
+            <div className={`block w-10 h-6 rounded-full ${useGoogleSearch ? 'bg-blue-600' : 'bg-slate-300'}`}></div>
             <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${useGoogleSearch ? 'translate-x-full' : ''}`}></div>
           </div>
         </label>
       </div>
-      <div className="flex-grow p-4 space-y-4 overflow-y-auto bg-brand-navy">
+      <div className="flex-grow p-4 space-y-4 overflow-y-auto bg-white"> {/* Changed message area bg */}
         {messages.map(msg => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-lg p-3 rounded-xl shadow ${
                 msg.sender === 'user'
-                  ? 'bg-brand-light-blue text-brand-navy rounded-br-none'
-                  : 'bg-brand-slate-medium text-brand-slate-light rounded-bl-none'
+                  ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-none' // User bubble with gradient
+                  : 'bg-slate-200 text-slate-800 rounded-bl-none' // AI bubble
               }`}
             >
               <div className="flex items-center mb-1">
-                {msg.sender === 'user' ? <User size={16} className="mr-2" /> : <Cpu size={16} className="mr-2" />}
-                <span className="text-xs font-semibold">{msg.sender === 'user' ? 'You' : 'Aqua'}</span>
+                {msg.sender === 'user' ? <User size={16} className="mr-2 text-current" /> : <Cpu size={16} className="mr-2 text-slate-700" />}
+                <span className={`text-xs font-semibold ${msg.sender === 'user' ? 'text-white/90' : 'text-slate-700'}`}>{msg.sender === 'user' ? 'You' : 'Aqua'}</span>
               </div>
-              <div className="prose prose-sm prose-invert max-w-none text-current">
+              <div className={`prose prose-sm max-w-none ${msg.sender === 'ai' ? 'text-slate-800' : 'text-white'}`}> {/* Removed prose-invert for AI */}
                 <ReactMarkdown
                     components={{
                         p: ({node, ...props}) => <p className="mb-1 last:mb-0" {...props} />,
@@ -138,19 +138,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) =
                 </ReactMarkdown>
                 {msg.isStreaming && <span className="inline-block w-2 h-2 ml-1 bg-current rounded-full animate-pulse"></span>}
               </div>
-               {/* Fix: Accessing groundingMetadata is now valid as it's part of ChatMessage type */}
                {msg.sender === 'ai' && msg.groundingMetadata && msg.groundingMetadata.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-500">
-                  <h4 className="text-xs font-semibold mb-1 text-gray-300">Sources:</h4>
+                <div className="mt-2 pt-2 border-t border-slate-300"> {/* Adjusted border color */}
+                  <h4 className="text-xs font-semibold mb-1 text-slate-500">Sources:</h4> {/* Adjusted text color */}
                   <ul className="space-y-1">
-                    {/* Fix: Accessing groundingMetadata is now valid */}
                     {msg.groundingMetadata.map((chunk, index) => (
                       <li key={index} className="text-xs">
                         <a 
                           href={chunk.web.uri} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="flex items-center text-blue-300 hover:text-blue-200 hover:underline break-all"
+                          className="flex items-center text-blue-600 hover:text-blue-700 hover:underline break-all" // Adjusted link color
                         >
                           <LinkIcon size={12} className="mr-1 flex-shrink-0" />
                           {chunk.web.title || chunk.web.uri}
@@ -164,11 +162,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) =
           </div>
         ))}
         {isLoading && messages.length > 0 && messages[messages.length -1].sender === 'user' && (
-           <div className="flex justify-start"> <LoadingSpinner size="sm" text="Aqua is thinking..." /></div>
+           <div className="flex justify-start"> <LoadingSpinner size="sm" text="Aqua is thinking..." className="text-slate-600" /></div>
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 border-t border-brand-slate-medium bg-brand-slate-dark">
+      <div className="p-4 border-t border-slate-300 bg-slate-100"> {/* Adjusted input area bg and border */}
         <div className="flex items-center space-x-2">
           <input
             type="text"
@@ -176,13 +174,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages = [] }) =
             onChange={e => setInput(e.target.value)}
             onKeyPress={e => e.key === 'Enter' && !isLoading && handleSendMessage()}
             placeholder="Ask Aqua anything..."
-            className="flex-grow p-3 border border-brand-slate-medium rounded-lg bg-brand-navy text-brand-slate-light focus:ring-2 focus:ring-brand-light-blue focus:outline-none"
+            className="flex-grow p-3 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400"
             disabled={isLoading}
           />
           <button
             onClick={handleSendMessage}
             disabled={isLoading || input.trim() === ''}
-            className="p-3 bg-brand-light-blue text-brand-navy rounded-lg hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-brand-light-blue focus:ring-offset-2 focus:ring-offset-brand-slate-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-3 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-600 hover:via-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 ease-in-out relative overflow-hidden button-shimmer"
             aria-label="Send message"
           >
             {isLoading ? <Zap size={20} className="animate-pulse" /> : <Send size={20} />}
