@@ -19,49 +19,65 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLoginMode: initialLoginMode = tru
   const [password, setPassword] = useState('');
   const [name, setName] = useState(''); // For signup
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState(''); // Replaced by context error
 
-  const { login } = useAuth(); // Assuming login handles both login/signup for mock
+  const { login, signup, error: authError, clearError, user } = useAuth();
   const navigate = useNavigate();
   const { addToast } = useToastContext();
+
+  // Effect to display auth errors from context via toast
+  useEffect(() => {
+    if (authError) {
+      addToast(authError, ToastType.Error);
+      // clearError(); // Clear error after showing, or let user dismiss
+    }
+  }, [authError, addToast]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    // setError(''); // Local error state removed
+    if(authError) clearError(); // Clear previous auth errors before new attempt
 
-    if (!isLoginMode && !name) {
-      setError('Name is required for signup.');
+
+    if (!isLoginMode && !name.trim()) {
+      addToast('Name is required for signup.', ToastType.Warning);
       setIsLoading(false);
       return;
     }
-    if (!email || !password) {
-      setError('Email and password are required.');
+    if (!email.trim() || !password.trim()) {
+      addToast('Email and password are required.', ToastType.Warning);
       setIsLoading(false);
       return;
     }
 
-    try {
-      // In a real app, login and signup would be different API calls
-      // For this mock, login also creates a user if they don't exist (simplified)
-      await login(email, isLoginMode ? 'Logged In User' : name); // Pass name for signup
-      // Fix: Use ToastType.Success instead of "success"
+    let success = false;
+    if (isLoginMode) {
+      success = await login(email, password);
+    } else {
+      success = await signup(name, email, password);
+    }
+
+    if (success) {
       addToast(`Successfully ${isLoginMode ? 'logged in' : 'signed up'}!`, ToastType.Success);
       if (onSuccess) {
         onSuccess();
       } else {
-        // If no curriculum selected, go to selection, else dashboard
-        // This logic should be in AuthContext or App.tsx based on user.selectedCurriculumId
-        navigate(APP_ROUTES.CURRICULUM_SELECT); 
+        // Check user from context for selectedCurriculumId after successful login/signup
+        // This navigation logic might be better placed in a wrapper component or useEffect watching `user`
+        navigate(APP_ROUTES.CURRICULUM_SELECT); // Default to curriculum select, actual user object will be available in next render.
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-      setError(errorMessage);
-      // Fix: Use ToastType.Error instead of "error"
-      addToast(`Authentication failed: ${errorMessage}`, ToastType.Error);
-    } finally {
-      setIsLoading(false);
+    } else {
+      // Error toast is handled by the useEffect watching authError
+      // If authError is not set (e.g. network error before context update), show a generic one.
+      // However, the context should set an error for API failures.
+      if (!authError) { // This check might be redundant if context always sets error
+         addToast(`Authentication failed. Please try again.`, ToastType.Error);
+      }
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -136,7 +152,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLoginMode: initialLoginMode = tru
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {/* Removed local error display, relying on toast for authError from context */}
+        {/* {error && <p className="text-sm text-red-400">{error}</p>} */}
 
         <div>
           <button
@@ -154,7 +171,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLoginMode: initialLoginMode = tru
       <p className="text-sm text-center text-brand-slate-medium">
         {isLoginMode ? "Don't have an account?" : 'Already have an account?'}
         <button
-          onClick={() => {setIsLoginMode(!isLoginMode); setError('');}}
+            onClick={() => {
+              setIsLoginMode(!isLoginMode);
+              // setError(''); // Local error removed
+              if(authError) clearError(); // Clear context error on mode switch
+            }}
           className="ml-1 font-medium text-brand-light-blue hover:text-opacity-80"
         >
           {isLoginMode ? 'Sign Up' : 'Login'}

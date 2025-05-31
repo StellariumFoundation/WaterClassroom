@@ -23,10 +23,38 @@ import (
 	"github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
+
+// RegisterRequest defines the structure for the registration request body
+type RegisterRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8"`
+}
+
+// UserResponse defines the structure for the user data returned in responses
+type UserResponse struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	// Password hash should not be included
+}
+
+// LoginRequest defines the structure for the login request body
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+// LoginResponse defines the structure for the login response body
+type LoginResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
 
 // Config holds all configuration for the service
 type Config struct {
@@ -552,13 +580,137 @@ func (app *Application) startGRPCServer(ctx context.Context) error {
 
 // Handler placeholder functions
 func (app *Application) handleRegister(c *gin.Context) {
-	// TODO: Implement registration logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req RegisterRequest
+
+	// Bind request body to struct
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Check if user already exists
+	var existingUserID string
+	err := app.DB.QueryRowContext(c.Request.Context(), "SELECT id FROM users WHERE email = $1", req.Email).Scan(&existingUserID)
+	if err != nil && err != sql.ErrNoRows {
+		app.Logger.Error("Database error while checking for existing user", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	if err == nil { // User found
+		app.Logger.Warn("Registration attempt with existing email", zap.String("email", req.Email))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User with this email already exists"})
+		return
+	}
+	// If err is sql.ErrNoRows, then user does not exist, proceed.
+
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash password", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing password"})
+		return
+	}
+
+	// Insert new user into the database
+	var newUserID string
+	// Assuming 'users' table has id (UUID), display_name, email, password_hash
+	// and returns the id of the newly inserted row.
+	// The actual schema uses 'display_name' for the user's name.
+	insertQuery := "INSERT INTO users (display_name, email, password_hash) VALUES ($1, $2, $3) RETURNING id"
+	err = app.DB.QueryRowContext(c.Request.Context(), insertQuery, req.Name, req.Email, string(hashedPassword)).Scan(&newUserID)
+	if err != nil {
+		app.Logger.Error("Failed to insert new user into database", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	// Return 201 Created with new user's details (excluding password)
+	userResponse := UserResponse{
+		ID:    newUserID,
+		Name:  req.Name,
+		Email: req.Email,
+	}
+	app.Logger.Info("User registered successfully", zap.String("userID", newUserID), zap.String("email", req.Email))
+	c.JSON(http.StatusCreated, userResponse)
 }
 
 func (app *Application) handleLogin(c *gin.Context) {
-	// TODO: Implement login logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req LoginRequest
+
+	// Bind request body to struct
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind request for login", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Query database for user by email
+	var userID, userEmail, passwordHash string
+	// Assuming 'users' table has id, email, password_hash.
+	// We also fetch display_name to potentially use it later, though not strictly needed for login logic itself.
+	query := "SELECT id, email, password_hash FROM users WHERE email = $1"
+	err := app.DB.QueryRowContext(c.Request.Context(), query, req.Email).Scan(&userID, &userEmail, &passwordHash)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Warn("Login attempt for non-existent email", zap.String("email", req.Email))
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"}) // Generic error for non-existent user or bad password
+			return
+		}
+		app.Logger.Error("Database error during login", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	// Compare provided password with stored hash
+	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password))
+	if err != nil {
+		// This includes bcrypt.ErrMismatchedHashAndPassword
+		app.Logger.Warn("Invalid password attempt", zap.String("email", userEmail), zap.Error(err))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"}) // Generic error
+		return
+	}
+
+	// Generate Access Token
+	accessTokenClaims := jwt.MapClaims{
+		"sub": userID,
+		"aud": app.Config.JWTAudience,
+		"iss": app.Config.JWTIssuer,
+		"exp": time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
+		// You might want to add other claims like role, email, name etc.
+		// "email": userEmail,
+		// "name": userName, // if you fetched it
+	}
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, accessTokenClaims)
+	signedAccessToken, err := accessToken.SignedString(app.PrivateKey)
+	if err != nil {
+		app.Logger.Error("Failed to sign access token", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate access token"})
+		return
+	}
+
+	// Generate Refresh Token
+	refreshTokenClaims := jwt.MapClaims{
+		"sub": userID,
+		"exp": time.Now().Add(app.Config.JWTRefreshTokenExpiry).Unix(),
+		// Refresh tokens usually have fewer claims and longer expiry
+	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, refreshTokenClaims)
+	signedRefreshToken, err := refreshToken.SignedString(app.PrivateKey)
+	if err != nil {
+		app.Logger.Error("Failed to sign refresh token", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
+		return
+	}
+
+	app.Logger.Info("User logged in successfully", zap.String("userID", userID), zap.String("email", userEmail))
+
+	// Return tokens
+	loginResponse := LoginResponse{
+		AccessToken:  signedAccessToken,
+		RefreshToken: signedRefreshToken,
+	}
+	c.JSON(http.StatusOK, loginResponse)
 }
 
 func (app *Application) handleRefreshToken(c *gin.Context) {

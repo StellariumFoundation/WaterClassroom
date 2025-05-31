@@ -1,0 +1,16 @@
+Things to Implement
+
+2. google signup.
+3. when the user comes onboard veryfy if the user is a homeschooled water school online student, or if they are from a specific school and then ask for a code for the school classroom, or an regular user that uses it gor education.
+5. when the user registers make the user choose a curriculum that depends on the countries specififc curicullum and make the user pick the country and curriculem he is from or choose the the water classroom regular curriculums.
+4. make the overlay button on almost all the screen that animates and when the user vlicked it open the ai tutor widget.
+5. make the interface look like an apple website but bright blue themed and very shiny with animations and all pretty, all the website.
+6. read the whole docs directory and do this: remake the homepage to be more like a world vlass online school, for homeschool people from all educations through undergraduates make a copy to attract people to signup for the school as a school that has world class fun learning and the best and most fun school. make sure that it's clear that it in an actual online school that the user can make even exams online verified by AI.
+8. Add the pricing on the page: It's $49.99 for homeschooled online water classrom students, and $39.99 for individual users just wanting to get world class education.
+9. make sure the user chose the currriculum and select to the user based on that.
+10. add database functionality and add all of the necessary variables.
+11. add payment functionality for the website.
+12. edit the user profile page and make it pretty. the user can change the name username, email, profile picture.
+13. add the functionality for badges, scores, progress, curriculum, and everything else in the database and everything else.
+14. Make the whole curriculum on repo a series of html files in it we can put interactive content games and everything, be careful to make each curriculum index with a series of tiles and ides that lead to these files, at deployment deploy these files to the database for faster access.
+1. signup funcionatlity, check the user is registered and register users. (done)
