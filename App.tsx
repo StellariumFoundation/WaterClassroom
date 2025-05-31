@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react'; // Added useEffect
-import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'; // Added useLocation, useNavigate
+import React, { useEffect } from 'react';
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { I18nProvider } from './contexts/I18nContext';
+import { TutorWidgetProvider, useTutorWidget } from './contexts/TutorWidgetContext'; // Import useTutorWidget
 import LandingPage from './pages/LandingPage';
+import TutorOverlayButton from './components/TutorOverlayButton'; // Import TutorOverlayButton
+import TutorWidget from './components/TutorWidget'; // Import TutorWidget
 import DashboardPage from './pages/DashboardPage';
 import CurriculumPage from './pages/CurriculumPage';
 import LecturePage from './pages/LecturePage';
@@ -30,29 +33,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 const AppContent: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // Renamed loading to authLoading for clarity
+  const { isTutorWidgetOpen, toggleTutorWidget, closeTutorWidget } = useTutorWidget();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!loading && user) {
-      // Ensure APP_ROUTES.ONBOARDING and APP_ROUTES.OAUTH_CALLBACK are defined
+    if (!authLoading && user) {
       const onboardingRoute = APP_ROUTES.ONBOARDING || '/onboarding';
       const oauthCallbackRoute = APP_ROUTES.OAUTH_CALLBACK || '/auth/oauth-callback';
 
       if (!user.onboarding_complete &&
           location.pathname !== onboardingRoute &&
           location.pathname !== oauthCallbackRoute &&
-          !location.pathname.startsWith(APP_ROUTES.AUTH) // Also don't redirect if on login/signup page itself
+          !location.pathname.startsWith(APP_ROUTES.AUTH)
           ) {
         navigate(onboardingRoute, { replace: true });
       } else if (user.onboarding_complete && location.pathname === onboardingRoute) {
-        navigate(APP_ROUTES.DASHBOARD, { replace: true }); // Or CURRICULUM_SELECT
+        navigate(APP_ROUTES.DASHBOARD, { replace: true });
       }
     }
-  }, [user, loading, navigate, location.pathname]);
-  
-  if (loading) {
+  }, [user, authLoading, navigate, location.pathname]);
+
+  if (authLoading) { // Use authLoading here
     return <div className="flex justify-center items-center h-screen bg-brand-navy"><div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-light-blue"></div></div>;
   }
 
@@ -93,14 +96,29 @@ const AppContent: React.FC = () => {
             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} 
           />
           <Route
-            path={APP_ROUTES.ONBOARDING} // Define APP_ROUTES.ONBOARDING in constants.ts
+            path={APP_ROUTES.ONBOARDING}
             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
           />
           <Route path="*" element={<Navigate to={user ? APP_ROUTES.DASHBOARD : APP_ROUTES.HOME} />} />
         </Routes>
       </main>
       <Footer />
-      {/* Toaster visual elements are rendered by the Toaster provider wrapper now, so it's removed from here */}
+
+      {/* Render TutorButton only if user is logged in and onboarding is complete, or on specific non-auth pages */}
+      {user && user.onboarding_complete && (
+         <>
+            <TutorOverlayButton onClick={toggleTutorWidget} />
+            <TutorWidget isOpen={isTutorWidgetOpen} onClose={closeTutorWidget} />
+         </>
+      )}
+      {/* Or, if you want it available more broadly but not on auth/onboarding:
+      {!authLoading && user && !location.pathname.startsWith(APP_ROUTES.AUTH) && location.pathname !== APP_ROUTES.ONBOARDING && (
+        <>
+          <TutorOverlayButton onClick={toggleTutorWidget} />
+          <TutorWidget isOpen={isTutorWidgetOpen} onClose={closeTutorWidget} />
+        </>
+      )}
+      */}
     </div>
   );
 };
@@ -109,10 +127,12 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <I18nProvider initialLanguage="en">
-        <AuthProvider> {/* AuthProvider should be inside HashRouter but outside Toaster if Toaster uses useAuth or similar */}
-          <Toaster> {/* Toaster now wraps AppContent to provide context */}
-            <AppContent />
-          </Toaster>
+        <AuthProvider>
+          <TutorWidgetProvider> {/* Wrap with TutorWidgetProvider */}
+            <Toaster>
+              <AppContent />
+            </Toaster>
+          </TutorWidgetProvider>
         </AuthProvider>
       </I18nProvider>
     </HashRouter>
