@@ -287,6 +287,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]); // Depends on user to get existing data for setUser update, though not strictly necessary if only setting new fields.
 
+  const updateUserCurriculum = useCallback((curriculumId: string) => {
+    if (user) {
+      // Optimistic update of local state
+      const updatedUser = { ...user, selectedCurriculumId: curriculumId };
+      setUser(updatedUser);
+      localStorage.setItem('waterClassroomUser', JSON.stringify(updatedUser));
+
+      const curriculum = MOCK_CURRICULA_DATA.find(c => c.id === curriculumId) || null;
+      setSelectedCurriculumDetails(curriculum); // Assuming Curriculum type matches
+
+      // Fire-and-forget backend update
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        fetch(`${API_BASE_URL}/api/v1/user/curriculum`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ selected_curriculum_id: curriculumId }),
+        })
+        .then(response => {
+          if (!response.ok) {
+            response.json().then(errData => {
+              console.error('Failed to save curriculum choice to backend:', errData.error || response.statusText);
+              setError(`Failed to save curriculum: ${errData.error || response.statusText}`);
+              // Optionally: revert optimistic update here if backend save fails critically
+              // setUser(user); // Revert to original user state
+              // localStorage.setItem('waterClassroomUser', JSON.stringify(user));
+              // setSelectedCurriculumDetails(MOCK_CURRICULA_DATA.find(c => c.id === user.selectedCurriculumId) || null);
+            }).catch(() => {
+               console.error('Failed to save curriculum choice to backend and parse error response.');
+               setError('Failed to save curriculum and parse error response.');
+            });
+          } else {
+            console.log("Curriculum choice saved to backend successfully.");
+            // Optionally, re-fetch user details for ultimate consistency, though optimistic update is usually enough.
+            // fetchUserDetails(accessToken).then(fetchedUser => setUser(fetchedUser));
+          }
+        })
+        .catch(error => {
+          console.error('Error saving curriculum choice to backend:', error);
+          setError(`Error saving curriculum: ${error.message}`);
+          // Optionally: revert optimistic update here
+        });
+      } else {
+        console.warn("No access token found, cannot save curriculum choice to backend.");
+        // If offline, this choice will only be local.
+      }
+    }
+  }, [user, API_BASE_URL]); // Added API_BASE_URL to dependencies
+
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -305,7 +357,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const curriculum = MOCK_CURRICULA_DATA.find(c => c.id === curriculumId) || null;
       setSelectedCurriculumDetails(curriculum as Curriculum | null);
     }
-  }, [user]);
+  }, [user]); // Removed API_BASE_URL from here as it's a constant, user is the main dep for optimistic UI update
 
   return (
     <AuthContext.Provider value={{

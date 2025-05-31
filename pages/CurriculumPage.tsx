@@ -1,13 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 import { useAuth } from '../contexts/AuthContext';
-// Fix: Import Link component
 import { useNavigate, Link } from 'react-router-dom';
-// Fix: Import ToastType
-import { Curriculum, Subject as SubjectType, ToastType } from '../types';
-import { MOCK_CURRICULA_DATA } from '../constants';
+import { Curriculum, ToastType } from '../types'; // Removed SubjectType as it's not directly used in this component's logic
+import { MOCK_CURRICULA_DATA, MOCK_COUNTRIES } from '../constants'; // Added MOCK_COUNTRIES
 import { APP_ROUTES } from '../constants';
-import { BookMarked, ChevronDown, ChevronUp, Search, ArrowRight } from 'lucide-react';
+import { BookMarked, ChevronDown, ChevronUp, Search, ArrowRight, Globe } from 'lucide-react'; // Added Globe
 import { useToastContext } from '../hooks/useToast';
 
 interface CurriculumCardProps {
@@ -59,44 +57,88 @@ const CurriculumPage: React.FC = () => {
   const navigate = useNavigate();
   const { addToast } = useToastContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCountryKey, setSelectedCountryKey] = useState<string>(MOCK_COUNTRIES[0]?.key || 'generic'); // Default to first country or 'generic'
+  const [filteredCurricula, setFilteredCurricula] = useState<Curriculum[]>([]);
+
+  useEffect(() => {
+    let curricula = MOCK_CURRICULA_DATA;
+
+    // Filter by country
+    if (selectedCountryKey !== 'generic') {
+      curricula = curricula.filter(c => c.countryKey === selectedCountryKey);
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      curricula = curricula.filter(c =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.targetAudience.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    setFilteredCurricula(curricula);
+  }, [selectedCountryKey, searchTerm]);
+
+  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountryKey(event.target.value);
+  };
 
   const handleSelectCurriculum = (id: string) => {
-    updateUserCurriculum(id);
-    const selected = MOCK_CURRICULA_DATA.find(c=>c.id === id);
-    // Fix: Use ToastType.Success instead of "success"
+    updateUserCurriculum(id); // This function now needs to be implemented in AuthContext to make API call
+    const selected = MOCK_CURRICULA_DATA.find(c => c.id === id);
     addToast(`Curriculum "${selected?.name}" selected!`, ToastType.Success);
-    navigate(APP_ROUTES.DASHBOARD); // Navigate to dashboard after selection
+    navigate(APP_ROUTES.DASHBOARD);
   };
   
-  const filteredCurricula = MOCK_CURRICULA_DATA.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.targetAudience.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
       <header className="mb-10 text-center">
         <BookMarked size={48} className="mx-auto text-brand-light-blue mb-4" />
         <h1 className="text-4xl font-bold text-brand-slate-light">Select Your Curriculum</h1>
-        <p className="text-brand-slate-medium mt-2">Choose the learning path that's right for you.</p>
+        <p className="text-brand-slate-medium mt-2">Tailor your learning path by selecting a country and curriculum.</p>
       </header>
 
-      <div className="mb-8 relative">
-        <input 
-          type="text"
-          placeholder="Search curricula (e.g., GCSE, Math, Grade 9)..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-4 pl-12 bg-brand-slate-dark border border-brand-slate-medium rounded-lg text-brand-slate-light focus:ring-2 focus:ring-brand-light-blue focus:outline-none"
-        />
-        <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-slate-medium" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="md:col-span-1">
+          <label htmlFor="countrySelect" className="block text-sm font-medium text-brand-slate-light mb-1">
+            Filter by Country
+          </label>
+          <div className="relative">
+            <select
+              id="countrySelect"
+              value={selectedCountryKey}
+              onChange={handleCountryChange}
+              className="w-full p-3 pl-10 bg-brand-slate-dark border border-brand-slate-medium rounded-lg text-brand-slate-light focus:ring-2 focus:ring-brand-light-blue focus:outline-none appearance-none"
+            >
+              {MOCK_COUNTRIES.map(country => (
+                <option key={country.key} value={country.key}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+            <Globe size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-slate-medium pointer-events-none" />
+             <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-slate-medium pointer-events-none" />
+          </div>
+        </div>
+        <div className="md:col-span-2 relative">
+           <label htmlFor="searchCurricula" className="block text-sm font-medium text-brand-slate-light mb-1">
+            Search Curricula
+          </label>
+          <input
+            id="searchCurricula"
+            type="text"
+            placeholder="Search selected country's curricula..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 pl-10 bg-brand-slate-dark border border-brand-slate-medium rounded-lg text-brand-slate-light focus:ring-2 focus:ring-brand-light-blue focus:outline-none"
+          />
+          <Search size={18} className="absolute left-3 top-1/2 mt-px -translate-y-1/2 text-brand-slate-medium" /> {/* Adjusted for label */}
+        </div>
       </div>
 
       {selectedCurriculumDetails && (
         <div className="mb-8 p-4 bg-brand-indigo rounded-lg text-center">
           <p className="text-brand-slate-light">Currently selected: <span className="font-semibold">{selectedCurriculumDetails.name}</span></p>
-          {/* Fix: Link component is now imported */}
           <Link to={APP_ROUTES.DASHBOARD} className="text-sm text-brand-light-blue hover:underline mt-1 inline-block">
             Go to Dashboard <ArrowRight size={14} className="inline-block ml-1" />
           </Link>
@@ -108,14 +150,14 @@ const CurriculumPage: React.FC = () => {
           {filteredCurricula.map(curriculum => (
             <CurriculumCard 
               key={curriculum.id} 
-              curriculum={curriculum as Curriculum} 
+              curriculum={curriculum as Curriculum} // Curriculum type is already imported
               onSelect={handleSelectCurriculum}
               isSelected={user?.selectedCurriculumId === curriculum.id}
             />
           ))}
         </div>
       ) : (
-         <p className="text-center text-brand-slate-medium py-10">No curricula found matching your search. Try a different term.</p>
+         <p className="text-center text-brand-slate-medium py-10">No curricula found matching your criteria. Try adjusting filters or search term.</p>
       )}
     </div>
   );

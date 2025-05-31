@@ -19,10 +19,19 @@ export enum APP_ROUTES {
   LEADERBOARD = '/leaderboard',
 }
 
+export const MOCK_COUNTRIES = [
+  { key: 'generic', name: 'All Curricula' },
+  { key: 'us', name: 'United States' },
+  { key: 'gb', name: 'United Kingdom' },
+  { key: 'in', name: 'India' },
+  { key: 'ca', name: 'Canada' },
+];
+
 export const MOCK_CURRICULA_DATA = [
   {
     id: 'common-core-math-g9',
     name: 'U.S. Common Core - Math Grade 9',
+    countryKey: 'us',
     description: 'Covers key mathematical concepts for 9th-grade students under the U.S. Common Core standards.',
     targetAudience: 'Grade 9',
     subjects: [
@@ -48,6 +57,7 @@ export const MOCK_CURRICULA_DATA = [
   {
     id: 'uk-gcse-physics',
     name: 'UK GCSE - Physics',
+    countryKey: 'gb',
     description: 'Fundamental physics concepts for students preparing for UK GCSE examinations.',
     targetAudience: 'GCSE Level (Age 14-16)',
     subjects: [
@@ -62,6 +72,7 @@ export const MOCK_CURRICULA_DATA = [
   {
     id: 'ib-history-hl',
     name: 'IB History HL - The Cold War',
+    countryKey: 'generic',
     description: 'In-depth study of The Cold War for IB History Higher Level students.',
     targetAudience: 'IB Diploma (Age 16-18)',
     subjects: [

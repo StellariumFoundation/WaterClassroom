@@ -83,11 +83,17 @@ type CurrentUserResponse struct {
 	DisplayName        string         `json:"display_name"`
 	Email              string         `json:"email"`
 	AvatarURL          sql.NullString `json:"avatar_url"`
-	Role               string         `json:"role"`
-	IsVerified         bool           `json:"is_verified"`
-	UserType           sql.NullString `json:"user_type"`
-	ClassroomCode      sql.NullString `json:"classroom_code"`
-	OnboardingComplete bool           `json:"onboarding_complete"`
+	Role                 string         `json:"role"`
+	IsVerified           bool           `json:"is_verified"`
+	UserType             sql.NullString `json:"user_type"`
+	ClassroomCode        sql.NullString `json:"classroom_code"`
+	OnboardingComplete   bool           `json:"onboarding_complete"`
+	SelectedCurriculumID sql.NullString `json:"selected_curriculum_id"` // New field
+}
+
+// UpdateCurriculumRequest defines the structure for updating selected curriculum
+type UpdateCurriculumRequest struct {
+	SelectedCurriculumID string `json:"selected_curriculum_id" binding:"required"`
 }
 
 // Config holds all configuration for the service
@@ -511,7 +517,8 @@ func (app *Application) initRouter() {
 			protected.PUT("/me", app.handleUpdateCurrentUser)
 			protected.POST("/change-password", app.handleChangePassword)
 			protected.DELETE("/me", app.handleDeleteAccount)
-			protected.PUT("/onboarding-details", app.handleUpdateOnboardingDetails) // New route
+			protected.PUT("/onboarding-details", app.handleUpdateOnboardingDetails)
+			protected.PUT("/curriculum", app.handleUpdateUserCurriculum) // New route for curriculum update
 		}
 	}
 
@@ -1020,7 +1027,7 @@ func (app *Application) handleGetCurrentUser(c *gin.Context) {
 	}
 
 	query := `
-		SELECT id, display_name, email, avatar_url, role, is_verified, user_type, classroom_code, onboarding_complete
+		SELECT id, display_name, email, avatar_url, role, is_verified, user_type, classroom_code, onboarding_complete, selected_curriculum_id
 		FROM users
 		WHERE id = $1`
 
@@ -1035,6 +1042,7 @@ func (app *Application) handleGetCurrentUser(c *gin.Context) {
 		&user.UserType,
 		&user.ClassroomCode,
 		&user.OnboardingComplete,
+		&user.SelectedCurriculumID, // Added scanning for the new field
 	)
 
 	if err != nil {
@@ -1140,6 +1148,63 @@ func (app *Application) handleUpdateOnboardingDetails(c *gin.Context) {
 
 	app.Logger.Info("User onboarding details updated successfully", zap.String("userID", userIDStr), zap.String("userType", req.UserType))
 	c.JSON(http.StatusOK, gin.H{"message": "Onboarding details updated successfully"})
+}
+
+// handleUpdateUserCurriculum updates the user's selected curriculum ID
+func (app *Application) handleUpdateUserCurriculum(c *gin.Context) {
+	var req UpdateCurriculumRequest
+
+	userID, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token during curriculum update")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userID.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token during curriculum update", zap.Any("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind update curriculum request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	if req.SelectedCurriculumID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Selected curriculum ID is required"})
+		return
+	}
+
+	updateQuery := `
+		UPDATE users
+		SET selected_curriculum_id = $1, updated_at = NOW()
+		WHERE id = $2`
+
+	result, err := app.DB.ExecContext(c.Request.Context(), updateQuery, req.SelectedCurriculumID, userIDStr)
+	if err != nil {
+		app.Logger.Error("Failed to update user curriculum ID in database", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update curriculum selection"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after curriculum update", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error confirming update for curriculum selection"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		app.Logger.Warn("No user found to update curriculum for", zap.String("userID", userIDStr))
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	app.Logger.Info("User curriculum updated successfully", zap.String("userID", userIDStr), zap.String("curriculumID", req.SelectedCurriculumID))
+	c.JSON(http.StatusOK, gin.H{"message": "User curriculum updated successfully"})
 }
 
 
