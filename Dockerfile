@@ -45,16 +45,17 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Add script to replace environment variables at runtime
-RUN echo '#!/bin/sh \n\
-# Replace RUNTIME_PLACEHOLDER with actual API key at container startup \n\
-if [ ! -z "$GEMINI_API_KEY" ]; then \n\
-  find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s/RUNTIME_PLACEHOLDER/$GEMINI_API_KEY/g" {} \; \n\
-fi \n\
-# Start nginx \n\
-nginx -g "daemon off;"' > /docker-entrypoint.sh && \
-chmod +x /docker-entrypoint.sh
 
+RUN printf '%s\n' \
+    '#!/bin/sh' \
+    '# Replace RUNTIME_PLACEHOLDER with actual API key at container startup' \
+    'if [ ! -z "$GEMINI_API_KEY" ]; then' \
+    '  find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s/RUNTIME_PLACEHOLDER/$GEMINI_API_KEY/g" {} \;' \
+    'fi' \
+    '# Start nginx' \
+    'nginx -g "daemon off;"' > /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+    
 # Expose port 80
 EXPOSE 80
 
