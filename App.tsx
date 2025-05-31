@@ -99,10 +99,13 @@ const AppContent: React.FC = () => {
             path={APP_ROUTES.ONBOARDING}
             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>}
           />
+          {/* TODO: Add route for PricingPage: <Route path="/pricing" element={<PricingPage />} /> */}
+          {/* Example: <Route path={APP_ROUTES.PRICING} element={<ProtectedRoute><PricingPage /></ProtectedRoute>} /> */}
           <Route path="*" element={<Navigate to={user ? APP_ROUTES.DASHBOARD : APP_ROUTES.HOME} />} />
         </Routes>
       </main>
       <Footer />
+      {/* TODO: Add link to Navbar for PricingPage: <Link to="/pricing">Pricing</Link> (in Navbar.tsx) */}
 
       {/* Render TutorButton only if user is logged in and onboarding is complete, or on specific non-auth pages */}
       {user && user.onboarding_complete && (
