@@ -1,6 +1,5 @@
 Things to Implement
 
-9. make sure the user chose the currriculum and select to the user based on that.
 10. add database functionality and add all of the necessary variables.
 11. add payment functionality for the website.
 12. edit the user profile page and make it pretty. the user can change the name username, email, profile picture.
@@ -13,4 +12,5 @@ Things to Implement
 4. make the overlay button on almost all the screen that animates and when the user vlicked it open the ai tutor widget. (done)
 5. make the interface look like an apple website but bright blue themed and very shiny with animations and all pretty, all the website. (done)
 6. read the whole docs directory and do this: remake the homepage to be more like a world vlass online school, for homeschool people from all educations through undergraduates make a copy to attract people to signup for the school as a school that has world class fun learning and the best and most fun school. make sure that it's clear that it in an actual online school that the user can make even exams online verified by AI. (done)
-8. Add the pricing on the page: It's $49.99 for homeschooled online water classrom students, and $39.99 for individual users just wanting to get world class education. (done)
+8. Add the pricing on the page: It's $49.99 for homescholed online water classrom students, and $39.99 for individual users just wanting to get world class education. (done)
+9. make sure the user chose the currriculum and select to the user based on that. (done)

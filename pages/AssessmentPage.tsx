@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 // Fix: Import ToastType
 import { Assessment, AssessmentQuestion, Curriculum, Subject as SubjectType, ToastType } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -19,6 +20,7 @@ const AssessmentPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToastContext();
+  const { user, loading: authLoading, selectedCurriculumId: userSelectedCurriculumId } = useAuth();
 
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
@@ -95,6 +97,21 @@ const AssessmentPage: React.FC = () => {
     }
   }, [assessmentId, loadAssessmentDetails]);
 
+  useEffect(() => {
+    if (authLoading) {
+      return; // Wait for auth to resolve
+    }
+
+    // Only apply this check if a specific assessment is being viewed
+    if (assessmentId && user && !userSelectedCurriculumId) {
+      // Only redirect if no assessment-specific error has occurred yet.
+      // This prevents redirecting away from an "assessment not found" or "invalid params" error.
+      if (!error) {
+        addToast("Please select a curriculum before accessing assessments.", ToastType.Info);
+        navigate(APP_ROUTES.CURRICULUM_SELECT, { replace: true });
+      }
+    }
+  }, [user, authLoading, userSelectedCurriculumId, assessmentId, navigate, addToast, error]);
 
   const handleAnswerChange = (questionId: string, answerValue: string) => {
     setAnswers(prev => {
@@ -124,7 +141,21 @@ const AssessmentPage: React.FC = () => {
     addToast(`Assessment submitted! Your score: ${calculatedScore.toFixed(0)}%`, ToastType.Success);
   };
 
-  if (isLoading) return <div className="flex justify-center items-center h-[calc(100vh-8rem)]"><LoadingSpinner text="Loading assessment..." size="lg" /></div>;
+  if (authLoading) { // Always show auth loading first if it's happening
+    return (
+        <div className="flex justify-center items-center h-[calc(100vh-8rem)]">
+            <LoadingSpinner text="Verifying user session..." size="lg" />
+        </div>
+    );
+  }
+  // If auth is done, then consider lecture-specific loading:
+  if (isLoading && assessmentId) { // Only show "Loading assessment..." if we are fetching a specific one
+    return (
+        <div className="flex justify-center items-center h-[calc(100vh-8rem)]">
+            <LoadingSpinner text="Loading assessment..." size="lg" />
+        </div>
+    );
+  }
   
   if (error) return (
     <div className="max-w-3xl mx-auto p-8 text-center">

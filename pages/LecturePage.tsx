@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 // Fix: Import ToastType
 import { Lecture, Curriculum, Subject as SubjectType, ToastType } from '../types';
 import { generateLectureContent } from '../services/geminiService';
@@ -16,6 +17,7 @@ const LecturePage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { addToast } = useToastContext();
+  const { user, loading: authLoading, selectedCurriculumId: userSelectedCurriculumId } = useAuth();
 
   const [lecture, setLecture] = useState<Lecture | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,6 +95,20 @@ const LecturePage: React.FC = () => {
     fetchAndSetLecture(lectureId!, curriculumId, subjectId);
   }, [lectureId, curriculumId, subjectId, fetchAndSetLecture]);
 
+  useEffect(() => {
+    if (authLoading) {
+      return; // Wait for auth to resolve
+    }
+    if (user && !userSelectedCurriculumId) {
+      // Only redirect if no lecture-specific error has occurred yet.
+      // This prevents redirecting away from a "lecture not found" or "invalid params" error.
+      if (!error) {
+          addToast("Please select a curriculum before accessing lectures.", ToastType.Info);
+          navigate(APP_ROUTES.CURRICULUM_SELECT, { replace: true });
+      }
+    }
+  }, [user, authLoading, userSelectedCurriculumId, navigate, addToast, error]); // Added error to deps
+
   const navigateLecture = (direction: 'next' | 'prev') => {
     if (!currentSubject || lectureIndex === -1) return;
     const newIndex = direction === 'next' ? lectureIndex + 1 : lectureIndex - 1;
@@ -153,7 +169,7 @@ const LecturePage: React.FC = () => {
   const lectureIcon = lecture?.type === 'video' ? <Video size={24} /> : lecture?.type === 'interactive' || lecture?.type === 'game_placeholder' ? <Lightbulb size={24} /> : <BookOpen size={24} />;
 
 
-  if (isLoading) return <div className="flex justify-center items-center h-[calc(100vh-8rem)]"><LoadingSpinner text="Loading lecture..." size="lg" /></div>;
+  if (authLoading || isLoading) return <div className="flex justify-center items-center h-[calc(100vh-8rem)]"><LoadingSpinner text={authLoading ? "Verifying user session..." : "Loading lecture..."} size="lg" /></div>;
   
   if (error) return (
     <div className="max-w-3xl mx-auto p-8 text-center">
