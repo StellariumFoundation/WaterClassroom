@@ -17,6 +17,7 @@ interface AuthContextType {
   selectedCurriculumDetails: Curriculum | null;
   clearError: () => void; // Utility to clear error
   processOAuthTokens: (accessToken: string, refreshToken: string) => Promise<boolean>; // For OAuth callback
+  updateUserOnboardingDetails: (details: { userType: string; classroomCode?: string }) => Promise<boolean>; // For onboarding
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -233,6 +234,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [fetchUserDetails]); // Added fetchUserDetails
 
+
+  const updateUserOnboardingDetails = useCallback(async (details: { userType: string; classroomCode?: string }): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      setError("No access token found. Please log in.");
+      setLoading(false);
+      return false;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/user/onboarding-details`, { // Endpoint from backend task
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          user_type: details.userType,
+          classroom_code: details.classroomCode, // Will be omitted if undefined
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to update onboarding details' }));
+        throw new Error(errorData.error || errorData.message || `HTTP error ${response.status}`);
+      }
+
+      // Successfully updated on backend, now update local user state
+      setUser(prevUser => {
+        if (!prevUser) return null;
+        const updatedUser = {
+          ...prevUser,
+          user_type: details.userType,
+          classroom_code: details.classroomCode,
+          onboarding_complete: true,
+        };
+        localStorage.setItem('waterClassroomUser', JSON.stringify(updatedUser)); // Persist change
+        return updatedUser;
+      });
+
+      setLoading(false);
+      return true;
+    } catch (err) {
+      console.error('Update onboarding details error:', err);
+      const message = err instanceof Error ? err.message : 'An unknown error occurred.';
+      setError(message);
+      setLoading(false);
+      return false;
+    }
+  }, [user]); // Depends on user to get existing data for setUser update, though not strictly necessary if only setting new fields.
+
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -254,7 +308,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, updateUserCurriculum, selectedCurriculumDetails, clearError, processOAuthTokens }}>
+    <AuthContext.Provider value={{
+      user, loading, error, login, signup, logout,
+      updateUserCurriculum, selectedCurriculumDetails,
+      clearError, processOAuthTokens, updateUserOnboardingDetails
+    }}>
       {children}
     </AuthContext.Provider>
   );

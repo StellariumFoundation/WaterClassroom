@@ -71,6 +71,25 @@ type LoginResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// OnboardingDetailsRequest defines the structure for updating user onboarding details
+type OnboardingDetailsRequest struct {
+	UserType      string `json:"user_type" binding:"required"` // e.g., "homeschool", "school_student", "individual"
+	ClassroomCode string `json:"classroom_code"`             // Optional
+}
+
+// CurrentUserResponse defines the structure for the /user/me endpoint
+type CurrentUserResponse struct {
+	ID                 string         `json:"id"`
+	DisplayName        string         `json:"display_name"`
+	Email              string         `json:"email"`
+	AvatarURL          sql.NullString `json:"avatar_url"`
+	Role               string         `json:"role"`
+	IsVerified         bool           `json:"is_verified"`
+	UserType           sql.NullString `json:"user_type"`
+	ClassroomCode      sql.NullString `json:"classroom_code"`
+	OnboardingComplete bool           `json:"onboarding_complete"`
+}
+
 // Config holds all configuration for the service
 type Config struct {
 	Env                    string        `mapstructure:"ENV"`
@@ -492,6 +511,7 @@ func (app *Application) initRouter() {
 			protected.PUT("/me", app.handleUpdateCurrentUser)
 			protected.POST("/change-password", app.handleChangePassword)
 			protected.DELETE("/me", app.handleDeleteAccount)
+			protected.PUT("/onboarding-details", app.handleUpdateOnboardingDetails) // New route
 		}
 	}
 
@@ -986,8 +1006,50 @@ func (app *Application) handleAppleCallback(c *gin.Context) {
 }
 
 func (app *Application) handleGetCurrentUser(c *gin.Context) {
-	// TODO: Implement get current user logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	userIDAny, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token for /me endpoint")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userIDAny.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token for /me endpoint", zap.Any("userID", userIDAny))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	query := `
+		SELECT id, display_name, email, avatar_url, role, is_verified, user_type, classroom_code, onboarding_complete
+		FROM users
+		WHERE id = $1`
+
+	var user CurrentUserResponse
+	err := app.DB.QueryRowContext(c.Request.Context(), query, userIDStr).Scan(
+		&user.ID,
+		&user.DisplayName,
+		&user.Email,
+		&user.AvatarURL,
+		&user.Role,
+		&user.IsVerified,
+		&user.UserType,
+		&user.ClassroomCode,
+		&user.OnboardingComplete,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Warn("User not found by ID from token", zap.String("userID", userIDStr))
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+		app.Logger.Error("Database error when fetching current user", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user details"})
+		return
+	}
+
+	app.Logger.Info("Successfully fetched current user details", zap.String("userID", userIDStr))
+	c.JSON(http.StatusOK, user)
 }
 
 func (app *Application) handleUpdateCurrentUser(c *gin.Context) {
@@ -1004,6 +1066,82 @@ func (app *Application) handleDeleteAccount(c *gin.Context) {
 	// TODO: Implement delete account logic
 	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
 }
+
+// handleUpdateOnboardingDetails updates the user's onboarding information
+func (app *Application) handleUpdateOnboardingDetails(c *gin.Context) {
+	var req OnboardingDetailsRequest
+
+	userID, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token during onboarding update")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userID.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token during onboarding update", zap.Any("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind onboarding details request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Basic validation for user_type (could be expanded)
+	if req.UserType == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User type is required"})
+		return
+	}
+	// Example validation:
+	// allowedUserTypes := map[string]bool{"homeschool": true, "school_student": true, "individual": true}
+	// if !allowedUserTypes[req.UserType] {
+	//    c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user type specified"})
+	//    return
+	// }
+
+
+	// Handle optional classroom_code: pass NULL to db if empty string
+	var classroomCodeArg interface{}
+	if req.ClassroomCode == "" {
+		classroomCodeArg = nil // This will be converted to NULL by the database driver for VARCHAR
+	} else {
+		classroomCodeArg = req.ClassroomCode
+	}
+
+	updateQuery := `
+		UPDATE users
+		SET user_type = $1, classroom_code = $2, onboarding_complete = TRUE, updated_at = NOW()
+		WHERE id = $3`
+
+	result, err := app.DB.ExecContext(c.Request.Context(), updateQuery, req.UserType, classroomCodeArg, userIDStr)
+	if err != nil {
+		app.Logger.Error("Failed to update user onboarding details in database", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update onboarding details"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after onboarding update", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error confirming update"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		// This case should ideally not happen if authMiddleware correctly validates user existence via token.
+		// However, it's good practice to check.
+		app.Logger.Warn("No user found to update onboarding details for", zap.String("userID", userIDStr))
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	app.Logger.Info("User onboarding details updated successfully", zap.String("userID", userIDStr), zap.String("userType", req.UserType))
+	c.JSON(http.StatusOK, gin.H{"message": "Onboarding details updated successfully"})
+}
+
 
 // authMiddleware returns a Gin middleware for JWT authentication
 func (app *Application) authMiddleware() gin.HandlerFunc {

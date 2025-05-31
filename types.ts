@@ -10,6 +10,10 @@ export interface User {
   badges?: Badge[];
   streak?: number;
   points?: number;
+  // Onboarding fields
+  user_type?: string;
+  classroom_code?: string;
+  onboarding_complete?: boolean;
 }
 
 export interface UserProgress {

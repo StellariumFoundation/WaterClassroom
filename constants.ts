@@ -1,11 +1,14 @@
 
 export const APP_NAME = "Water Classroom";
 export const API_KEY_INSTRUCTION = "Please ensure your GEMINI_API_KEY is set as an environment variable (e.g., process.env.API_KEY). This app requires it to function.";
+export const API_BASE_URL = "http://localhost:8080"; // Added API Base URL
 
 export enum APP_ROUTES {
   HOME = '/',
   LOGIN = '/login', // Kept for clarity, AuthPage handles both
   AUTH = '/auth',
+  OAUTH_CALLBACK = '/auth/oauth-callback', // Added OAuth callback route
+  ONBOARDING = '/onboarding', // Added Onboarding route
   DASHBOARD = '/dashboard',
   CURRICULUM_SELECT = '/curriculum',
   LECTURE = '/lecture', // e.g. /lecture/:lectureId
