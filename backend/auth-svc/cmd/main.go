@@ -96,6 +96,15 @@ type UpdateCurriculumRequest struct {
 	SelectedCurriculumID string `json:"selected_curriculum_id" binding:"required"`
 }
 
+// UpdateCurrentUserRequest defines the structure for the /user/me update request
+type UpdateCurrentUserRequest struct {
+	DisplayName *string `json:"display_name"`
+	AvatarURL   *string `json:"avatar_url"`
+	// Add other updatable fields here, e.g.,
+	// Bio         *string `json:"bio"`
+	// Preferences *json.RawMessage `json:"preferences"` // For complex JSON objects
+}
+
 // Config holds all configuration for the service
 type Config struct {
 	Env                    string        `mapstructure:"ENV"`
@@ -1042,7 +1051,7 @@ func (app *Application) handleGetCurrentUser(c *gin.Context) {
 		&user.UserType,
 		&user.ClassroomCode,
 		&user.OnboardingComplete,
-		&user.SelectedCurriculumID, // Added scanning for the new field
+		&user.SelectedCurriculumID,
 	)
 
 	if err != nil {
@@ -1061,8 +1070,110 @@ func (app *Application) handleGetCurrentUser(c *gin.Context) {
 }
 
 func (app *Application) handleUpdateCurrentUser(c *gin.Context) {
-	// TODO: Implement update current user logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	userIDAny, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token for updating user")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userIDAny.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token for updating user", zap.Any("userID", userIDAny))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	var req UpdateCurrentUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind update user request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Check if at least one field is provided
+	if req.DisplayName == nil && req.AvatarURL == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "At least one field (display_name or avatar_url) must be provided for update."})
+		return
+	}
+
+	// Dynamically construct the SQL query
+	queryBuilder := strings.Builder{}
+	queryBuilder.WriteString("UPDATE users SET ")
+
+	args := []interface{}{}
+	paramCount := 1
+
+	if req.DisplayName != nil {
+		queryBuilder.WriteString(fmt.Sprintf("display_name = $%d, ", paramCount))
+		args = append(args, *req.DisplayName)
+		paramCount++
+	}
+	if req.AvatarURL != nil {
+		// If AvatarURL is an empty string, it will update the DB field to an empty string.
+		// If you want to set it to NULL for an empty string, handle that logic here or in DB schema (DEFAULT NULL).
+		queryBuilder.WriteString(fmt.Sprintf("avatar_url = $%d, ", paramCount))
+		args = append(args, *req.AvatarURL) // Store empty string as is, or use sql.NullString for NULL
+		paramCount++
+	}
+
+	queryBuilder.WriteString(fmt.Sprintf("updated_at = NOW() WHERE id = $%d", paramCount))
+	args = append(args, userIDStr)
+
+	finalQuery := queryBuilder.String()
+	app.Logger.Debug("Constructed update query", zap.String("query", finalQuery), zap.Any("args", args))
+
+	result, err := app.DB.ExecContext(c.Request.Context(), finalQuery, args...)
+	if err != nil {
+		app.Logger.Error("Failed to update user details in database", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user details"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after user update", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error confirming user update"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		// This should ideally not happen if authMiddleware is effective and user exists.
+		app.Logger.Warn("No user found to update, or data was the same", zap.String("userID", userIDStr))
+		// It's not necessarily an error if rowsAffected is 0 if the data sent was identical to existing data,
+		// but for simplicity, we'll fetch and return. If user was deleted between auth and now, fetch will fail.
+	}
+
+	// Fetch and return the updated user details
+	// Re-use the logic from handleGetCurrentUser or call it directly if refactored
+	// For now, duplicating the fetch logic for clarity within this handler:
+	fetchQuery := `
+		SELECT id, display_name, email, avatar_url, role, is_verified, user_type, classroom_code, onboarding_complete, selected_curriculum_id
+		FROM users
+		WHERE id = $1`
+
+	var updatedUser CurrentUserResponse
+	err = app.DB.QueryRowContext(c.Request.Context(), fetchQuery, userIDStr).Scan(
+		&updatedUser.ID,
+		&updatedUser.DisplayName,
+		&updatedUser.Email,
+		&updatedUser.AvatarURL,
+		&updatedUser.Role,
+		&updatedUser.IsVerified,
+		&updatedUser.UserType,
+		&updatedUser.ClassroomCode,
+		&updatedUser.OnboardingComplete,
+		&updatedUser.SelectedCurriculumID,
+	)
+
+	if err != nil {
+		// This could happen if the user was deleted just after the update.
+		app.Logger.Error("Failed to fetch updated user details after update", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve updated user details"})
+		return
+	}
+
+	app.Logger.Info("User details updated successfully", zap.String("userID", userIDStr))
+	c.JSON(http.StatusOK, updatedUser)
 }
 
 func (app *Application) handleChangePassword(c *gin.Context) {

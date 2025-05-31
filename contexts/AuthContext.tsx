@@ -18,6 +18,7 @@ interface AuthContextType {
   clearError: () => void; // Utility to clear error
   processOAuthTokens: (accessToken: string, refreshToken: string) => Promise<boolean>; // For OAuth callback
   updateUserOnboardingDetails: (details: { userType: string; classroomCode?: string }) => Promise<boolean>; // For onboarding
+  updateUserInContext: (newUserDetails: any) => void; // User object from /me endpoint (CurrentUserResponse)
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -349,21 +350,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // addToast('Logged out successfully.', ToastType.Info); // Component can show this
   }, []);
 
-  const updateUserCurriculum = useCallback((curriculumId: string) => {
-    if (user) {
-      const updatedUser = { ...user, selectedCurriculumId: curriculumId };
-      localStorage.setItem('waterClassroomUser', JSON.stringify(updatedUser)); // Persist this app-specific change
-      setUser(updatedUser);
-      const curriculum = MOCK_CURRICULA_DATA.find(c => c.id === curriculumId) || null;
-      setSelectedCurriculumDetails(curriculum as Curriculum | null);
-    }
-  }, [user]); // Removed API_BASE_URL from here as it's a constant, user is the main dep for optimistic UI update
+  // This is the more complete updateUserCurriculum, keeping this one.
+  // The duplicate simpler one that was below this is removed.
+
+  const updateUserInContext = useCallback((newUserDetails: any) => { // `any` should ideally be CurrentUserResponse type from backend
+    setUser(prevUser => {
+      if (!prevUser) return null; // Should not happen if called when user is logged in
+
+      // Merge backend data (newUserDetails) with existing frontend user state
+      // Backend CurrentUserResponse has: DisplayName, AvatarURL (sql.NullString), Email, ID, Role, etc.
+      // Frontend User type has: name, avatarUrl (string), email, id, plus app-specific fields
+      const updatedUser: User = {
+        ...prevUser, // Preserve existing app-specific fields like progress, badges etc.
+        id: newUserDetails.id || prevUser.id,
+        name: newUserDetails.display_name || prevUser.name, // map DisplayName to name
+        email: newUserDetails.email || prevUser.email,
+        avatarUrl: newUserDetails.avatar_url?.Valid ? newUserDetails.avatar_url.String : prevUser.avatarUrl, // map AvatarURL (sql.NullString)
+        // Update other fields from CurrentUserResponse if they exist in frontend User type
+        // For example, if role, is_verified, user_type, classroom_code, onboarding_complete are in User type:
+        // role: newUserDetails.role || prevUser.role,
+        // is_verified: newUserDetails.is_verified !== undefined ? newUserDetails.is_verified : prevUser.is_verified,
+        // user_type: newUserDetails.user_type?.Valid ? newUserDetails.user_type.String : prevUser.user_type,
+        // classroom_code: newUserDetails.classroom_code?.Valid ? newUserDetails.classroom_code.String : prevUser.classroom_code,
+        // onboarding_complete: newUserDetails.onboarding_complete !== undefined ? newUserDetails.onboarding_complete : prevUser.onboarding_complete,
+        // selectedCurriculumId: newUserDetails.selected_curriculum_id?.Valid ? newUserDetails.selected_curriculum_id.String : prevUser.selectedCurriculumId,
+      };
+
+      // Update localStorage
+      localStorage.setItem('waterClassroomUser', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{
       user, loading, error, login, signup, logout,
       updateUserCurriculum, selectedCurriculumDetails,
-      clearError, processOAuthTokens, updateUserOnboardingDetails
+      clearError, processOAuthTokens, updateUserOnboardingDetails,
+      updateUserInContext // Provide the new function
     }}>
       {children}
     </AuthContext.Provider>

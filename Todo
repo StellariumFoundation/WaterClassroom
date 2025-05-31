@@ -1,6 +1,5 @@
 Things to Implement
 
-12. edit the user profile page and make it pretty. the user can change the name username, email, profile picture.
 13. add the functionality for badges, scores, progress, curriculum, and everything else in the database and everything else.
 14. Make the whole curriculum on repo a series of html files in it we can put interactive content games and everything, be careful to make each curriculum index with a series of tiles and ides that lead to these files, at deployment deploy these files to the database for faster access.
 1. signup funcionatlity, check the user is registered and register users. (done)
@@ -14,3 +13,4 @@ Things to Implement
 9. make sure the user chose the currriculum and select to the user based on that. (done)
 10. add database functionality and add all of the necessary variables. (done for auth-svc and curriculum-svc initial schema)
 11. add payment functionality for the website. (done)
+12. edit the user profile page and make it pretty. The user can change name and profile picture URL. (done)

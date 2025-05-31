@@ -7,30 +7,93 @@ import { User as UserIconLucide, Mail, BookOpenCheck, CalendarDays, ShieldCheck,
 import BadgeIconDisplay from '../components/BadgeIconDisplay';
 
 const ProfilePage: React.FC = () => {
-  const { user, logout, selectedCurriculumDetails, updateUserCurriculum } = useAuth(); // Assuming updateUserCurriculum can be used for changes
+  // Ensure useAuth provides 'token' and an 'updateUserInContext' function or similar
+  const { user, logout, selectedCurriculumDetails, token, updateUserInContext } = useAuth();
   const navigate = useNavigate();
   
-  // Mock editable fields, in real app this would update backend
   const [isEditing, setIsEditing] = useState(false);
-  const [editableName, setEditableName] = useState(user?.name || '');
-  // const [editableEmail, setEditableEmail] = useState(user?.email || ''); // Email usually not easily changed
+  const [editableName, setEditableName] = useState(user?.name || user?.displayName || '');
+  const [editableAvatarUrl, setEditableAvatarUrl] = useState(user?.avatarUrl?.String || ''); // Initialize from .String
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState('');
+
 
   if (!user) {
     navigate(APP_ROUTES.AUTH);
     return null;
   }
 
-  const handleSave = () => {
-    // Mock update user. In real app, call API then update context.
-    if (user && user.name !== editableName) {
-        // auth.updateUser({ ...user, name: editableName }); // Example if updateUser method existed
-        console.log("Mock saving name:", editableName);
-        // For demo, we can update local storage part of user if login logic in AuthContext is adapted
+  const handleSave = async () => {
+    setApiError(null);
+    setSaveSuccessMessage('');
+    setIsSaving(true);
+
+    const payload: { display_name?: string; avatar_url?: string } = {};
+    const currentDisplayName = user.displayName || '';
+    const currentAvatarUrl = user.avatarUrl?.String || '';
+
+    if (editableName !== currentDisplayName) {
+      payload.display_name = editableName;
     }
-    setIsEditing(false);
+    if (editableAvatarUrl !== currentAvatarUrl) {
+      payload.avatar_url = editableAvatarUrl;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      setIsEditing(false);
+      setIsSaving(false);
+      setSaveSuccessMessage("No changes to save."); // Or just close without message
+      setTimeout(() => setSaveSuccessMessage(''), 3000);
+      return;
+    }
+
+    if (!token) {
+      setApiError("Authentication token not found. Please log in again.");
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/user/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to update profile. Please try again.' }));
+        throw new Error(errorData.message || `HTTP error ${response.status}`);
+      }
+
+      const updatedUserData = await response.json();
+
+      if (updateUserInContext) {
+         updateUserInContext(updatedUserData);
+      } else {
+        console.warn("updateUserInContext function not available in AuthContext. User state might be stale.");
+      }
+
+      setEditableName(updatedUserData.display_name || '');
+      setEditableAvatarUrl(updatedUserData.avatar_url?.String || '');
+      setIsEditing(false);
+      setSaveSuccessMessage('Profile updated successfully!');
+      setTimeout(() => setSaveSuccessMessage(''), 3000); // Clear message after 3 seconds
+
+    } catch (error: any) {
+      console.error('Failed to update user profile:', error);
+      setApiError(error.message || 'An unexpected error occurred.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const userBadges = user.badges?.length ? user.badges : MOCK_BADGES.slice(0, Math.floor(Math.random() * MOCK_BADGES.length) + 1);
+  const displayName = user.displayName || user.name || 'User'; // Prioritize displayName from CurrentUserResponse
+  const displayAvatarUrl = user.avatarUrl?.Valid ? user.avatarUrl.String : `https://i.pravatar.cc/150?u=${user.email}`;
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -41,31 +104,72 @@ const ProfilePage: React.FC = () => {
       <div className="bg-brand-slate-dark shadow-xl rounded-xl p-6 md:p-10">
         <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-8 mb-8">
           <img
-            src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.email}`}
+            src={isEditing ? (editableAvatarUrl || `https://i.pravatar.cc/150?u=${user.email}`) : displayAvatarUrl}
             alt="User Avatar"
-            className="w-32 h-32 rounded-full shadow-lg border-4 border-brand-light-blue mb-6 md:mb-0"
+            className="w-32 h-32 rounded-full shadow-lg border-4 border-brand-light-blue mb-6 md:mb-0 object-cover"
           />
           <div className="flex-1 text-center md:text-left">
             {isEditing ? (
-              <input 
-                type="text"
-                value={editableName}
-                onChange={(e) => setEditableName(e.target.value)}
-                className="text-3xl font-bold text-brand-slate-light bg-brand-navy border-b-2 border-brand-light-blue focus:outline-none px-2 py-1 mb-2 w-full md:w-auto"
-              />
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="displayName" className="block text-sm font-medium text-brand-slate-medium">Display Name</label>
+                  <input
+                    type="text"
+                    id="displayName"
+                    value={editableName}
+                    onChange={(e) => { setEditableName(e.target.value); setSaveSuccessMessage(''); }}
+                    className="text-xl font-bold text-brand-slate-light bg-brand-navy border-b-2 border-brand-light-blue focus:outline-none focus:border-brand-purple px-2 py-1 w-full md:w-auto transition-colors"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="avatarUrl" className="block text-sm font-medium text-brand-slate-medium mt-1">Avatar URL</label>
+                  <input
+                    type="text"
+                    id="avatarUrl"
+                    value={editableAvatarUrl}
+                    onChange={(e) => { setEditableAvatarUrl(e.target.value); setSaveSuccessMessage(''); }}
+                    placeholder="https://example.com/avatar.png"
+                    className="text-sm text-brand-slate-light bg-brand-navy border-b-2 border-brand-light-blue focus:outline-none focus:border-brand-purple px-2 py-1 w-full transition-colors"
+                  />
+                </div>
+              </div>
             ) : (
-              <h2 className="text-3xl font-bold text-brand-slate-light mb-1">{user.name}</h2>
+              <h2 className="text-3xl font-bold text-brand-slate-light mb-1">{displayName}</h2>
             )}
-            <p className="text-brand-slate-medium flex items-center justify-center md:justify-start">
+            <p className="text-brand-slate-medium flex items-center justify-center md:justify-start mt-2">
               <Mail size={16} className="mr-2" /> {user.email}
             </p>
             <div className="mt-4">
               {isEditing ? (
-                <button onClick={handleSave} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-400 flex items-center text-sm">
-                  <Save size={16} className="mr-2" /> Save Changes
-                </button>
+                <div className="space-y-2">
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={`px-4 py-2 text-white rounded-lg flex items-center text-sm w-full md:w-auto justify-center transition-colors
+                                ${isSaving ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400'}`}
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      <><Save size={16} className="mr-2" /> Save Changes</>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => { setIsEditing(false); setApiError(null); setEditableName(displayName); setEditableAvatarUrl(displayAvatarUrl);}}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-400 flex items-center text-sm w-full md:w-auto justify-center"
+                  >
+                    Cancel
+                  </button>
+                  {apiError && <p className="text-red-400 text-sm mt-2">{apiError}</p>}
+                </div>
               ) : (
-                <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-brand-light-blue text-brand-navy rounded-lg hover:bg-opacity-80 flex items-center text-sm">
+                <button
+                  onClick={() => { setIsEditing(true); setApiError(null); setEditableName(displayName); setEditableAvatarUrl(displayAvatarUrl); }}
+                  className="px-4 py-2 bg-brand-light-blue text-brand-navy rounded-lg hover:bg-opacity-80 flex items-center text-sm"
+                >
                   <Edit size={16} className="mr-2" /> Edit Profile
                 </button>
               )}
