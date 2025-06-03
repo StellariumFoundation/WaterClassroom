@@ -5,11 +5,14 @@
 
 # Make all targets PHONY to ensure they always run
 .PHONY: help build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend build-auth-svc-prod-image \
-        install build test clean cloud-test-build
+        install build test clean cloud-test-build build-frontend clean-frontend test-frontend
 
 # Variables
 SHELL := /bin/bash
 BACKEND_DIR := backend
+FRONTEND_DIR := frontend
+FRONTEND_BUILD_DIR := $(FRONTEND_DIR)/dist
+FRONTEND_NODE_MODULES := $(FRONTEND_DIR)/node_modules
 DOCKER_COMPOSE := docker-compose -f $(BACKEND_DIR)/deployments/docker-compose/docker-compose.yml
 
 # Colors for better output
@@ -29,6 +32,27 @@ help: ## Show this help message
 	@echo ""
 	@echo -e "${YELLOW}Available targets:${NC}"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  ${GREEN}%-30s${NC} %s\n", $$1, $$2}"
+
+# Frontend Commands
+build-frontend: ## Build frontend application
+	@echo -e "${BLUE}Installing frontend dependencies...${NC}"
+	@npm install --prefix $(FRONTEND_DIR)
+	@echo -e "${BLUE}Building frontend application...${NC}"
+	@cd $(FRONTEND_DIR) && npm run build
+	@echo -e "${GREEN}Frontend application built successfully! Output: $(FRONTEND_BUILD_DIR)${NC}"
+
+clean-frontend: ## Clean frontend build artifacts and dependencies
+	@echo -e "${BLUE}Cleaning frontend build artifacts and dependencies...${NC}"
+	@rm -rf $(FRONTEND_BUILD_DIR)
+	@rm -rf $(FRONTEND_NODE_MODULES)
+	@echo -e "${GREEN}Frontend build artifacts and dependencies cleaned successfully!${NC}"
+
+test-frontend: ## Run frontend checks and tests
+	@echo -e "${BLUE}Installing frontend dependencies for testing...${NC}"
+	@npm install --prefix $(FRONTEND_DIR)
+	@echo -e "${BLUE}Running frontend checks and tests...${NC}"
+	@cd $(FRONTEND_DIR) && npm run check
+	@echo -e "${GREEN}Frontend checks and tests completed.${NC}"
 
 # Backend Commands
 build-backend-dev-images: ## Build development Docker images for all backend services
@@ -71,22 +95,22 @@ install: ## Install all backend dependencies (no-op for root, handled by backend
 	@echo -e "${GREEN}Backend dependencies are managed by the backend Makefile.${NC}"
 	@echo -e "${YELLOW}Run 'make -C backend install' if you need to manage backend dependencies explicitly.${NC}"
 
-build: build-auth-svc-prod-image ## Build backend for production
-	@echo -e "${GREEN}Backend components built successfully!${NC}"
+build: build-auth-svc-prod-image build-frontend ## Build backend and frontend for production
+	@echo -e "${GREEN}Backend and frontend components built successfully!${NC}"
 
-test: test-backend ## Run all backend tests
-	@echo -e "${GREEN}Backend tests completed!${NC}"
+test: test-backend test-frontend ## Run all backend and frontend tests
+	@echo -e "${GREEN}Backend and frontend tests completed!${NC}"
 
-clean: ## Clean build artifacts
-	@echo -e "${BLUE}Cleaning build artifacts...${NC}"
-	@# No frontend artifacts to clean from root anymore
+clean: clean-frontend ## Clean backend and frontend build artifacts
+	@echo -e "${BLUE}Cleaning all build artifacts...${NC}"
 	@make -C $(BACKEND_DIR) clean
-	@echo -e "${GREEN}Build artifacts cleaned successfully!${NC}"
+	@echo -e "${GREEN}All build artifacts cleaned successfully!${NC}"
 
 # Cloud Deployment Testing
-cloud-test-build: build ## Test full backend build process for cloud deployment
+cloud-test-build: build ## Test full backend and frontend build process for cloud deployment
 	@echo -e "${BLUE}Testing full backend build process for cloud deployment...${NC}"
-	@echo -e "${GREEN}Backend build process completed successfully!${NC}"
-	@echo -e "${YELLOW}Note: This build has generated Docker images that can be deployed to cloud services like Render.${NC}"
+	@echo -e "${GREEN}Backend and frontend build process completed successfully!${NC}"
+	@echo -e "${YELLOW}Note: This build has generated Docker images and frontend assets that can be deployed.${NC}"
 	@echo -e "${YELLOW}Auth service image: wc-auth-svc:latest${NC}"
+	@echo -e "${YELLOW}Frontend assets in: $(FRONTEND_BUILD_DIR)${NC}"
 	@docker images | grep -E 'wc-auth-svc'
