@@ -11,6 +11,7 @@ WORKDIR /build
 COPY go.mod go.sum ./
 
 # Run go mod tidy to ensure go.sum is correct
+RUN apk add --no-cache make
 RUN go mod tidy
 
 # Download dependencies
@@ -18,9 +19,10 @@ RUN go mod download
 
 # Copy the source code
 COPY . .
+COPY ../../backend/Makefile /Makefile.backend
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o auth-service ./cmd
+RUN make -f /Makefile.backend build-service-docker SERVICE=auth-svc BIN_PATH=./auth-service MODULE_DIR=.
 
 # Final stage
 FROM alpine:3.19

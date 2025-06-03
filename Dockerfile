@@ -13,14 +13,16 @@ COPY frontend/package.json frontend/package-lock.json* ./
 
 # Copy the rest of the frontend application code
 COPY frontend/. .
+COPY frontend/Makefile /app/frontend/Makefile
 
 # Install dependencies
+RUN apk add --no-cache make
 RUN npm install --legacy-peer-deps
 RUN npm install @sveltejs/kit
 # RUN pnpm install --frozen-lockfile # Uncomment if using pnpm
 
 # Build the SvelteKit application for static export
-RUN npx vite build
+RUN make build
 # The output will be in /app/frontend/build (by default for adapter-static)
 
 # Stage 2: Backend Build (Go API Gateway)
@@ -31,7 +33,9 @@ WORKDIR /app/backend/api-gateway
 # Copy Go module files
 COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 
+COPY backend/Makefile /app/backend/Makefile
 # Download Go module dependencies
+RUN apk add --no-cache make
 RUN go mod download
 
 # Copy the rest of the API gateway source code
@@ -41,7 +45,7 @@ COPY backend/api-gateway/. .
 # CGO_ENABLED=0 for static linking (optional, but good for alpine)
 # GOOS=linux to ensure Linux binary
 # -ldflags="-s -w" to strip debug information and reduce binary size (optional)
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/api-gateway -ldflags="-s -w" .
+RUN make -f ../Makefile build-service-docker SERVICE=api-gateway BIN_PATH=/app/api-gateway
 # The compiled binary will be at /app/api-gateway
 
 # Stage 3: Final Production Image

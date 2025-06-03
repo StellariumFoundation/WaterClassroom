@@ -235,3 +235,38 @@ generate-keys: ## Generate RSA keys for JWT authentication
 
 # Default target
 .DEFAULT_GOAL := help
+
+build-service-docker: ## Build a specific service for Docker production image (SERVICE, BIN_PATH, MODULE_DIR are params)
+	ifndef SERVICE
+		$(error SERVICE is not set. Usage: make build-service-docker SERVICE=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_SERVICE_name>])
+	endif
+	ifndef BIN_PATH
+		$(error BIN_PATH is not set. Usage: make build-service-docker SERVICE=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_SERVICE_name>])
+	endif
+	@# MODULE_DIR defaults to the service name relative to this Makefile if not set.
+	@# This means if MODULE_DIR is '.', it refers to the CWD of the make command.
+	@# If this Makefile is /app/backend/Makefile, and MODULE_DIR is not set, it assumes sources are in /app/backend/$(SERVICE)/
+	MODULE_PATH_PREFIX := "."
+	ifeq ($(MODULE_DIR),)
+		# If MODULE_DIR is empty, assume service sources are in a subdirectory named $(SERVICE) relative to this Makefile
+		ACTUAL_MODULE_DIR := $(MODULE_PATH_PREFIX)/$(SERVICE)
+	else
+		# If MODULE_DIR is set (e.g. to "."), use that path.
+		ACTUAL_MODULE_DIR := $(MODULE_DIR)
+	endif
+
+	# Determine Go build source path
+	GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/cmd/main.go" # Default for most services
+	ifeq ($(SERVICE),api-gateway)
+		GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/main.go" # Special case for api-gateway
+	endif
+
+	@echo "--- Building service $(SERVICE) for Docker ---"
+	@echo "Source directory: $(ACTUAL_MODULE_DIR)"
+	@echo "Go build source: $(GO_BUILD_SRC_PATH)"
+	@echo "Output binary: $(BIN_PATH)"
+	CGO_ENABLED=0 GOOS=linux $(GO) build \
+		-ldflags="-w -s" \
+		-o $(BIN_PATH) \
+		$(GO_BUILD_SRC_PATH)
+	@echo "--- Finished building service $(SERVICE) for Docker ---"
