@@ -37,7 +37,7 @@
     {id}
     {name}
     {type}
-    bind:value={value}
+    value={value}
     {placeholder}
     {disabled}
     class="styled-input"

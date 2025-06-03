@@ -92,6 +92,21 @@ make build-auth-svc-prod-image
 | Specific Backend Service | `make -C backend/auth-svc test` (example) |
 | All Backend Services | `make test-backend` |
 
+### 4.6 Frontend (via npm/vite)
+To run the frontend development server:
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   This will typically start the server on `http://localhost:5173`.
 
 ---
 
