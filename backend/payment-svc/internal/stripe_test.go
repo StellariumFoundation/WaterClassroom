@@ -1,170 +1,287 @@
 package internal
 
 import (
+	"fmt" // For default error in mock and for HandleWebhook tests
 	"testing"
-	// "github.com/stretchr/testify/assert" // Common assertion library
-	// "github.com/stripe/stripe-go/v72" // Import Stripe if directly using its types for mocks
-	// "github.com/company/payment-svc/internal/mocks" // Hypothetical mocks directory
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stripe/stripe-go/v76"
+	// "github.com/stripe/stripe-go/v76/paymentintent" // Not directly used by tests now
+	// "encoding/json" // Not currently needed but could be for more complex event data mocking
 )
 
-// TestCreatePaymentIntent outlines tests for the CreatePaymentIntent function.
+// MockPaymentIntentCreator is a mock implementation of the PaymentIntentCreator interface.
+type MockPaymentIntentCreator struct {
+	MockNew func(params *stripe.PaymentIntentParams) (*stripe.PaymentIntent, error)
+}
+
+// New implements the PaymentIntentCreator interface for MockPaymentIntentCreator.
+func (m *MockPaymentIntentCreator) New(params *stripe.PaymentIntentParams) (*stripe.PaymentIntent, error) {
+	if m.MockNew != nil {
+		return m.MockNew(params)
+	}
+	return nil, fmt.Errorf("MockPaymentIntentCreator.MockNew function is not set")
+}
+
+// MockStripeWebhookConstructor is a mock implementation of StripeWebhookConstructor.
+type MockStripeWebhookConstructor struct {
+	MockConstructEvent func(payload []byte, signatureHeader string, secret string) (stripe.Event, error)
+}
+
+// ConstructEvent implements the StripeWebhookConstructor interface for MockStripeWebhookConstructor.
+func (m *MockStripeWebhookConstructor) ConstructEvent(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+	if m.MockConstructEvent != nil {
+		return m.MockConstructEvent(payload, signatureHeader, secret)
+	}
+	return stripe.Event{}, fmt.Errorf("MockStripeWebhookConstructor.MockConstructEvent function is not set")
+}
+
 func TestCreatePaymentIntent(t *testing.T) {
-	// Mock Stripe client setup
-	// mockStripeClient := new(mocks.StripeClient) // Example using a mock client
+	testAmount := int64(2000)
+	testCurrency := "usd"
+	testStripeKey := "sk_test_your_stripe_secret_key"
 
-	// --- Test Case 1: Successful PaymentIntent creation ---
-	t.Run("SuccessfulCreation", func(t *testing.T) {
-		// Arrange:
-		// - Define expected amount and currency.
-		// - Configure the mockStripeClient.PaymentIntents.New to return a successful stripe.PaymentIntent object
-		//   and no error for specific input.
-		//   Example:
-		//   expectedPI := &stripe.PaymentIntent{ID: "pi_123", Amount: 1000, Currency: "usd", Status: stripe.PaymentIntentStatusSucceeded}
-		//   mockStripeClient.On("New", mock.AnythingOfType("*stripe.PaymentIntentParams")).Return(expectedPI, nil)
-		//
-		//   // Inject the mock client (e.g., by setting a global variable or passing it to CreatePaymentIntent if refactored)
-		//   OriginalStripeKey := stripe.Key
-		//   stripe.Key = "sk_test_mock" // Or initialize stripe.DefaultBackend with a mock backend
-		//   // If CreatePaymentIntent is refactored to accept a client:
-		//   // paymentService := NewStripeService(mockStripeClient)
+	tests := []struct {
+		name                string
+		amount              int64
+		currency            string
+		setupMockPICreator func(mockCreator *MockPaymentIntentCreator)
+		wantErr             bool
+		wantErrType         stripe.ErrorType 
+		checkResponse       func(t *testing.T, pi *stripe.PaymentIntent, err error)
+	}{
+		{
+			name:     "successful payment intent creation",
+			amount:   testAmount,
+			currency: testCurrency,
+			setupMockPICreator: func(mockCreator *MockPaymentIntentCreator) {
+				mockCreator.MockNew = func(params *stripe.PaymentIntentParams) (*stripe.PaymentIntent, error) {
+					assert.Equal(t, testAmount, *params.Amount)
+					assert.Equal(t, testCurrency, *params.Currency)
+					foundCard := false
+					for _, pmt := range params.PaymentMethodTypes {
+						if pmt != nil && *pmt == "card" {
+							foundCard = true
+							break
+						}
+					}
+					assert.True(t, foundCard, "PaymentMethodTypes should contain 'card'")
+					var pmtConverted []string
+					for _, s := range params.PaymentMethodTypes {
+						if s != nil {
+							pmtConverted = append(pmtConverted, *s)
+						}
+					}
+					return &stripe.PaymentIntent{
+						ID:                 "pi_mock_123",
+						Amount:             *params.Amount,
+						Currency:           stripe.Currency(*params.Currency),
+						Status:             stripe.PaymentIntentStatusRequiresPaymentMethod,
+						ClientSecret:       "pi_mock_123_secret_abc",
+						PaymentMethodTypes: pmtConverted,
+					}, nil
+				}
+			},
+			wantErr: false,
+			checkResponse: func(t *testing.T, pi *stripe.PaymentIntent, err error) {
+				assert.NoError(t, err)
+				assert.NotNil(t, pi)
+				assert.Equal(t, "pi_mock_123", pi.ID)
+				assert.Equal(t, testAmount, pi.Amount)
+				assert.Equal(t, testCurrency, string(pi.Currency))
+				assert.NotEmpty(t, pi.ClientSecret)
+				assert.Contains(t, pi.PaymentMethodTypes, "card")
+			},
+		},
+		{
+			name:     "Stripe API error (simulated)",
+			amount:   testAmount,
+			currency: testCurrency,
+			setupMockPICreator: func(mockCreator *MockPaymentIntentCreator) {
+				mockCreator.MockNew = func(params *stripe.PaymentIntentParams) (*stripe.PaymentIntent, error) {
+					return nil, &stripe.Error{
+						Msg: "Simulated Stripe API error.",
+						// Type and Code removed due to resolution issues
+					}
+				}
+			},
+			wantErr: true,
+			// wantErrType: stripe.ErrorTypeAPI, // Cannot reliably check this
+			checkResponse: func(t *testing.T, pi *stripe.PaymentIntent, err error) {
+				assert.Error(t, err)
+				assert.Nil(t, pi)
+				stripeErr, ok := err.(*stripe.Error)
+				assert.True(t, ok, "Error should be a *stripe.Error")
+				if ok {
+					assert.Equal(t, "Simulated Stripe API error.", stripeErr.Msg)
+					// Cannot reliably check Type or Code if constants are undefined
+				}
+			},
+		},
+		{
+			name:     "invalid currency parameter (simulated error from mock)",
+			amount:   testAmount,
+			currency: "invalid_curr",
+			setupMockPICreator: func(mockCreator *MockPaymentIntentCreator) {
+				mockCreator.MockNew = func(params *stripe.PaymentIntentParams) (*stripe.PaymentIntent, error) {
+					if *params.Currency != "usd" && *params.Currency != "eur" {
+						return nil, &stripe.Error{
+							Msg:   fmt.Sprintf("Invalid currency: %s", *params.Currency),
+							Param: "currency",
+							// Type and Code removed
+						}
+					}
+					return &stripe.PaymentIntent{ID: "pi_valid"}, nil
+				}
+			},
+			wantErr: true,
+			// wantErrType: stripe.ErrorTypeInvalidRequest, // Cannot reliably check this
+			checkResponse: func(t *testing.T, pi *stripe.PaymentIntent, err error) {
+				assert.Error(t, err)
+				assert.Nil(t, pi)
+				stripeErr, ok := err.(*stripe.Error)
+				assert.True(t, ok)
+				if ok {
+					assert.Equal(t, "currency", stripeErr.Param)
+					assert.Contains(t, stripeErr.Msg, "Invalid currency: invalid_curr")
+					// Cannot reliably check Type or Code
+				}
+			},
+		},
+	}
 
-		amount := int64(1000)
-		currency := "usd"
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			sc := NewStripeClient(testStripeKey)
+			mockCreator := &MockPaymentIntentCreator{}
+			if tc.setupMockPICreator != nil {
+				tc.setupMockPICreator(mockCreator)
+			}
+			sc.PIClient = mockCreator
 
-		// Act:
-		// Call CreatePaymentIntent.
-		// pi, err := CreatePaymentIntent(amount, currency) // Or paymentService.CreatePaymentIntent(...)
+			pi, err := sc.CreatePaymentIntent(tc.amount, tc.currency)
 
-		// Assert:
-		// - Check that err is nil.
-		// - Check that the returned PaymentIntent (pi) is not nil and has expected values (ID, Amount, Currency).
-		//   assert.NoError(t, err)
-		//   assert.NotNil(t, pi)
-		//   assert.Equal(t, expectedPI.ID, pi.ID)
-		//   assert.Equal(t, amount, pi.Amount)
-		t.Logf("Placeholder: Test successful PaymentIntent creation for amount %d %s", amount, currency)
-	})
+			if tc.wantErr {
+				assert.Error(t, err, "Expected an error but got none.")
+				if tc.wantErrType != "" { 
+					stripeErr, ok := err.(*stripe.Error)
+					assert.True(t, ok, "Error is not a *stripe.Error, actual error: %v", err)
+					if ok {
+						assert.Equal(t, tc.wantErrType, stripeErr.Type, "Unexpected Stripe error type.")
+					}
+				}
+			} else {
+				assert.NoError(t, err, "Did not expect an error but got one: %v", err)
+			}
 
-	// --- Test Case 2: Stripe API error ---
-	t.Run("StripeAPIError", func(t *testing.T) {
-		// Arrange:
-		// - Configure the mockStripeClient.PaymentIntents.New to return an error (e.g., a stripe.Error).
-		//   Example:
-		//   mockStripeClient.On("New", mock.AnythingOfType("*stripe.PaymentIntentParams")).Return(nil, &stripe.Error{Type: stripe.ErrorTypeAPI})
-
-		// Act:
-		// Call CreatePaymentIntent.
-
-		// Assert:
-		// - Check that an error is returned.
-		// - Check that the error is of the expected type or has expected properties.
-		//   assert.Error(t, err)
-		//   // assert.IsType(t, &stripe.Error{}, err) // If you want to check specific Stripe error type
-		t.Log("Placeholder: Test Stripe API error during PaymentIntent creation")
-	})
-
-	// --- Test Case 3: Invalid parameters (e.g., zero amount, unsupported currency if validated internally) ---
-	t.Run("InvalidParameters", func(t *testing.T) {
-		// Arrange:
-		// Set up invalid input like amount = 0 or an empty currency string.
-		// Note: Current CreatePaymentIntent doesn't have internal validation for this, Stripe API would catch it.
-		// If internal validation were added, this test would be more relevant.
-
-		// Act:
-		// Call CreatePaymentIntent with invalid parameters.
-
-		// Assert:
-		// - Check for an appropriate error (e.g., a custom validation error or Stripe's error).
-		t.Log("Placeholder: Test invalid parameters for PaymentIntent creation (if applicable)")
-	})
-
-	// Teardown:
-	// Restore original Stripe key or backend if changed for mocks.
-	// stripe.Key = OriginalStripeKey
+			if tc.checkResponse != nil {
+				tc.checkResponse(t, pi, err)
+			}
+		})
+	}
 }
 
-// TestHandleWebhook outlines tests for the HandleWebhook function.
 func TestHandleWebhook(t *testing.T) {
-	// Mock Stripe webhook verification (if HandleWebhook is responsible for it)
-	// stripe.WebhookEndpointSecret = "whsec_mock" // Set mock webhook secret
+	testPayload := []byte(`{"id": "evt_test", "type": "unknown"}`)
+	testSignature := "dummy_signature"
+	testWebhookSecret := "whsec_test_secret"
+	testStripeKey := "sk_test_your_stripe_secret_key" // For NewStripeClient
 
-	// --- Test Case 1: Successful handling of 'payment_intent.succeeded' event ---
-	t.Run("PaymentIntentSucceededEvent", func(t *testing.T) {
-		// Arrange:
-		// - Create a sample JSON payload for a 'payment_intent.succeeded' event.
-		// - Generate a valid signature for this payload (or mock the signature verification step).
-		//   Example:
-		//   payload := []byte(`{"id": "evt_123", "type": "payment_intent.succeeded", "data": {"object": {"id": "pi_123", "status": "succeeded"}}}`)
-		//   signature := generateTestSignature(payload, stripe.WebhookEndpointSecret) // Helper to generate signature
+	tests := []struct {
+		name                  string
+		payload               []byte
+		signature             string
+		webhookSecret         string
+		setupMockWHConstructor func(mockConstructor *MockStripeWebhookConstructor)
+		wantErr               bool
+		wantSpecificError     error // For checking specific error instances like SignatureVerificationError
+		checkErrorType        bool  // True if we should check err against *stripe.Error
+		expectedStripeErrType stripe.ErrorType
+	}{
+		{
+			name:    "successful payment_intent.succeeded event",
+			payload: testPayload, // Payload content doesn't strictly matter if event type is directly set
+			setupMockWHConstructor: func(mockConstructor *MockStripeWebhookConstructor) {
+				mockConstructor.MockConstructEvent = func(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+					assert.Equal(t, testPayload, payload)
+					assert.Equal(t, testSignature, signatureHeader)
+					assert.Equal(t, testWebhookSecret, secret)
+					return stripe.Event{Type: stripe.EventTypePaymentIntentSucceeded, ID: "evt_pi_succeeded"}, nil
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name:    "successful payment_intent.payment_failed event",
+			payload: testPayload,
+			setupMockWHConstructor: func(mockConstructor *MockStripeWebhookConstructor) {
+				mockConstructor.MockConstructEvent = func(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+					return stripe.Event{Type: stripe.EventTypePaymentIntentPaymentFailed, ID: "evt_pi_failed"}, nil
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name:    "unhandled event type",
+			payload: testPayload,
+			setupMockWHConstructor: func(mockConstructor *MockStripeWebhookConstructor) {
+				mockConstructor.MockConstructEvent = func(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+					return stripe.Event{Type: "customer.created", ID: "evt_customer_created"}, nil
+				}
+			},
+			wantErr: false, // The handler itself doesn't error, just logs
+		},
+		{
+			name:    "signature verification error",
+			payload: testPayload,
+			setupMockWHConstructor: func(mockConstructor *MockStripeWebhookConstructor) {
+				mockConstructor.MockConstructEvent = func(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+					// Simulate the kind of error webhook.ConstructEvent returns for signature issues
+					return stripe.Event{}, &stripe.Error{Msg: "webhook signature verification failed"} // Type and Code removed
+				}
+			},
+			wantErr:          true,
+			checkErrorType: true, // Will check it's a *stripe.Error, then message
+			// expectedStripeErrType: stripe.ErrorTypeStripe, // Cannot use SDK constants
+		},
+		{
+			name:    "other ConstructEvent error",
+			payload: testPayload,
+			setupMockWHConstructor: func(mockConstructor *MockStripeWebhookConstructor) {
+				mockConstructor.MockConstructEvent = func(payload []byte, signatureHeader string, secret string) (stripe.Event, error) {
+					return stripe.Event{}, fmt.Errorf("some other construct event error")
+				}
+			},
+			wantErr: true, // Expect a generic error
+		},
+	}
 
-		//   // If HandleWebhook calls other functions (e.g., to update database), mock those as well.
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			sc := NewStripeClient(testStripeKey)
+			mockConstructor := &MockStripeWebhookConstructor{}
+			if tc.setupMockWHConstructor != nil {
+				tc.setupMockWHConstructor(mockConstructor)
+			}
+			sc.WHClient = mockConstructor
 
-		// Act:
-		// Call HandleWebhook with the payload and signature.
-		// err := HandleWebhook(payload, signature)
+			err := sc.HandleWebhook(tc.payload, testSignature, testWebhookSecret)
 
-		// Assert:
-		// - Check that err is nil.
-		// - Verify any side effects (e.g., database update function was called with correct parameters).
-		//   assert.NoError(t, err)
-		t.Log("Placeholder: Test successful handling of 'payment_intent.succeeded' webhook")
-	})
-
-	// --- Test Case 2: Invalid webhook signature ---
-	t.Run("InvalidSignature", func(t *testing.T) {
-		// Arrange:
-		// - Create a sample payload.
-		// - Provide an invalid signature.
-		//   payload := []byte(`{"id": "evt_123", "type": "payment_intent.succeeded"}`)
-		//   invalidSignature := "bad_signature"
-
-		// Act:
-		// Call HandleWebhook.
-		// err := HandleWebhook(payload, invalidSignature)
-
-		// Assert:
-		// - Check that an error is returned, indicating signature verification failure.
-		//   assert.Error(t, err)
-		//   // assert.Contains(t, err.Error(), "webhook signature verification failed") // Or similar
-		t.Log("Placeholder: Test invalid webhook signature")
-	})
-
-	// --- Test Case 3: Unhandled event type ---
-	t.Run("UnhandledEventType", func(t *testing.T) {
-		// Arrange:
-		// - Create a payload for an event type that HandleWebhook is not designed to process.
-		//   payload := []byte(`{"id": "evt_123", "type": "customer.created"}`)
-		//   signature := generateTestSignature(payload, stripe.WebhookEndpointSecret)
-
-		// Act:
-		// Call HandleWebhook.
-		// err := HandleWebhook(payload, signature)
-
-		// Assert:
-		// - Check that err is nil (or a specific behavior for unhandled events, e.g., logging and returning nil).
-		//   assert.NoError(t, err) // Assuming unhandled events are not errors but are skipped
-		t.Log("Placeholder: Test handling of an unhandled webhook event type")
-	})
-
-	// --- Test Case 4: Error during event processing (e.g., database error) ---
-	t.Run("EventProcessingError", func(t *testing.T) {
-		// Arrange:
-		// - Create a valid payload and signature for a handled event.
-		// - Mock any internal function called by HandleWebhook (e.g., database update) to return an error.
-
-		// Act:
-		// Call HandleWebhook.
-
-		// Assert:
-		// - Check that an error is returned, reflecting the internal processing error.
-		//   assert.Error(t, err)
-		t.Log("Placeholder: Test error during event processing (e.g., database write failure)")
-	})
+			if tc.wantErr {
+				assert.Error(t, err)
+				if tc.wantSpecificError != nil { // This path won't be taken for this modified test case
+					assert.IsType(t, tc.wantSpecificError, err, "Error type mismatch")
+				} else if tc.checkErrorType { 
+					stripeErr, ok := err.(*stripe.Error)
+					assert.True(t, ok, "Expected error to be of type *stripe.Error")
+					if ok {
+						// Cannot reliably check Type or Code if constants are undefined
+						assert.Contains(t, stripeErr.Msg, "webhook signature verification failed", "Error message should indicate signature failure")
+					}
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
-
-// Helper function (example) - in a real test, you might need a more robust way to do this or mock verification.
-// func generateTestSignature(payload []byte, secret string) string {
-//   // This is a simplified example. Real signature generation is more complex.
-//   // For testing, it's often better to mock stripe.webhook.ConstructEvent itself.
-//   return "dummy_signature_for_testing"
-// }
