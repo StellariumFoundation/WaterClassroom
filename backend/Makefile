@@ -237,6 +237,10 @@ generate-keys: ## Generate RSA keys for JWT authentication
 .DEFAULT_GOAL := help
 
 build-service-docker: ## Build a specific service for Docker production image (SERVICE, BIN_PATH, MODULE_DIR are params)
+	@echo "Debug: Entered build-service-docker target."
+	@echo "Debug: SERVICE variable value is: [$(SERVICE)]"
+	@echo "Debug: BIN_PATH variable value is: [$(BIN_PATH)]"
+	@echo "Debug: MODULE_DIR variable value is: [$(MODULE_DIR)]"
 	ifndef SERVICE
 		$(error SERVICE is not set. Usage: make build-service-docker SERVICE=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_SERVICE_name>])
 	endif
