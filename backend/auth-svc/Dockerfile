@@ -2,25 +2,19 @@
 FROM golang:1.22-alpine AS builder
 
 # Install build dependencies
-RUN apk add --no-cache git
+RUN apk add --no-cache git # Remains
 
-# Set working directory
-WORKDIR /build
+WORKDIR /app
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
+COPY Makefile /app/Makefile
+COPY backend/Makefile /app/backend/Makefile
+COPY backend/auth-svc /app/backend/auth-svc # Copies the auth-svc go.mod, source, configs etc.
 
-# Run go mod tidy to ensure go.sum is correct
-RUN go mod tidy
+WORKDIR /app/backend # build-service target is relative to backend dir
 
-# Download dependencies
-RUN go mod download
-
-# Copy the source code
-COPY . .
-
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o auth-service ./cmd
+RUN make build-service SERVICE=auth-svc
+# Binary will be at /app/backend/auth-svc/bin/auth-svc
+# Configs will be at /app/backend/auth-svc/configs
 
 # Final stage
 FROM alpine:3.19
@@ -36,8 +30,8 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Copy the binary from the builder stage
-COPY --from=builder /build/auth-service .
-COPY --from=builder /build/configs ./configs
+COPY --from=builder /app/backend/auth-svc/bin/auth-svc .
+COPY --from=builder /app/backend/auth-svc/configs ./configs
 
 # Use the non-root user
 USER appuser

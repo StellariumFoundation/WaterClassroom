@@ -5,6 +5,7 @@
 
 # Make all targets PHONY to ensure they always run
 .PHONY: help build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend build-auth-svc-prod-image \
+        build-frontend-for-docker build-api-gateway-for-docker \
         install build test clean cloud-test-build
 
 # Variables
@@ -66,6 +67,17 @@ build-auth-svc-prod-image: ## Build production Docker image for auth-svc
 	@docker build -t wc-auth-svc:latest -f $(BACKEND_DIR)/auth-svc/Dockerfile $(BACKEND_DIR)/auth-svc
 	@echo -e "${GREEN}auth-svc Docker image built successfully!${NC}"
 
+# Docker Build Stage Specific Targets
+build-frontend-for-docker: ## Build frontend for Docker stage
+	@echo -e "${BLUE}Building frontend application for Docker...${NC}"
+	@cd frontend && npm install --legacy-peer-deps && npx vite build && cd ..
+	@echo -e "${GREEN}Frontend application for Docker built successfully!${NC}"
+
+build-api-gateway-for-docker: ## Build api-gateway for Docker stage
+	@echo -e "${BLUE}Building api-gateway service for Docker...${NC}"
+	@make -C backend build-service SERVICE=api-gateway
+	@echo -e "${GREEN}api-gateway service for Docker built successfully!${NC}"
+
 # Combined Commands
 install: ## Install backend dependencies and required Go tools
 	@echo -e "${BLUE}Installing backend Go tools...${NC}"
@@ -73,10 +85,13 @@ install: ## Install backend dependencies and required Go tools
 	@echo -e "${GREEN}Backend Go tools installation initiated.${NC}"
 	@echo -e "${YELLOW}Note: This installs tools like goose, golangci-lint, buf, and air using 'go install'. Ensure your GOPATH/bin is in your PATH.${NC}"
 
-build: ## Build backend for production (without Docker)
+build: ## Build backend and frontend for production (without Docker)
 	@echo -e "${BLUE}Building backend services using local Go environment...${NC}"
 	@make -C backend build
 	@echo -e "${GREEN}Backend components built successfully!${NC}"
+	@echo -e "${BLUE}Building frontend application...${NC}"
+	@cd frontend && npm install --legacy-peer-deps && npx vite build && cd ..
+	@echo -e "${GREEN}Frontend application built successfully!${NC}"
 
 test: test-backend ## Run all backend tests
 	@echo -e "${GREEN}Backend tests completed!${NC}"
@@ -88,9 +103,9 @@ clean: ## Clean build artifacts
 	@echo -e "${GREEN}Build artifacts cleaned successfully!${NC}"
 
 # Cloud Deployment Testing
-cloud-test-build: build ## Test full backend build process for cloud deployment
-	@echo -e "${BLUE}Testing full backend build process for cloud deployment...${NC}"
-	@echo -e "${GREEN}Backend build process completed successfully!${NC}"
-	@echo -e "${YELLOW}Note: This build has generated Docker images that can be deployed to cloud services like Render.${NC}"
-	@echo -e "${YELLOW}Auth service image: wc-auth-svc:latest${NC}"
-	@docker images | grep -E 'wc-auth-svc'
+cloud-test-build: build ## Test full build process (backend & frontend) for cloud deployment readiness
+	@echo -e "${BLUE}Testing full build process for cloud deployment readiness...${NC}"
+	@echo -e "${GREEN}Local build process completed successfully!${NC}"
+	@echo -e "${YELLOW}Note: Local build process completed. Docker images can now be built using the Dockerfiles which leverage this build system.${NC}"
+	# @echo -e "${YELLOW}Auth service image: wc-auth-svc:latest${NC}" # Example, if you were building a specific image
+	# @docker images | grep -E 'wc-auth-svc' # Commented out as 'build' no longer creates Docker images directly
