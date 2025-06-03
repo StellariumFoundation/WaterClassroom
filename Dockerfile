@@ -5,26 +5,44 @@ ARG GEMINI_API_KEY
 ENV VITE_GEMINI_API_KEY=$GEMINI_API_KEY
 ENV NODE_ENV=production
 
-WORKDIR /app
+WORKDIR /app/frontend
 
-# Copy entire project context
-COPY . .
+# Copy package files
+COPY frontend/package.json frontend/package-lock.json* ./
+#COPY frontend/pnpm-lock.yaml ./ # Uncomment if using pnpm
 
-# Build frontend using Makefile target
-RUN make build-frontend-for-docker
-# The output will be in /app/frontend/build (as per Makefile target and original comments)
+# Copy the rest of the frontend application code
+COPY frontend/. .
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+RUN npm install @sveltejs/kit
+# RUN pnpm install --frozen-lockfile # Uncomment if using pnpm
+
+# Build the SvelteKit application for static export
+RUN npx vite build
+# The output will be in /app/frontend/build (by default for adapter-static)
 
 # Stage 2: Backend Build (Go API Gateway)
-FROM golang:1.22-alpine AS go-builder
+FROM golang:1.24-alpine AS go-builder
 
-WORKDIR /app
+WORKDIR /app/backend/api-gateway
 
-# Copy entire project context
-COPY . .
+# Copy Go module files
+COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 
-# Build Go API gateway using Makefile target
-RUN make build-api-gateway-for-docker
-# The compiled binary will be at /app/backend/api-gateway/bin/api-gateway (as per Makefile target)
+# Download Go module dependencies
+RUN go mod download
+
+# Copy the rest of the API gateway source code
+COPY backend/api-gateway/. .
+
+# Build the Go application
+# CGO_ENABLED=0 for static linking (optional, but good for alpine)
+# GOOS=linux to ensure Linux binary
+# -ldflags="-s -w" to strip debug information and reduce binary size (optional)
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/api-gateway -ldflags="-s -w" .
+# The compiled binary will be at /app/api-gateway
 
 # Stage 3: Final Production Image
 FROM alpine:3.19
@@ -38,7 +56,7 @@ ENV SERVER_PORT=8080
 # So, if WORKDIR is /app, and binary is /app/api-gateway, it looks for /app/static_frontend.
 
 # Copy the compiled Go binary from the go-builder stage
-COPY --from=go-builder /app/backend/api-gateway/bin/api-gateway /app/api-gateway
+COPY --from=go-builder /app/api-gateway /app/api-gateway
 
 # Copy the static frontend assets from the frontend-builder stage
 # The Go application is configured to serve files from "./static_frontend"
