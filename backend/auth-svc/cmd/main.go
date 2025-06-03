@@ -105,6 +105,25 @@ type UpdateCurrentUserRequest struct {
 	// Preferences *json.RawMessage `json:"preferences"` // For complex JSON objects
 }
 
+// RefreshTokenRequest defines the structure for the token refresh request
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
+}
+
+// ForgotPasswordRequest defines the structure for the forgot password request
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+// ResetPasswordRequest defines the structure for the reset password request
+type ResetPasswordRequest struct {
+	Token       string `json:"token" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+// Note: VerifyEmailRequest is not strictly needed if the token is passed as a query parameter.
+// If it were a POST request with a JSON body, it would be defined here.
+
 // Config holds all configuration for the service
 type Config struct {
 	Env                    string        `mapstructure:"ENV"`
@@ -766,11 +785,12 @@ func (app *Application) generateTokens(userID, email string) (string, string, er
 
 	// Generate Access Token
 	accessTokenClaims := jwt.MapClaims{
-		"sub":   userID,
-		"aud":   app.Config.JWTAudience,
-		"iss":   app.Config.JWTIssuer,
-		"exp":   time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
-		"email": email, // Optionally include email or other non-sensitive info
+		"sub":        userID,
+		"aud":        app.Config.JWTAudience,
+		"iss":        app.Config.JWTIssuer,
+		"exp":        time.Now().Add(app.Config.JWTAccessTokenExpiry).Unix(),
+		"email":      email,
+		"token_type": "access", // Add token type claim
 	}
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, accessTokenClaims)
 	signedAccessToken, err := accessToken.SignedString(app.PrivateKey)
@@ -780,8 +800,11 @@ func (app *Application) generateTokens(userID, email string) (string, string, er
 
 	// Generate Refresh Token
 	refreshTokenClaims := jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(app.Config.JWTRefreshTokenExpiry).Unix(),
+		"sub":        userID,
+		"aud":        app.Config.JWTAudience, // Add audience to refresh token as well
+		"iss":        app.Config.JWTIssuer,   // Add issuer to refresh token as well
+		"exp":        time.Now().Add(app.Config.JWTRefreshTokenExpiry).Unix(),
+		"token_type": "refresh", // Add token type claim
 	}
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, refreshTokenClaims)
 	signedRefreshToken, err := refreshToken.SignedString(app.PrivateKey)
@@ -792,20 +815,358 @@ func (app *Application) generateTokens(userID, email string) (string, string, er
 	return signedAccessToken, signedRefreshToken, nil
 }
 
+// generatePasswordResetToken generates a short-lived token for password reset
+func (app *Application) generatePasswordResetToken(userID, email string) (string, time.Time, error) {
+	if app.PrivateKey == nil {
+		return "", time.Time{}, fmt.Errorf("private key is not available for token signing")
+	}
+
+	expiryDuration := app.Config.PasswordResetTokenExpiry
+	if expiryDuration <= 0 {
+		// Default to a reasonable expiry if not configured or misconfigured.
+		expiryDuration = 1 * time.Hour
+		app.Logger.Warn("PasswordResetTokenExpiry not configured or invalid, defaulting to 1 hour", zap.Duration("configured_expiry", app.Config.PasswordResetTokenExpiry))
+	}
+	expiryTime := time.Now().Add(expiryDuration)
+
+	app.Logger.Debug("Generating password reset token", zap.String("userID", userID), zap.Time("expiryTime", expiryTime), zap.Duration("expiryDuration", expiryDuration))
+
+	claims := jwt.MapClaims{
+		"sub":        userID,
+		"aud":        app.Config.JWTAudience, // Can use the same audience
+		"iss":        app.Config.JWTIssuer,   // Can use the same issuer
+		"exp":        expiryTime.Unix(),
+		"email":      email, // Include email for verification if needed on reset page
+		"token_type": "password_reset",
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	signedToken, err := token.SignedString(app.PrivateKey)
+	if err != nil {
+		return "", time.Time{}, fmt.Errorf("failed to sign password reset token: %w", err)
+	}
+	return signedToken, expiryTime, nil
+}
+
 
 func (app *Application) handleRefreshToken(c *gin.Context) {
-	// TODO: Implement token refresh logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req RefreshTokenRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind refresh token request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
+		return
+	}
+
+	if req.RefreshToken == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token is required"})
+		return
+	}
+
+	// Parse and validate the refresh token
+	token, err := jwt.Parse(req.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return app.PublicKey, nil
+	})
+
+	if err != nil {
+		app.Logger.Warn("Refresh token parsing/validation failed", zap.Error(err))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired refresh token"})
+		return
+	}
+
+	if !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired refresh token"})
+		return
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	// Verify standard claims
+	if iss, ok := claims["iss"].(string); !ok || iss != app.Config.JWTIssuer {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token issuer"})
+		return
+	}
+	if aud, ok := claims["aud"].(string); !ok || aud != app.Config.JWTAudience {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token audience"})
+		return
+	}
+
+	// Verify token type
+	tokenType, typeOk := claims["token_type"].(string)
+	if !typeOk || tokenType != "refresh" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token type"})
+		return
+	}
+
+	userID, subOk := claims["sub"].(string)
+	if !subOk || userID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token subject (user ID)"})
+		return
+	}
+
+	// At this point, the refresh token is valid.
+	// Fetch user's email to generate new tokens, as generateTokens requires it.
+	var userEmail string
+	emailQuery := "SELECT email FROM users WHERE id = $1"
+	err = app.DB.QueryRowContext(c.Request.Context(), emailQuery, userID).Scan(&userEmail)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Error("User not found for refresh token, though token was valid", zap.String("userID", userID))
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"}) // Should not happen if sub is valid
+			return
+		}
+		app.Logger.Error("Database error fetching user email for refresh token", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+
+	// Generate new access and refresh tokens
+	newAccessToken, newRefreshToken, err := app.generateTokens(userID, userEmail)
+	if err != nil {
+		app.Logger.Error("Failed to generate new tokens during refresh", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new tokens"})
+		return
+	}
+
+	app.Logger.Info("Tokens refreshed successfully", zap.String("userID", userID))
+	c.JSON(http.StatusOK, LoginResponse{
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
+	})
 }
 
 func (app *Application) handleForgotPassword(c *gin.Context) {
-	// TODO: Implement forgot password logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req ForgotPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind forgot password request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
+		return
+	}
+
+	// Query database for user by email
+	var userID, userEmail string
+	var isVerified bool // Potentially use this later
+	query := "SELECT id, email, is_verified FROM users WHERE email = $1"
+	err := app.DB.QueryRowContext(c.Request.Context(), query, req.Email).Scan(&userID, &userEmail, &isVerified)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// User not found. Return a generic message to prevent email enumeration.
+			app.Logger.Info("Forgot password attempt for non-existent email", zap.String("email", req.Email))
+			c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+			return
+		}
+		// Other database error
+		app.Logger.Error("Database error during forgot password user lookup", zap.Error(err), zap.String("email", req.Email))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	// Optional: Check if email is verified before allowing password reset
+	// if !isVerified && app.Config.EmailVerificationRequired {
+	// 	app.Logger.Warn("Password reset attempt for unverified email", zap.String("email", userEmail), zap.String("userID", userID))
+	// 	c.JSON(http.StatusForbidden, gin.H{"error": "Please verify your email before resetting password."})
+	// 	return
+	// }
+
+	// Generate password reset token
+	resetToken, expiryTime, err := app.generatePasswordResetToken(userID, userEmail)
+	if err != nil {
+		app.Logger.Error("Failed to generate password reset token", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate reset token"})
+		return
+	}
+
+	// Store reset token and its expiry in the database
+	// Assumes `users` table has `reset_token_hash` (TEXT) and `reset_token_expires_at` (TIMESTAMPTZ) columns.
+	hashedResetToken, err := bcrypt.GenerateFromPassword([]byte(resetToken), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash password reset token", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process password reset request"})
+		return
+	}
+
+	updateQuery := "UPDATE users SET reset_token_hash = $1, reset_token_expires_at = $2, updated_at = NOW() WHERE id = $3"
+	_, updateErr := app.DB.ExecContext(c.Request.Context(), updateQuery, string(hashedResetToken), expiryTime, userID)
+	if updateErr != nil {
+		app.Logger.Error("Failed to store password reset token hash in database", zap.Error(updateErr), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process password reset request"})
+		return
+	}
+
+	// For Option A (development/testing): Log token and return it.
+	// In production (Option B), you would send an email with a reset link containing this token.
+	app.Logger.Info("Password reset token generated and stored",
+		zap.String("userID", userID),
+		zap.String("email", userEmail),
+		zap.String("reset_token", resetToken), // Logging for dev purposes
+	)
+
+	// TODO: Implement actual email sending here for production
+	// emailData := map[string]string{"reset_token": resetToken, "user_email": userEmail}
+	// app.publishToQueue("password_reset_email", emailData)
+
+
+	// Return a generic success message (as per original plan, even if token is included for dev)
+	// For this subtask, we return the token for easier testing of the next step (reset password).
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "If an account with that email exists, a password reset link has been sent. (Token included for dev)",
+		"reset_token": resetToken, // For testing/dev only. REMOVE FOR PRODUCTION.
+	})
 }
 
 func (app *Application) handleResetPassword(c *gin.Context) {
-	// TODO: Implement reset password logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req ResetPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind reset password request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
+		return
+	}
+
+	// Validate the JWT reset token (the raw token from user)
+	tokenClaims, err := jwt.Parse(req.Token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return app.PublicKey, nil
+	})
+
+	if err != nil {
+		app.Logger.Warn("Reset password JWT parsing/validation failed", zap.Error(err), zap.String("token", req.Token))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	if !tokenClaims.Valid {
+		app.Logger.Warn("Reset password JWT is invalid", zap.String("token", req.Token))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	claims, ok := tokenClaims.Claims.(jwt.MapClaims)
+	if !ok {
+		app.Logger.Error("Invalid claims type in reset password JWT", zap.String("token", req.Token))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	// Verify standard claims
+	claimIss, issOk := claims["iss"].(string)
+	if !issOk || claimIss != app.Config.JWTIssuer {
+		app.Logger.Warn("Invalid issuer in reset token", zap.String("expected", app.Config.JWTIssuer), zap.Any("actual", claims["iss"]))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+	claimAud, audOk := claims["aud"].(string)
+	if !audOk || claimAud != app.Config.JWTAudience {
+		app.Logger.Warn("Invalid audience in reset token", zap.String("expected", app.Config.JWTAudience), zap.Any("actual", claims["aud"]))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	// Check expiry from claims (though jwt.Parse already does this, an explicit check is fine)
+	expFloat, expOk := claims["exp"].(float64)
+	if !expOk {
+		app.Logger.Warn("Expiry claim missing or invalid type in reset token", zap.Any("expiry_claim", claims["exp"]))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+	expTime := time.Unix(int64(expFloat), 0)
+	app.Logger.Debug("Reset token expiry check", zap.Time("expTime", expTime), zap.Time("currentTime", time.Now()))
+	if expTime.Before(time.Now()) {
+		app.Logger.Warn("Expired reset token presented (checked via claims)", zap.Float64("exp_value", expFloat), zap.Time("exp_time_parsed", expTime), zap.Time("time_now", time.Now()))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	// Verify token type
+	tokenType, typeOk := claims["token_type"].(string)
+	if !typeOk || tokenType != "password_reset" {
+		app.Logger.Warn("Invalid token_type in reset token", zap.Any("expected_type", "password_reset"), zap.Any("actual_type", claims["token_type"]))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	userID, subOk := claims["sub"].(string)
+	if !subOk || userID == "" {
+		app.Logger.Warn("Invalid sub claim in reset token", zap.Any("sub_claim", claims["sub"]))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+	app.Logger.Debug("Extracted userID from reset token", zap.String("userID", userID))
+
+	// Fetch user and their stored reset token hash and expiry
+	var storedResetTokenHash sql.NullString
+	var storedResetTokenExpiresAt sql.NullTime // Use sql.NullTime for nullable timestamp
+
+	// Assuming column names `reset_token_hash` and `reset_token_expires_at`
+	query := "SELECT id, reset_token_hash, reset_token_expires_at FROM users WHERE id = $1"
+	err = app.DB.QueryRowContext(c.Request.Context(), query, userID).Scan(&userID, &storedResetTokenHash, &storedResetTokenExpiresAt)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Warn("User not found for reset password", zap.String("userID", userID))
+		} else {
+			app.Logger.Error("Database error fetching user for reset password", zap.Error(err), zap.String("userID", userID))
+		}
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"}) // Generic error
+		return
+	}
+
+	if !storedResetTokenHash.Valid || storedResetTokenHash.String == "" {
+		app.Logger.Warn("No reset token stored for user or already used", zap.String("userID", userID))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	if !storedResetTokenExpiresAt.Valid || storedResetTokenExpiresAt.Time.Before(time.Now()) {
+		app.Logger.Warn("Stored reset token has expired for user", zap.String("userID", userID), zap.Time("expiry", storedResetTokenExpiresAt.Time))
+		// Invalidate the token in DB as it's now confirmed expired
+		invalidateQuery := "UPDATE users SET reset_token_hash = NULL, reset_token_expires_at = NULL, updated_at = NOW() WHERE id = $1"
+		_, _ = app.DB.ExecContext(c.Request.Context(), invalidateQuery, userID)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	// Compare the provided raw token (from request body) with the stored hash
+	err = bcrypt.CompareHashAndPassword([]byte(storedResetTokenHash.String), []byte(req.Token))
+	if err != nil {
+		app.Logger.Warn("Reset token mismatch for user", zap.String("userID", userID), zap.Error(err))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
+		return
+	}
+
+	// Token is valid, matches, and not expired. Proceed to hash new password.
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash new password during reset", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing new password"})
+		return
+	}
+
+	// Update user's password and invalidate the reset token
+	updateUserQuery := `
+		UPDATE users
+		SET password_hash = $1, reset_token_hash = NULL, reset_token_expires_at = NULL, updated_at = NOW()
+		WHERE id = $2`
+	_, err = app.DB.ExecContext(c.Request.Context(), updateUserQuery, string(newHashedPassword), userID)
+	if err != nil {
+		app.Logger.Error("Failed to update password and invalidate reset token", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to reset password"})
+		return
+	}
+
+	app.Logger.Info("Password reset successfully", zap.String("userID", userID))
+	c.JSON(http.StatusOK, gin.H{"message": "Password has been reset successfully."})
 }
 
 func (app *Application) handleVerifyEmail(c *gin.Context) {
