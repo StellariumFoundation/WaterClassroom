@@ -758,6 +758,10 @@ func (app *Application) handleLogin(c *gin.Context) {
 
 // generateTokens is a helper function to create access and refresh JWTs
 func (app *Application) generateTokens(userID, email string) (string, string, error) {
+	if app.PrivateKey == nil {
+		return "", "", fmt.Errorf("private key is not available for token signing")
+	}
+
 	// Generate Access Token
 	accessTokenClaims := jwt.MapClaims{
 		"sub":   userID,
@@ -1176,14 +1180,132 @@ func (app *Application) handleUpdateCurrentUser(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedUser)
 }
 
+// ChangePasswordRequest defines the structure for the change password request body
+type ChangePasswordRequest struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
 func (app *Application) handleChangePassword(c *gin.Context) {
-	// TODO: Implement change password logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	userIDAny, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token for change password")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userIDAny.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token for change password", zap.Any("userID", userIDAny))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	var req ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind change password request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	// Get current password hash from DB
+	var currentPasswordHash string
+	query := "SELECT password_hash FROM users WHERE id = $1"
+	err := app.DB.QueryRowContext(c.Request.Context(), query, userIDStr).Scan(&currentPasswordHash)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// This case should ideally not be reached if authMiddleware is effective,
+			// as it implies an authenticated user ID that doesn't exist in the DB.
+			app.Logger.Error("User not found in DB during password change, despite valid token", zap.String("userID", userIDStr))
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+		app.Logger.Error("Database error fetching current password hash", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error fetching user details"})
+		return
+	}
+
+	// Compare provided old password with stored hash
+	err = bcrypt.CompareHashAndPassword([]byte(currentPasswordHash), []byte(req.OldPassword))
+	if err != nil {
+		// Handles bcrypt.ErrMismatchedHashAndPassword and other potential errors
+		app.Logger.Warn("Incorrect old password attempt", zap.String("userID", userIDStr), zap.Error(err))
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect old password"})
+		return
+	}
+
+	// Hash the new password
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash new password", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing new password"})
+		return
+	}
+
+	// Update password hash in the database
+	updateQuery := "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2"
+	result, err := app.DB.ExecContext(c.Request.Context(), updateQuery, string(newHashedPassword), userIDStr)
+	if err != nil {
+		app.Logger.Error("Failed to update password hash in database", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after password update", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error confirming password update"})
+		return
+	}
+	if rowsAffected == 0 {
+		// Should not happen if previous SELECT worked and user was not deleted in between.
+		app.Logger.Error("No user found to update password for, though user was fetched prior", zap.String("userID", userIDStr))
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found for update"})
+		return
+	}
+
+	app.Logger.Info("Password changed successfully", zap.String("userID", userIDStr))
+	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
 }
 
 func (app *Application) handleDeleteAccount(c *gin.Context) {
-	// TODO: Implement delete account logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	userIDAny, exists := c.Get("userId")
+	if !exists {
+		app.Logger.Error("User ID not found in token for account deletion")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+	userIDStr, ok := userIDAny.(string)
+	if !ok {
+		app.Logger.Error("Invalid User ID format in token for account deletion", zap.Any("userID", userIDAny))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid User ID format in token"})
+		return
+	}
+
+	// Execute delete operation
+	query := "DELETE FROM users WHERE id = $1"
+	result, err := app.DB.ExecContext(c.Request.Context(), query, userIDStr)
+	if err != nil {
+		app.Logger.Error("Database error during account deletion", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete account"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after account deletion", zap.Error(err), zap.String("userID", userIDStr))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error confirming account deletion"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		// This implies the user ID from a valid token does not exist in the DB, which is unexpected.
+		app.Logger.Warn("No user found to delete, though token was valid", zap.String("userID", userIDStr))
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found for deletion"})
+		return
+	}
+
+	app.Logger.Info("Account deleted successfully", zap.String("userID", userIDStr))
+	c.JSON(http.StatusOK, gin.H{"message": "Account deleted successfully"})
 }
 
 // handleUpdateOnboardingDetails updates the user's onboarding information
