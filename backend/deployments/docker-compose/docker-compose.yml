@@ -89,8 +89,8 @@ services:
   # Backend Microservices
   api-gateway:
     build:
-      context: ../../
-      dockerfile: ./api-gateway/Dockerfile.dev
+      context: ../../backend/api-gateway
+      dockerfile: Dockerfile.dev
     container_name: wc-api-gateway
     ports:
       - "8081:8080"
@@ -109,7 +109,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: api-gateway
     volumes:
-      - ../../api-gateway:/app
+      - ../../backend/api-gateway:/app
     depends_on:
       - auth-svc
       - user-svc
@@ -123,8 +123,8 @@ services:
 
   auth-svc:
     build:
-      context: ../../
-      dockerfile: ./auth-svc/Dockerfile.dev
+      context: ../../backend/auth-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-auth-svc
     ports:
       - "8080:8080"
@@ -143,7 +143,7 @@ services:
       OTEL_SERVICE_NAME: auth-service
       DISABLE_AUTH: "true" # For development only
     volumes:
-      - ../../auth-svc:/app
+      - ../../backend/auth-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -156,8 +156,8 @@ services:
 
   user-svc:
     build:
-      context: ../../
-      dockerfile: ./user-svc/Dockerfile.dev
+      context: ../../backend/user-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-user-svc
     ports:
       - "50052:50052"
@@ -172,7 +172,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: user-service
     volumes:
-      - ../../user-svc:/app
+      - ../../backend/user-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -183,8 +183,8 @@ services:
 
   curriculum-svc:
     build:
-      context: ../../
-      dockerfile: ./curriculum-svc/Dockerfile.dev
+      context: ../../backend/curriculum-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-curriculum-svc
     ports:
       - "8082:8082"
@@ -202,7 +202,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: curriculum-service
     volumes:
-      - ../../curriculum-svc:/app
+      - ../../backend/curriculum-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -213,8 +213,8 @@ services:
 
   progress-svc:
     build:
-      context: ../../
-      dockerfile: ./progress-svc/Dockerfile.dev
+      context: ../../backend/progress-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-progress-svc
     ports:
       - "50054:50054"
@@ -228,7 +228,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: progress-service
     volumes:
-      - ../../progress-svc:/app
+      - ../../backend/progress-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -237,8 +237,8 @@ services:
 
   assessment-svc:
     build:
-      context: ../../
-      dockerfile: ./assessment-svc/Dockerfile.dev
+      context: ../../backend/assessment-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-assessment-svc
     ports:
       - "8084:8084"
@@ -255,7 +255,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: assessment-service
     volumes:
-      - ../../assessment-svc:/app
+      - ../../backend/assessment-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -264,8 +264,8 @@ services:
 
   tutor-orchestrator-svc:
     build:
-      context: ../../
-      dockerfile: ./tutor-orchestrator-svc/Dockerfile.dev
+      context: ../../backend/tutor-orchestrator-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-tutor-orchestrator-svc
     ports:
       - "8085:8085"
@@ -283,7 +283,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: tutor-orchestrator-service
     volumes:
-      - ../../tutor-orchestrator-svc:/app
+      - ../../backend/tutor-orchestrator-svc:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -294,8 +294,8 @@ services:
 
   notification-svc:
     build:
-      context: ../../
-      dockerfile: ./notification-svc/Dockerfile.dev
+      context: ../../backend/notification-svc
+      dockerfile: Dockerfile.dev
     container_name: wc-notification-svc
     ports:
       - "50057:50057"
@@ -314,7 +314,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       OTEL_SERVICE_NAME: notification-service
     volumes:
-      - ../../notification-svc:/app
+      - ../../backend/notification-svc:/app
     depends_on:
       rabbitmq:
         condition: service_healthy
