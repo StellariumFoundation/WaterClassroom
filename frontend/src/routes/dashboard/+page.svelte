@@ -1,92 +1,157 @@
 <script lang="ts">
-  // Placeholder data - will be fetched or managed by state later
+  import Card from '$lib/components/ui/Card.svelte';
+  import Button from '$lib/components/ui/Button.svelte'; // For potential future actions
+
+  // Placeholder data
   let completedLessons = 5;
   let earnedBadges = 2;
   let currentLessonTitle = "Chapter 1: Introduction to Fractions";
   let upcomingActivity = "Quiz on Fractions";
+
+  // Placeholder for future navigation items
+  const futureNavigations = [
+    { href: '/curriculum', text: 'View Full Curriculum' },
+    { href: '/ai-tutor', text: 'AI Tutor Access (Coming Soon)' },
+    { href: '/profile', text: 'My Profile & Settings' },
+  ];
 </script>
 
+<svelte:head>
+  <title>Student Dashboard - Water Classroom</title>
+</svelte:head>
+
 <div class="dashboard-container">
-  <h1>Student Dashboard</h1>
+  <h1 class="page-title">Student Dashboard</h1>
 
-  <section class="dashboard-section">
-    <h2>My Progress</h2>
-    <p>You have completed {completedLessons} lessons and earned {earnedBadges} badges.</p>
-    <!-- Future Link: View Detailed Progress -->
-  </section>
+  <div class="dashboard-grid">
+    <Card class="dashboard-card">
+      <h2 slot="header">My Progress</h2>
+      <p>You have completed <strong>{completedLessons}</strong> lessons and earned <strong>{earnedBadges}</strong> badges.</p>
+      <!-- Example of a button for future use -->
+      <div slot="footer">
+        <Button variant="tertiary" onClick={() => alert('Detailed progress view coming soon!')}>
+          View Detailed Progress
+        </Button>
+      </div>
+    </Card>
 
-  <section class="dashboard-section">
-    <h2>Current Lesson</h2>
-    <p>Your current lesson is: <strong>{currentLessonTitle}</strong>.</p>
-    <!-- Future Link: Go to Lesson -->
-  </section>
+    <Card class="dashboard-card">
+      <h2 slot="header">Current Lesson</h2>
+      <p>Your current lesson is: <strong>{currentLessonTitle}</strong>.</p>
+      <div slot="footer">
+        <Button variant="primary" onClick={() => alert('Navigating to lesson: ' + currentLessonTitle)}>
+          Go to Lesson
+        </Button>
+      </div>
+    </Card>
 
-  <section class="dashboard-section">
-    <h2>Upcoming Activities</h2>
-    <p>Next up: {upcomingActivity}.</p>
-    <!-- Future Link: View Activity Details -->
-  </section>
+    <Card class="dashboard-card">
+      <h2 slot="header">Upcoming Activities</h2>
+      <p>Next up: <strong>{upcomingActivity}</strong>.</p>
+      <div slot="footer">
+        <Button variant="tertiary" onClick={() => alert('Activity details for: ' + upcomingActivity)}>
+          View Activity Details
+        </Button>
+      </div>
+    </Card>
+  </div>
 
-  <nav class="future-navigation">
-    <p><em>Future navigation links:</em></p>
-    <ul>
-      <li>View Full Curriculum</li>
-      <li>AI Tutor</li>
-      <li>My Profile</li>
-      <li>Settings</li>
+  <section class="future-nav-section">
+    <h2 class="section-title">Quick Access</h2>
+    <ul class="future-nav-list">
+      {#each futureNavigations as navItem}
+        <li>
+          <a href={navItem.href} class="future-nav-link">{navItem.text}</a>
+        </li>
+      {/each}
     </ul>
-  </nav>
+  </section>
 </div>
 
 <style>
   .dashboard-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+    /* Max width is handled by .app-content in layout */
   }
 
-  h1 {
+  .page-title {
+    /* Global h1 styling will apply. Specific overrides if needed: */
     text-align: center;
-    margin-bottom: 2rem;
-    color: #333;
+    margin-bottom: var(--spacing-xxl); /* 32px */
   }
 
-  .dashboard-section {
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--spacing-xl); /* 24px */
+    margin-bottom: var(--spacing-xxl);
   }
 
-  .dashboard-section h2 {
+  /* Styling for h2 within Card headers on this page */
+  :global(.dashboard-card .card-header h2) {
+    font-size: var(--font-size-h4); /* Adjust size as needed */
+    color: var(--primary-blue-darker);
+    margin:0;
+  }
+
+  .dashboard-card p {
+    font-size: var(--font-size-body);
+    color: var(--neutral-text-subtle);
+    line-height: var(--line-height-base);
+  }
+
+  .dashboard-card strong {
+    color: var(--neutral-text-body);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Styling for button alignment in card footer */
+  :global(.dashboard-card .card-footer) {
+    justify-content: flex-start; /* Align buttons to the left in this context */
+  }
+  :global(.dashboard-card .card-footer .btn) {
+    font-size: var(--font-size-small);
+  }
+
+
+  .future-nav-section {
+    margin-top: var(--spacing-xxxl); /* 48px */
+    padding: var(--spacing-xl); /* 24px */
+    background-color: var(--neutral-bg); /* Light background for this section */
+    border-radius: var(--border-radius-lg);
+  }
+
+  .section-title {
+    font-size: var(--font-size-h3);
+    color: var(--neutral-text-body);
     margin-top: 0;
-    margin-bottom: 0.75rem;
-    color: #0056b3; /* A theme color */
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
   }
 
-  .dashboard-section p {
-    line-height: 1.6;
-    color: #555;
-  }
-
-  .future-navigation {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px dashed #ccc;
-  }
-
-  .future-navigation p {
-    font-weight: bold;
-  }
-
-  .future-navigation ul {
+  .future-nav-list {
     list-style: none;
-    padding-left: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
   }
 
-  .future-navigation li {
-    margin-bottom: 0.5rem;
-    color: #777; /* Indicate they are not active links yet */
+  .future-nav-link {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--neutral-white);
+    border: 1px solid var(--neutral-border);
+    border-radius: var(--border-radius-base);
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: all 0.2s ease;
+  }
+  .future-nav-link:hover {
+    background-color: var(--primary-blue-lighter);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue-darker);
+    text-decoration: none;
   }
 </style>

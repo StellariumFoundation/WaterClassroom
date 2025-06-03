@@ -1,4 +1,9 @@
 <script lang="ts">
+  import Card from '$lib/components/ui/Card.svelte';
+  import Input from '$lib/components/ui/Input.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import Checkbox from '$lib/components/ui/Checkbox.svelte';
+
   let email = '';
   let password = '';
   let confirmPassword = '';
@@ -6,106 +11,111 @@
 
   function handleSubmit() {
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      alert("Passwords do not match!"); // Replace with a better notification later
       return;
     }
     // Basic form handling logic will go here in later tasks
-    console.log('Sign Up attempt with:', { email, password, isStudent });
-    alert(`Sign Up attempt with Email: ${email}, Student: ${isStudent}`);
+    console.log('Sign Up attempt with:', { email, isStudent });
+    alert(`Sign Up with Email: ${email}, Student: ${isStudent}. This is a placeholder action.`);
   }
 </script>
 
-<div class="container">
-  <h1>Sign Up</h1>
+<svelte:head>
+  <title>Sign Up - Water Classroom</title>
+</svelte:head>
 
-  <form on:submit|preventDefault={handleSubmit}>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" bind:value={email} required />
+<div class="auth-page-container">
+  <Card>
+    <h1 slot="header" class="card-title">Create Your Account</h1>
+
+    <form on:submit|preventDefault={handleSubmit}>
+      <Input
+        label="Email Address"
+        type="email"
+        name="email"
+        id="email"
+        placeholder="you@example.com"
+        bind:value={email}
+        required
+      />
+      <Input
+        label="Password"
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Create a strong password"
+        bind:value={password}
+        required
+      />
+      <Input
+        label="Confirm Password"
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Re-enter your password"
+        bind:value={confirmPassword}
+        required
+      />
+      <Checkbox
+        label="I am a Water School student"
+        name="isStudent"
+        id="isStudent"
+        bind:checked={isStudent}
+      />
+      <Button type="submit" variant="primary" class="submit-button">Create Account</Button>
+    </form>
+
+    <div slot="footer" class="auth-links">
+      <a href="/login">Already have an account? Login</a>
     </div>
-
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" bind:value={password} required />
-    </div>
-
-    <div class="form-group">
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" bind:value={confirmPassword} required />
-    </div>
-
-    <div class="form-group checkbox-group">
-      <input type="checkbox" id="isStudent" bind:checked={isStudent} />
-      <label for="isStudent" class="checkbox-label">I am a Water School student</label>
-    </div>
-
-    <button type="submit">Sign Up</button>
-  </form>
-
-  <div class="links">
-    <p><a href="/login">Already have an account? Login</a></p>
-  </div>
+  </Card>
 </div>
 
 <style>
-  .container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  label {
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  input[type="email"],
-  input[type="password"] {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  .checkbox-group {
+  .auth-page-container {
     display: flex;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 70vh;
+    padding: var(--spacing-xxl) var(--spacing-lg);
   }
-  input[type="checkbox"] {
-    margin-right: 0.5rem;
-  }
-  .checkbox-label {
-    margin-bottom: 0; /* Override default block label margin */
-  }
-  button {
+
+  :global(.auth-page-container .card) {
     width: 100%;
-    padding: 0.75rem;
-    background-color: #28a745; /* Green for sign up */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+    max-width: 420px;
   }
-  button:hover {
-    background-color: #218838;
-  }
-  .links {
-    margin-top: 1.5rem;
+
+  .card-title {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
     text-align: center;
+    margin:0;
   }
-  .links a {
-    color: #007bff;
+
+  .submit-button {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+  }
+
+  /* Ensure checkbox is spaced correctly */
+  :global(.auth-page-container .checkbox-control) {
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xl); /* More space before button */
+  }
+
+  .auth-links {
+    display: flex;
+    justify-content: center; /* Center single link */
+    align-items: center;
+    font-size: var(--font-size-small);
+    width: 100%;
+  }
+  .auth-links a {
+    color: var(--primary-blue);
     text-decoration: none;
   }
-  .links a:hover {
+  .auth-links a:hover {
     text-decoration: underline;
+    color: var(--primary-blue-darker);
   }
 </style>

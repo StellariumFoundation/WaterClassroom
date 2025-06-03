@@ -22,37 +22,49 @@
 
 <style>
   .card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0; /* Light gray border */
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    overflow: hidden; /* Ensures rounded corners clip content */
-    margin-bottom: 1rem; /* Spacing if cards are stacked */
+    background-color: var(--neutral-white); /* Card background */
+    border: 1px solid var(--neutral-border);
+    border-radius: var(--border-radius-lg); /* Slightly larger radius for cards: 8px */
+    box-shadow: var(--box-shadow-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl); /* Consistent spacing: 24px */
   }
 
   .card-header {
-    padding: 1rem 1.25rem;
-    background-color: #f8f9fa; /* Very light gray */
-    border-bottom: 1px solid #e0e0e0;
-  }
-  /* Optional: if you want header text to be bolder or larger by default */
-  .card-header :global(h1), 
-  .card-header :global(h2), 
-  .card-header :global(h3) {
-    margin: 0; 
+    padding: var(--spacing-lg) var(--spacing-xl); /* 16px 24px */
+    background-color: var(--neutral-white); /* Header can be same as card or slightly different */
+    border-bottom: 1px solid var(--neutral-border);
+    font-size: var(--font-size-h5); /* Example: 1.25rem */
+    font-weight: var(--font-weight-semibold);
   }
 
+  .card-header :global(h1),
+  .card-header :global(h2),
+  .card-header :global(h3),
+  .card-header :global(h4),
+  .card-header :global(h5),
+  .card-header :global(h6) {
+    margin: 0; /* Remove default margins from headings in slot */
+    font-size: inherit; /* Inherit size from .card-header */
+    font-weight: inherit; /* Inherit weight */
+  }
 
   .card-content {
-    padding: 1.25rem;
+    padding: var(--spacing-xl); /* 24px */
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-base);
+  }
+  /* Ensure paragraphs within card content have appropriate spacing */
+  .card-content :global(p:last-child) {
+    margin-bottom: 0;
   }
 
   .card-footer {
-    padding: 1rem 1.25rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
-    display: flex; /* Useful for aligning buttons, etc. */
-    justify-content: flex-end; /* Example: align items to the right */
-    gap: 0.5rem; /* Spacing between items in footer */
+    padding: var(--spacing-lg) var(--spacing-xl); /* 16px 24px */
+    background-color: var(--neutral-bg); /* Footer slightly different bg */
+    border-top: 1px solid var(--neutral-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md); /* 12px gap */
   }
 </style>

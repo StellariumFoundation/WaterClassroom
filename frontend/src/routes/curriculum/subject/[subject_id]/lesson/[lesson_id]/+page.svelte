@@ -1,19 +1,21 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import Button from '$lib/components/ui/Button.svelte';
+  import Card from '$lib/components/ui/Card.svelte';
 
-  // Placeholder data - in a real app, this would be fetched based on subjectId and lessonId
-  const lessonDetailsDatabase: { [key: string]: { [key: string]: { title: string, content: string, gameLink?: string } } } = {
+  // (Assuming the same lessonDetailsDatabase structure as before)
+  const lessonDetailsDatabase: { [key: string]: { [key: string]: { title: string, content: string, gameId?: string, gameName?: string, quizId?: string } } } = {
     'grade-5-math': {
-      'ch1-fractions': { title: 'Chapter 1: Introduction to Fractions', content: 'Detailed content about fractions, including examples, diagrams, and practice problems...' },
+      'ch1-fractions': { title: 'Chapter 1: Introduction to Fractions', content: 'Detailed content about fractions, including examples, diagrams, and practice problems...', quizId: 'ch1-fractions-quiz' },
       'ch2-decimals': { title: 'Chapter 2: Understanding Decimals', content: 'Exploring decimal places, addition, subtraction, and real-world use of decimals...' },
       'ch3-geometry': { title: 'Chapter 3: Basic Geometry', content: 'Introduction to shapes, angles, and spatial reasoning...' },
     },
     'intro-to-biology': {
-      'unit1-cells': { title: 'Unit 1: Cell Biology', content: 'The structure and function of cells, organelles, and cell processes.', gameLink: 'CellExplorerGame' },
+      'unit1-cells': { title: 'Unit 1: Cell Biology', content: 'The structure and function of cells, organelles, and cell processes.', gameId: 'cell-explorer', gameName: 'Cell Explorer Game', quizId: 'biology-cell-basics' },
       'unit2-genetics': { title: 'Unit 2: Basics of Genetics', content: 'Understanding DNA, heredity, and genetic variation.' },
       'unit3-ecology': { title: 'Unit 3: Introduction to Ecology', content: 'Ecosystems, populations, and interactions between organisms.' },
     },
-    'world-history': {
+     'world-history': {
         'epoch1-ancient': { title: 'Epoch 1: Ancient Civilizations', content: 'A survey of major ancient civilizations and their contributions.'},
         'epoch2-middle-ages': { title: 'Epoch 2: The Middle Ages', content: 'Key events and developments during the Middle Ages.'},
         'epoch3-modern': { title: 'Epoch 3: The Modern Era', content: 'From the Renaissance to contemporary world history.'}
@@ -28,123 +30,102 @@
   $: subjectId = $page.params.subject_id;
   $: lessonId = $page.params.lesson_id;
 
-  $: lesson = (lessonDetailsDatabase[subjectId] && lessonDetailsDatabase[subjectId][lessonId]) 
-              ? lessonDetailsDatabase[subjectId][lessonId] 
+  $: lesson = (lessonDetailsDatabase[subjectId] && lessonDetailsDatabase[subjectId][lessonId])
+              ? lessonDetailsDatabase[subjectId][lessonId]
               : { title: 'Lesson Not Found', content: 'Could not find details for this lesson.' };
-  
+
   $: lessonTitle = lesson.title;
   $: lessonContent = lesson.content;
-  $: gameLink = lesson.gameLink;
+  $: gameId = lesson.gameId;
+  $: gameName = lesson.gameName || 'Educational Game';
+  $: quizId = lesson.quizId;
 
-  function launchGame() {
-    if (gameLink) {
-      alert(`Launching game: ${gameLink}`);
-      // In a real app: navigation or game embedding logic
-    } else {
-      alert('No game associated with this lesson.');
-    }
-  }
 </script>
 
-<div class="lesson-container">
-  <h1>{lessonTitle}</h1>
+<svelte:head>
+  <title>{lessonTitle} - Water Classroom</title>
+</svelte:head>
 
-  <section class="lesson-content">
-    <h2>Lesson Material</h2>
-    <p>{lessonContent}</p>
-    <!-- Placeholder for rich text, images, videos -->
-  </section>
+<div class="lesson-view-container">
+  <div class="page-header">
+     <Button href={`/curriculum/subject/${subjectId}`} variant="tertiary" class="back-button">&larr; Back to Lessons</Button>
+  </div>
 
-  <section class="interactive-elements">
-    <h2>Interactive Quiz</h2>
-    <p><em>Placeholder for an interactive quiz related to {lessonTitle}.</em></p>
-    <button disabled>Start Quiz (Coming Soon)</button>
-  </section>
+  <h1 class="lesson-main-title">{lessonTitle}</h1>
 
-  {#if gameLink}
-    <section class="game-launcher">
-      <h2>Educational Game</h2>
-      <p>Reinforce your learning with a fun game!</p>
-      <button on:click={launchGame}>Play {gameLink.replace(/([A-Z])/g, ' $1').trim()} Game</button>
-    </section>
+  <Card class="lesson-content-card">
+    <h2 slot="header">Lesson Material</h2>
+    <div class="prose">
+      <!-- In a real app, lessonContent might be HTML or Markdown to be rendered -->
+      <p>{lessonContent}</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+  </Card>
+
+  {#if quizId}
+  <Card class="related-activity-card">
+    <h2 slot="header">Check Your Understanding</h2>
+    <p>Test your knowledge with a short quiz on the concepts covered in this lesson.</p>
+    <div slot="footer">
+      <Button href={`/quiz/${quizId}`} variant="primary">Start Quiz: {lessonTitle}</Button>
+    </div>
+  </Card>
   {/if}
 
-  <div class="navigation-links">
-    <a href={`/curriculum/subject/${subjectId}`}>Back to Lesson List ({subjectId})</a><br>
-    <a href="/curriculum">Back to Curriculum Selection</a>
-  </div>
+  {#if gameId}
+  <Card class="related-activity-card">
+    <h2 slot="header">Reinforce Learning</h2>
+    <p>Play an interactive game to practice the skills from this lesson!</p>
+    <div slot="footer">
+      <Button href={`/game/${gameId}`} variant="secondary">Play {gameName}</Button>
+    </div>
+  </Card>
+  {/if}
+
 </div>
 
 <style>
-  .lesson-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+  .lesson-view-container {
+    /* Max width handled by .app-content */
   }
-
-  h1 {
+  .page-header {
+    margin-bottom: var(--spacing-lg);
+  }
+  .lesson-main-title {
     text-align: center;
-    margin-bottom: 1.5rem;
-    color: #333;
-  }
-  
-  h2 {
-    color: #0056b3;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.25rem;
+    margin-bottom: var(--spacing-xl);
   }
 
-  .lesson-content, .interactive-elements, .game-launcher {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+  /* Ensure card headers on this page have a consistent style */
+  :global(.lesson-content-card .card-header h2),
+  :global(.related-activity-card .card-header h2) {
+    font-size: var(--font-size-h4);
+    color: var(--primary-blue-darker);
+    margin:0;
   }
 
-  .lesson-content p, .interactive-elements p, .game-launcher p {
-    line-height: 1.6;
-    color: #555;
+  .prose {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-base);
+    color: var(--neutral-text-body);
   }
-  
-  button {
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
+  .prose p {
+    margin-bottom: var(--spacing-lg);
+  }
+  .prose p:last-child {
+    margin-bottom: 0;
   }
 
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+  .related-activity-card {
+    margin-top: var(--spacing-xl);
+  }
+  .related-activity-card p {
+    font-size: var(--font-size-body);
+    color: var(--neutral-text-subtle);
+  }
+  :global(.related-activity-card .card-footer) {
+    justify-content: flex-start;
   }
 
-  button:hover:not(:disabled) {
-    background-color: #0056b3;
-  }
-  
-  .game-launcher button {
-    background-color: #28a745; /* Green for games */
-  }
-  .game-launcher button:hover {
-    background-color: #218838;
-  }
-
-  .navigation-links {
-    margin-top: 2rem;
-    text-align: center;
-  }
-  .navigation-links a {
-    color: #007bff;
-    text-decoration: none;
-    margin: 0 0.5rem;
-  }
-  .navigation-links a:hover {
-    text-decoration: underline;
-  }
 </style>

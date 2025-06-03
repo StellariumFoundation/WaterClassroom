@@ -1,78 +1,93 @@
 <script lang="ts">
+  import Card from '$lib/components/ui/Card.svelte';
+  import Input from '$lib/components/ui/Input.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+
   let email = '';
 
   function handleSubmit() {
     // Basic form handling logic will go here in later tasks
     console.log('Password reset request for:', email);
-    alert(`Password reset link would be sent to: ${email}`);
+    alert(`Password reset link would be sent to: ${email}. This is a placeholder action.`);
   }
 </script>
 
-<div class="container">
-  <h1>Reset Password</h1>
+<svelte:head>
+  <title>Reset Password - Water Classroom</title>
+</svelte:head>
 
-  <form on:submit|preventDefault={handleSubmit}>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" bind:value={email} required />
+<div class="auth-page-container">
+  <Card>
+    <h1 slot="header" class="card-title">Reset Your Password</h1>
+
+    <form on:submit|preventDefault={handleSubmit}>
+      <p class="reset-instructions">
+        Enter the email address associated with your account, and we'll send you a link to reset your password.
+      </p>
+      <Input
+        label="Email Address"
+        type="email"
+        name="email"
+        id="email"
+        placeholder="you@example.com"
+        bind:value={email}
+        required
+      />
+      <Button type="submit" variant="primary" class="submit-button">Send Reset Link</Button>
+    </form>
+
+    <div slot="footer" class="auth-links">
+      <a href="/login">Back to Login</a>
     </div>
-
-    <button type="submit">Send Reset Link</button>
-  </form>
-
-  <div class="links">
-    <p><a href="/login">Back to Login</a></p>
-  </div>
+  </Card>
 </div>
 
 <style>
-  .container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+  .auth-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 70vh;
+    padding: var(--spacing-xxl) var(--spacing-lg);
   }
-  h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  label {
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  input[type="email"] {
+
+  :global(.auth-page-container .card) {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
+    max-width: 420px;
   }
-  button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #ffc107; /* Yellow for warning/reset */
-    color: #212529;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  button:hover {
-    background-color: #e0a800;
-  }
-  .links {
-    margin-top: 1.5rem;
+
+  .card-title {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
     text-align: center;
+    margin:0;
   }
-  .links a {
-    color: #007bff;
+
+  .reset-instructions {
+    font-size: var(--font-size-body);
+    color: var(--neutral-text-subtle);
+    text-align: center;
+    margin-bottom: var(--spacing-xl); /* Space before input */
+  }
+
+  .submit-button {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+  }
+
+  .auth-links {
+    display: flex;
+    justify-content: center; /* Center single link */
+    align-items: center;
+    font-size: var(--font-size-small);
+    width: 100%;
+  }
+  .auth-links a {
+    color: var(--primary-blue);
     text-decoration: none;
   }
-  .links a:hover {
+  .auth-links a:hover {
     text-decoration: underline;
+    color: var(--primary-blue-darker);
   }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   export let type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' = 'text';
   export let value: string | number = '';
@@ -7,31 +7,25 @@
   export let label: string | undefined = undefined;
   export let disabled: boolean = false;
   export let name: string | undefined = undefined; // Useful for forms
+  export let id: string | undefined = undefined; // Allow passing ID for label association
 
   const dispatch = createEventDispatcher();
 
-  // Forward input events to allow for bind:value on the parent
-  function handleInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    value = target.value; // Keep internal value in sync
-    dispatch('input', event); // Forward the native event
-  }
-  
-  // Forward change events
-  function handleChange(event: Event) {
-    dispatch('change', event);
-  }
-  
-  // Forward other common input events if needed, e.g., blur, focus
-  function handleBlur(event: FocusEvent) {
-    dispatch('blur', event);
-  }
+  // Generate a unique ID if not provided, for label association
+  onMount(() => {
+    if (!id && label) {
+      id = `input-${Math.random().toString(36).substring(2, 9)}`;
+    }
+  });
 
-  function handleFocus(event: FocusEvent) {
-    dispatch('focus', event);
+  // Forward events to allow for bind:value and other event handling on parent
+  function handleEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (event.type === 'input') { // Keep internal value in sync for bind:value
+      value = target.value;
+    }
+    dispatch(event.type, event);
   }
-  
-  let id = label ? `input-${Math.random().toString(36).substring(2,9)}` : undefined;
 
 </script>
 
@@ -47,53 +41,59 @@
     {placeholder}
     {disabled}
     class="styled-input"
-    on:input={handleInput}
-    on:change={handleChange}
-    on:blur={handleBlur}
-    on:focus={handleFocus}
+    on:input={handleEvent}
+    on:change={handleEvent}
+    on:blur={handleEvent}
+    on:focus={handleEvent}
+    on:keydown={handleEvent}
+    on:keyup={handleEvent}
   />
 </div>
 
 <style>
   .form-control {
-    margin-bottom: 1rem; /* Spacing between form controls */
+    margin-bottom: var(--spacing-lg); /* 16px */
     display: flex;
     flex-direction: column;
   }
 
   .input-label {
     display: block;
-    margin-bottom: 0.35rem;
-    font-size: 0.9rem;
-    color: #333; /* Darker label text */
-    font-weight: 500;
+    margin-bottom: var(--spacing-sm); /* 8px */
+    font-family: var(--font-family-system);
+    font-size: var(--font-size-small); /* 14px */
+    color: var(--neutral-text-subtle);
+    font-weight: var(--font-weight-medium); /* 500 */
   }
 
   .styled-input {
-    width: 100%; /* Full width by default */
-    padding: 0.6rem 0.75rem;
-    border: 1px solid #ced4da; /* Standard Bootstrap-like border */
-    border-radius: 4px;
-    font-size: 1rem;
-    line-height: 1.5;
-    background-color: #fff;
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg); /* 12px 16px -- more padding */
+    border: 1px solid var(--neutral-border);
+    border-radius: var(--border-radius-base); /* 6px */
+    font-family: var(--font-family-system);
+    font-size: var(--font-size-body); /* 16px */
+    line-height: var(--line-height-base);
+    background-color: var(--neutral-white); /* Or a specific input background if defined */
+    color: var(--neutral-text-body);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    box-sizing: border-box; /* Important for width: 100% */
+    box-sizing: border-box;
   }
 
-  .styled-input:focus {
-    border-color: #80bdff; /* Blue focus highlight */
+  .styled-input:focus, .styled-input:focus-visible {
+    border-color: var(--primary-blue);
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px var(--primary-blue-lighter); /* Subtle focus ring */
   }
 
   .styled-input::placeholder {
-    color: #6c757d; /* Gray placeholder */
+    color: var(--neutral-text-subtle);
     opacity: 1;
   }
 
   .styled-input:disabled {
-    background-color: #e9ecef; /* Gray out when disabled */
+    background-color: var(--neutral-bg); /* Lighter background for disabled */
+    color: var(--neutral-text-subtle);
     opacity: 0.7;
     cursor: not-allowed;
   }

@@ -1,0 +1,62 @@
+:root {
+  /* Color Palette (Blue Theme) */
+  --primary-blue: #007AFF;
+  --primary-blue-darker: #0056b3; /* For hover/active states */
+  --primary-blue-lighter: #EBF5FF; /* For light backgrounds/accents */
+
+  --neutral-bg: #F5F5F7; /* Light Gray for backgrounds */
+  --neutral-text-body: #1D1D1F; /* Near Black for strong text */
+  --neutral-text-subtle: #86868B; /* Medium Gray for less prominent text */
+  --neutral-border: #D1D1D6; /* Light-Medium Gray for borders */
+  --neutral-white: #FFFFFF;
+  --neutral-black: #000000;
+
+  --status-success: #34C759; /* Apple Green */
+  --status-error: #FF3B30; /* Apple Red */
+  --status-warning: #FFCC00; /* Apple Yellow */
+
+  /* Typography */
+  --font-family-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+  /* Base Font Size - used for rem calculation (typically 16px) */
+  --font-size-base: 16px;
+
+  --font-size-h1: 2.5rem; /* 40px */
+  --font-size-h2: 2rem;   /* 32px */
+  --font-size-h3: 1.75rem;/* 28px */
+  --font-size-h4: 1.5rem; /* 24px */
+  --font-size-h5: 1.25rem;/* 20px */
+  --font-size-h6: 1rem;   /* 16px */
+  --font-size-body: 1rem; /* 16px */
+  --font-size-small: 0.875rem; /* 14px */
+  --font-size-tiny: 0.75rem;  /* 12px */
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-base: 1.6;
+  --line-height-heading: 1.3;
+
+  /* Spacing (based on 8px unit) */
+  --spacing-unit: 8px;
+  --spacing-xs: calc(0.5 * var(--spacing-unit));   /* 4px */
+  --spacing-sm: var(--spacing-unit);              /* 8px */
+  --spacing-md: calc(1.5 * var(--spacing-unit));  /* 12px */
+  --spacing-lg: calc(2 * var(--spacing-unit));   /* 16px */
+  --spacing-xl: calc(3 * var(--spacing-unit));   /* 24px */
+  --spacing-xxl: calc(4 * var(--spacing-unit));  /* 32px */
+  --spacing-xxxl: calc(6 * var(--spacing-unit)); /* 48px */
+
+  /* Border Radius */
+  --border-radius-base: 6px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 8px;
+
+  /* Box Shadows (optional, can be expanded) */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}

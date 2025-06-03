@@ -1,211 +1,186 @@
 <script lang="ts">
-  // Placeholder data - in a real app, this would be fetched or from a store
+  import Card from '$lib/components/ui/Card.svelte';
+  import Input from '$lib/components/ui/Input.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
+  import Checkbox from '$lib/components/ui/Checkbox.svelte';
+
+  // Placeholder data
   let userName = "Jane Doe";
   let userEmail = "jane.doe@example.com";
   let accountType = "Water School Student";
   let currentCurriculum = "Grade 5 Math - Common Core";
 
-  // Placeholder for settings
   let emailNotifications = true;
-  let languagePreference = "English";
+  let languagePreference = "English"; // This would ideally be an object {value: 'en', label: 'English'}
 
   function saveChanges() {
-    alert("Saving changes... (This is a placeholder)");
-    // Actual save logic would go here
+    alert("Saving changes... (Placeholder)");
   }
 
   function logout() {
-    alert("Logging out... (This is a placeholder)");
-    // Actual logout logic would go here, likely redirecting to /login
+    alert("Logging out... (Placeholder)");
+    // Potentially: await goto('/login');
   }
 
   function changePassword() {
-    alert("Change Password functionality not implemented yet.");
-    // Would typically navigate to a new page or show a modal
+    alert("Change Password functionality would typically open a modal or navigate to a new page. (Placeholder)");
   }
 </script>
 
-<div class="profile-container">
-  <h1>User Profile & Settings</h1>
+<svelte:head>
+  <title>User Profile & Settings - Water Classroom</title>
+</svelte:head>
 
-  <section class="profile-section info-section">
-    <h2>My Information</h2>
-    <div class="info-item">
-      <span class="info-label">Name:</span>
-      <span class="info-value">{userName}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Email:</span>
-      <span class="info-value">{userEmail}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Account Type:</span>
-      <span class="info-value">{accountType}</span>
-    </div>
-    <div class="info-item">
-      <span class="info-label">Current Curriculum:</span>
-      <span class="info-value">{currentCurriculum}</span>
-      <!-- Placeholder link to change curriculum -->
-      <a href="/curriculum" class="change-link">(Change)</a>
-    </div>
-  </section>
+<div class="profile-page-container">
+  <h1 class="page-title">Profile & Settings</h1>
 
-  <section class="profile-section settings-section">
-    <h2>Settings</h2>
-    
-    <div class="setting-item">
-      <span class="setting-label">Password:</span>
-      <button class="inline-button" on:click={changePassword}>Change Password</button>
+  <Card class="profile-card">
+    <h2 slot="header">My Information</h2>
+
+    <div class="info-grid">
+      <Input label="Full Name" name="userName" bind:value={userName} disabled />
+      <Input label="Email Address" name="userEmail" type="email" bind:value={userEmail} disabled />
+      <Input label="Account Type" name="accountType" bind:value={accountType} disabled />
+      <div class="form-item-with-action">
+        <Input label="Current Curriculum" name="currentCurriculum" bind:value={currentCurriculum} disabled />
+        <Button href="/curriculum" variant="tertiary" class="inline-action-button">Change</Button>
+      </div>
+    </div>
+  </Card>
+
+  <Card class="profile-card">
+    <h2 slot="header">Account Settings</h2>
+
+    <div class="settings-section">
+      <div class="setting-item">
+        <span class="setting-label">Password</span>
+        <Button variant="secondary" onClick={changePassword}>Change Password</Button>
+      </div>
+
+      <Checkbox
+        label="Receive email notifications for important updates and news."
+        name="emailNotifications"
+        bind:checked={emailNotifications}
+        class="setting-checkbox"
+      />
+
+      <!-- Language Preference - conceptual, would need a Select component -->
+      <div class="setting-item">
+        <span class="setting-label">Language Preference</span>
+        <Input name="language" value="English (US)" disabled class="language-input-disabled"/>
+        <span class="field-note">(Language selection coming soon)</span>
+      </div>
     </div>
 
-    <div class="setting-item">
-      <label for="notifications">
-        <input type="checkbox" id="notifications" bind:checked={emailNotifications} />
-        Email me about platform updates and news.
-      </label>
+    <div slot="footer" class="profile-actions-footer">
+      <Button variant="primary" onClick={saveChanges}>Save All Changes</Button>
     </div>
+  </Card>
 
-    <div class="setting-item">
-      <label for="language">Language Preference:</label>
-      <!-- In a real app, this would be a select dropdown -->
-      <select id="language" bind:value={languagePreference} disabled>
-        <option value="English">English</option>
-        <option value="Spanish">Español (Placeholder)</option>
-        <option value="French">Français (Placeholder)</option>
-      </select>
-      <span class="field-note">(Language selection coming soon)</span>
-    </div>
-  </section>
+  <div class="logout-section">
+    <Button variant="danger" onClick={logout} class="logout-button">Logout</Button>
+  </div>
 
-  <section class="profile-actions">
-    <button class="save-btn" on:click={saveChanges}>Save Changes</button>
-    <button class="logout-btn" on:click={logout}>Logout</button>
-  </section>
 </div>
 
 <style>
-  .profile-container {
-    max-width: 700px;
-    margin: 2rem auto;
-    padding: 1rem;
+  .profile-page-container {
+    /* Max width handled by .app-content */
   }
-
-  h1 {
+  .page-title {
     text-align: center;
-    margin-bottom: 2rem;
-    color: #333;
+    margin-bottom: var(--spacing-xxl);
   }
 
-  .profile-section {
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+  :global(.profile-card .card-header h2) {
+    font-size: var(--font-size-h4);
+    color: var(--primary-blue-darker);
+    margin: 0;
   }
 
-  .profile-section h2 {
-    margin-top: 0;
-    margin-bottom: 1.25rem;
-    color: #0056b3;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.5rem;
+  .profile-card {
+    margin-bottom: var(--spacing-xl); /* 24px */
   }
 
-  .info-item, .setting-item {
-    margin-bottom: 1rem;
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid for info items */
+    gap: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  /* For Input components used as display fields */
+  :global(.info-grid .form-control .styled-input:disabled) {
+    background-color: var(--neutral-white); /* Make disabled inputs look like text */
+    border-color: transparent; /* var(--neutral-border) if you want a subtle box */
+    color: var(--neutral-text-body);
+    opacity: 1;
+    padding-left: 0; /* Remove padding for text-like appearance */
+    padding-right: 0;
+  }
+  :global(.info-grid .form-control .input-label) {
+    font-size: var(--font-size-tiny); /* Smaller label for "display" fields */
+    color: var(--neutral-text-subtle);
+    text-transform: uppercase;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .form-item-with-action {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end; /* Align input bottom with button bottom */
+    gap: var(--spacing-md);
+  }
+  :global(.form-item-with-action .form-control) {
+    flex-grow: 1; /* Input takes available space */
+    margin-bottom: 0; /* Remove default margin from Input component */
+  }
+  .inline-action-button {
+    /* Adjust height or padding if needed to match input field height */
+    white-space: nowrap;
   }
 
-  .info-label, .setting-label {
-    font-weight: bold;
-    color: #555;
-    margin-right: 0.5rem;
-    min-width: 150px; /* Align values */
+  .settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl); /* Spacing between setting items */
   }
-  
-  .info-value {
-    color: #333;
-  }
-
-  .change-link {
-    font-size: 0.85em;
-    margin-left: 0.5rem;
-    color: #007bff;
-    text-decoration: none;
-  }
-  .change-link:hover {
-    text-decoration: underline;
-  }
-
-  .setting-item label {
+  .setting-item {
     display: flex;
     align-items: center;
-    width: 100%; /* Full width for checkbox label */
+    justify-content: space-between; /* Label on left, control on right */
+    flex-wrap: wrap; /* Wrap if not enough space */
+    gap: var(--spacing-md);
   }
-  
-  .setting-item input[type="checkbox"] {
-    margin-right: 0.5rem;
+  .setting-label {
+    font-weight: var(--font-weight-medium);
+    color: var(--neutral-text-body);
   }
-  
-  .setting-item select {
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    margin-left: 0.5rem;
+  :global(.setting-checkbox.checkbox-control) { /* Target the specific checkbox */
+    margin-bottom: 0; /* Override default if any */
+    width: 100%; /* Take full width for consistent spacing */
   }
-  .setting-item select:disabled {
-    background-color: #e9ecef;
-    cursor: not-allowed;
+  .language-input-disabled {
+    flex-grow: 1;
+    max-width: 200px; /* Example max width */
+  }
+  :global(.language-input-disabled.styled-input:disabled) {
+     background-color: var(--neutral-bg);
+     border-color: var(--neutral-border);
   }
   .field-note {
-    font-size: 0.8em;
-    color: #777;
-    margin-left: 0.5rem;
+    font-size: var(--font-size-small);
+    color: var(--neutral-text-subtle);
   }
 
-  .inline-button {
-    padding: 0.3rem 0.8rem;
-    font-size: 0.9em;
-    background-color: #6c757d; /* Secondary button color */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .inline-button:hover {
-    background-color: #5a6268;
-  }
-  
-  .profile-actions {
-    text-align: center;
-    margin-top: 2rem;
+  :global(.profile-actions-footer) {
+    justify-content: flex-end;
   }
 
-  .profile-actions button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 0.5rem;
+  .logout-section {
+    margin-top: var(--spacing-xxl);
+    display: flex;
+    justify-content: center; /* Center logout button */
   }
-
-  .save-btn {
-    background-color: #007bff; /* Primary action */
-    color: white;
-  }
-  .save-btn:hover {
-    background-color: #0056b3;
-  }
-
-  .logout-btn {
-    background-color: #dc3545; /* Destructive action */
-    color: white;
-  }
-  .logout-btn:hover {
-    background-color: #c82333;
+  .logout-button {
+    min-width: 150px; /* Give logout some width */
   }
 </style>
