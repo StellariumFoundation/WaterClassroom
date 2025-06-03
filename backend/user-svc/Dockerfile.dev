@@ -9,6 +9,8 @@ WORKDIR /app
 # Copy the source code
 COPY . .
 
+RUN make build-internal
+
 # Expose gRPC port
 EXPOSE 50052
 

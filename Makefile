@@ -5,7 +5,7 @@
 
 # Make all targets PHONY to ensure they always run
 .PHONY: help build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend build-auth-svc-prod-image \
-        install build test clean cloud-test-build
+        install build-prod-auth test clean cloud-test-build all all-docker
 
 # Variables
 SHELL := /bin/bash
@@ -67,16 +67,26 @@ build-auth-svc-prod-image: ## Build production Docker image for auth-svc
 	@echo -e "${GREEN}auth-svc Docker image built successfully!${NC}"
 
 # Combined Commands
-install: ## Install backend dependencies and required Go tools
-	@echo -e "${BLUE}Installing backend Go tools...${NC}"
-	@make -C backend install-tools
-	@echo -e "${GREEN}Backend Go tools installation initiated.${NC}"
-	@echo -e "${YELLOW}Note: This installs tools like goose, golangci-lint, buf, and air using 'go install'. Ensure your GOPATH/bin is in your PATH.${NC}"
+install: ## Install all backend dependencies (no-op for root, handled by backend Makefile)
+	@echo -e "${GREEN}Backend dependencies are managed by the backend Makefile.${NC}"
+	@echo -e "${YELLOW}Run 'make -C backend install' if you need to manage backend dependencies explicitly.${NC}"
 
-build: ## Build backend for production (without Docker)
-	@echo -e "${BLUE}Building backend services using local Go environment...${NC}"
-	@make -C backend build
-	@echo -e "${GREEN}Backend components built successfully!${NC}"
+all: ## Build all backend services locally and the frontend locally
+	@echo -e "${BLUE}Building all backend services locally...${NC}"
+	@$(MAKE) -C $(BACKEND_DIR) build
+	@echo -e "${BLUE}Building frontend locally...${NC}"
+	@cd frontend && npm install && npm run build
+	@echo -e "${GREEN}All services built locally successfully!${NC}"
+
+all-docker: ## Build all backend services using Docker (make internally) and frontend using Docker
+	@echo -e "${BLUE}Building all backend services with Docker (using make internally)...${NC}"
+	@$(MAKE) -C $(BACKEND_DIR) build-docker-services
+	@echo -e "${BLUE}Building frontend with Docker...${NC}"
+	@docker build -f ./Dockerfile -t wc-frontend:latest .
+	@echo -e "${GREEN}All services built with Docker successfully!${NC}"
+
+build-prod-auth: build-auth-svc-prod-image ## Build auth-svc backend for production
+	@echo -e "${GREEN}Auth-svc backend component built successfully for production!${NC}"
 
 test: test-backend ## Run all backend tests
 	@echo -e "${GREEN}Backend tests completed!${NC}"
@@ -88,9 +98,9 @@ clean: ## Clean build artifacts
 	@echo -e "${GREEN}Build artifacts cleaned successfully!${NC}"
 
 # Cloud Deployment Testing
-cloud-test-build: build ## Test full backend build process for cloud deployment
-	@echo -e "${BLUE}Testing full backend build process for cloud deployment...${NC}"
-	@echo -e "${GREEN}Backend build process completed successfully!${NC}"
+cloud-test-build: build-prod-auth ## Test auth-svc backend build process for cloud deployment
+	@echo -e "${BLUE}Testing auth-svc backend build process for cloud deployment...${NC}"
+	@echo -e "${GREEN}Auth-svc backend build process completed successfully!${NC}"
 	@echo -e "${YELLOW}Note: This build has generated Docker images that can be deployed to cloud services like Render.${NC}"
 	@echo -e "${YELLOW}Auth service image: wc-auth-svc:latest${NC}"
 	@docker images | grep -E 'wc-auth-svc'

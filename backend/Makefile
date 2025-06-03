@@ -116,6 +116,20 @@ build: ## Build all services
 	done
 	@echo -e "${GREEN}All services built successfully!${NC}"
 
+.PHONY: build-docker-services
+build-docker-services: ## Build all backend services using their Dockerfile.dev, ensuring make is used internally
+	@echo -e "${BLUE}Building all backend services using Docker (make internally)...${NC}"
+	@for service in $(SERVICES); do \
+		echo -e "${YELLOW}Building Docker image for $$service (dev)...${NC}"; \
+		if [ -f "$$service/Dockerfile.dev" ]; then \
+			docker build -f $$service/Dockerfile.dev -t wc-$$service-dev:latest $$service/; \
+			echo -e "${GREEN}Docker image for $$service built successfully!${NC}"; \
+		else \
+			echo -e "${RED}Dockerfile.dev not found for $$service. Skipping.${NC}"; \
+		fi; \
+	done
+	@echo -e "${GREEN}All backend service Docker images built successfully!${NC}"
+
 .PHONY: build-service
 build-service: ## Build a specific service (e.g., make build-service SERVICE=auth-svc)
 	@if [ -z "$(SERVICE)" ]; then \
@@ -126,6 +140,12 @@ build-service: ## Build a specific service (e.g., make build-service SERVICE=aut
 	@echo -e "${BLUE}Building $(SERVICE)...${NC}"
 	@cd $(SERVICE) && $(GO) build -o bin/$(SERVICE) ./cmd
 	@echo -e "${GREEN}$(SERVICE) built successfully!${NC}"
+
+.PHONY: build-internal
+build-internal: ## Build the current service (intended to be called inside Docker)
+	@echo -e "${BLUE}Building $(shell basename $(CURDIR)) internally (Go build)...${NC}"
+	@$(GO) build -o bin/$(shell basename $(CURDIR)) ./cmd
+	@echo -e "${GREEN}$(shell basename $(CURDIR)) built successfully!${NC}"
 
 # Test Commands
 .PHONY: test

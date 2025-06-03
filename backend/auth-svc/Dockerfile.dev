@@ -22,6 +22,8 @@ RUN go mod download
 # Copy the rest of the code
 COPY . .
 
+RUN make build-internal
+
 # Create .air.toml configuration if it doesn't exist
 RUN if [ ! -f .air.toml ]; then \
     echo '[build]\n  cmd = "go build -o ./bin/app ./cmd"\n  bin = "./bin/app"\n  include_ext = ["go"]\n  exclude_dir = ["bin", "vendor"]\n  delay = 1000\n[misc]\n  clean_on_exit = true' > .air.toml; \

@@ -9,6 +9,8 @@ RUN apk add --no-cache git curl make gcc libc-dev
 # Copy the source code
 COPY . .
 
+RUN make build-internal
+
 # Expose gRPC port
 EXPOSE 50057
 
