@@ -12,7 +12,7 @@ COPY frontend/package.json frontend/package-lock.json* ./
 #COPY frontend/pnpm-lock.yaml ./ # Uncomment if using pnpm
 
 # Install dependencies
-RUN npm install --legacy-peer-deps --production
+RUN npm install --legacy-peer-deps
 # RUN pnpm install --frozen-lockfile # Uncomment if using pnpm
 
 # Copy the rest of the frontend application code
