@@ -18,6 +18,7 @@ RUN npm install --legacy-peer-deps
 # Copy the rest of the frontend application code
 COPY frontend/. .
 
+RUN npm install -g vite
 # Build the SvelteKit application for static export
 RUN npm run build
 # The output will be in /app/frontend/build (by default for adapter-static)
