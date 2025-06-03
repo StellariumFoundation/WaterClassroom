@@ -60,7 +60,7 @@
 
             {#if question.type === 'multiple-choice'}
               <div class="options-group">
-                {#each question.options || [] as option, i (option)}
+                {#each question.options as option, i (option)}
                   <label class="radio-label">
                     <input type="radio" name="q{question.id}" value={option} class="styled-radio" />
                     <span>{option}</span>
@@ -87,6 +87,9 @@
 </div>
 
 <style>
+  .quiz-page-container {
+    /* Max width handled by .app-content */
+  }
   .page-header {
     /* For potential back button */
     margin-bottom: var(--spacing-md);

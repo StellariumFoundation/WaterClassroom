@@ -84,6 +84,9 @@
 </div>
 
 <style>
+  .profile-page-container {
+    /* Max width handled by .app-content */
+  }
   .page-title {
     text-align: center;
     margin-bottom: var(--spacing-xxl);
