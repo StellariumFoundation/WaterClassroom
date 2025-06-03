@@ -44,6 +44,7 @@ RATE_LIMIT_WINDOW: 1m
 OAUTH_GOOGLE_CLIENT_ID: ""
 OAUTH_GOOGLE_CLIENT_SECRET: ""
 OAUTH_GOOGLE_REDIRECT_URL: http://localhost:8080/auth/callback/google
+FRONTEND_OAUTH_CALLBACK_URL: "http://localhost:5173/auth/oauth-callback" # This is the frontend callback
 
 OAUTH_APPLE_CLIENT_ID: ""
 OAUTH_APPLE_CLIENT_SECRET: ""

@@ -114,28 +114,11 @@ Object storage buckets:
 
 ## 7 · Security & Compliance  
 
-*   BCrypt/Argon2 password hashing.
-*   **JWT (RS256) and Refresh Token Mechanism:**
-    *   **Access Tokens:** Short-lived (e.g., 15 minutes, configurable via `JWT_ACCESS_TOKEN_EXPIRY`) JWTs used to authenticate API requests.
-    *   **Refresh Tokens:** Longer-lived (e.g., 7 days, configurable via `JWT_REFRESH_TOKEN_EXPIRY`) tokens used to obtain new access tokens without requiring user re-authentication.
-    *   **Refresh Token Rotation:**
-        *   Upon successful validation of an existing refresh token, both a new access token and a new refresh token are issued.
-        *   The previously used refresh token is invalidated.
-        *   Active refresh tokens are stored in Redis, keyed by user ID (e.g., `refresh_token:<userID>`). Only the latest refresh token issued to a user is considered valid. This strategy means a new login or a token refresh action on one device/session will invalidate any older refresh tokens for that same user, effectively limiting a user to one active refreshable session.
-    *   **JWT Claims:**
-        *   Standard claims include `iss` (issuer), `aud` (audience), `exp` (expiry time), and `sub` (subject/user ID).
-        *   The `authMiddleware` strictly validates the `iss` and `aud` claims against configured values (`JWT_ISSUER`, `JWT_AUDIENCE`) for incoming access tokens.
-        *   A `type` claim is used to differentiate between "access" and "refresh" tokens.
-        *   Refresh tokens also include a `jti` (JWT ID) claim, providing a unique identifier for each refresh token, which can support more granular revocation strategies in the future if needed.
-    *   **Key Management:** Utilizes RSA (RS256) for JWT signing. The private key is used for signing tokens, and the corresponding public key is used for verification. Secure management and rotation of these keys are critical, especially in production environments.
-    *   **Token Revocation:**
-        *   Access tokens are primarily revoked by their short expiry time.
-        *   Refresh tokens are effectively revoked upon use due to the rotation strategy (the old token is no longer valid in Redis).
-        *   A new login or a token refresh by the same user also invalidates any previously issued refresh token for that user by overwriting the Redis entry.
-        *   If a user's account status changes (e.g., disabled, password changed significantly), the stored refresh token in Redis should be explicitly deleted by the relevant service logic to invalidate active sessions. The current refresh mechanism (checking user validity in DB and matching token in Redis) helps mitigate use of tokens for users whose status changes or if tokens are superseded.
-*   Rate-limiting (Redis token bucket).
-*   GDPR / COPPA data retention tags in user records.
-*   Proctoring media encryption at rest, signed URL access, auto-purge after retention window.
+* BCrypt/Argon2 password hashing.
+* JWT (RS256) + refresh tokens.
+* Rate-limiting (Redis token bucket).
+* GDPR / COPPA data retention tags in user records.
+* Proctoring media encryption at rest, signed URL access, auto-purge after retention window.
 
 ---
 
