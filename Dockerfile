@@ -17,8 +17,7 @@ COPY frontend/Makefile /app/frontend/Makefile
 
 # Install dependencies
 RUN apk add --no-cache make
-RUN npm install --legacy-peer-deps
-RUN npm install @sveltejs/kit
+RUN make install-deps
 # RUN pnpm install --frozen-lockfile # Uncomment if using pnpm
 
 # Build the SvelteKit application for static export
@@ -36,7 +35,6 @@ COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 COPY backend/Makefile /app/backend/Makefile
 # Download Go module dependencies
 RUN apk add --no-cache make
-RUN go mod download
 
 # Copy the rest of the API gateway source code
 COPY backend/api-gateway/. .

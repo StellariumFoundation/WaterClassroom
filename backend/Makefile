@@ -257,8 +257,9 @@ build-service-docker: ## Build a specific service for Docker production image (S
 
 	# Determine Go build source path
 	GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/cmd/main.go" # Default for most services
-	ifeq ($(SERVICE),api-gateway)
-		GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/main.go" # Special case for api-gateway
+	# If SERVICE is 'api-gateway' or 'assessment-svc', then expect main.go in the root of the module directory.
+	ifeq ($(filter $(SERVICE),api-gateway assessment-svc),$(SERVICE))
+		GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/main.go"
 	endif
 
 	@echo "--- Building service $(SERVICE) for Docker ---"

@@ -10,12 +10,8 @@ WORKDIR /build
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Run go mod tidy to ensure go.sum is correct
+# Install make
 RUN apk add --no-cache make
-RUN go mod tidy
-
-# Download dependencies
-RUN go mod download
 
 # Copy the source code
 COPY . .

@@ -8,6 +8,8 @@ WORKDIR /app
 
 # Copy the source code
 COPY . .
+# Copy the backend Makefile (one level up from context)
+COPY ../Makefile /app/Makefile
 
 # Expose ports
 # 8084: HTTP API
