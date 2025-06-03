@@ -86,9 +86,6 @@
 </div>
 
 <style>
-  .lesson-view-container {
-    /* Max width handled by .app-content */
-  }
   .page-header {
     margin-bottom: var(--spacing-lg);
   }

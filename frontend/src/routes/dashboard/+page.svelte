@@ -69,10 +69,6 @@
 </div>
 
 <style>
-  .dashboard-container {
-    /* Max width is handled by .app-content in layout */
-  }
-
   .page-title {
     /* Global h1 styling will apply. Specific overrides if needed: */
     text-align: center;

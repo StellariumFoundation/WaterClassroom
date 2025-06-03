@@ -2,29 +2,41 @@
   export let variant: 'primary' | 'secondary' | 'tertiary' | 'danger' = 'primary';
   export let onClick: (() => void) | undefined = undefined;
   export let disabled: boolean = false;
-  export let type: 'button' | 'submit' | 'reset' = 'button'; // Added type prop
+  export let type: 'button' | 'submit' | 'reset' = 'button';
+  export let href: string | undefined = undefined; // Added href prop
 
   // Base classes + variant specific classes
-  $: buttonClass = `btn btn-${variant}`;
+  $: buttonClass = `btn btn-${variant} ${$$props.class || ''}`; // Include additional classes
 
-  const handleClick = (event: MouseEvent) => { // Added event param
+  const handleClick = (event: MouseEvent) => {
     if (onClick && !disabled) {
       onClick();
     }
-    // Allow default form submission if type="submit" and no onClick is defined,
-    // or if onClick doesn't preventDefault.
-    // For this component, we primarily rely on the onClick prop for actions.
+    // If it's a link, default browser navigation will handle it.
+    // If it's a button of type submit, default form submission will occur
+    // unless event.preventDefault() was called in onClick.
   };
 </script>
 
-<button {type} class={buttonClass} on:click={handleClick} {disabled}>
-  <slot />
-</button>
+{#if href && !disabled}
+  <a {href} class={buttonClass} role="button" aria-disabled={disabled ? 'true' : undefined} on:click={handleClick}>
+    <slot />
+  </a>
+{:else if href && disabled}
+  <a {href} class={buttonClass} role="button" aria-disabled="true">
+    <slot />
+  </a>
+{:else}
+  <button {type} class={buttonClass} on:click={handleClick} {disabled}>
+    <slot />
+  </button>
+{/if}
 
 <style>
   .btn {
     padding: var(--spacing-sm) var(--spacing-lg); /* 8px 16px */
     border-radius: var(--border-radius-base); /* 6px */
+    text-decoration: none; /* Ensure links don't have underlines by default */
     border: 1px solid transparent;
     cursor: pointer;
     font-family: var(--font-family-system);
@@ -48,7 +60,7 @@
     box-shadow: 0 0 0 3px var(--primary-blue-lighter);
   }
 
-  .btn:disabled {
+  .btn:disabled, a.btn[aria-disabled="true"] { /* Style for disabled button and link */
     opacity: 0.65;
     cursor: not-allowed;
   }

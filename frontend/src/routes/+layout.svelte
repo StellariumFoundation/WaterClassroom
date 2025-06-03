@@ -142,9 +142,6 @@
     text-decoration: none;
     color: var(--primary-blue); /* Highlight on hover */
   }
-  .logo-text {
-    /* If using an SVG logo later, this text can be visually hidden but accessible */
-  }
 
   .main-nav ul {
     list-style: none;
@@ -183,14 +180,6 @@
     font-weight: var(--font-weight-semibold);
     background-color: var(--primary-blue-lighter);
   }
-  .main-nav a.nav-auth-link { /* Specific styling for Login/Signup if needed */
-    /* Example: make it look more like a button */
-    /* background-color: var(--primary-blue);
-    color: var(--neutral-white); */
-  }
-  /* .main-nav a.nav-auth-link:hover {
-    background-color: var(--primary-blue-darker);
-  } */
 
   /* Main Content Area */
   .app-content {

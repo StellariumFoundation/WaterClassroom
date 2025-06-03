@@ -8,6 +8,7 @@
   export let disabled: boolean = false;
   export let name: string | undefined = undefined; // Useful for forms
   export let id: string | undefined = undefined; // Allow passing ID for label association
+  export let required: boolean = false; // Added required prop
 
   const dispatch = createEventDispatcher();
 
@@ -40,7 +41,8 @@
     value={value}
     {placeholder}
     {disabled}
-    class="styled-input"
+    {required}
+    class="styled-input {$$props.class || ''}"
     on:input={handleEvent}
     on:change={handleEvent}
     on:blur={handleEvent}

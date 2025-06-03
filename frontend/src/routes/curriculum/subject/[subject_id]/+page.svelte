@@ -76,10 +76,6 @@
 </div>
 
 <style>
-  .lesson-list-container {
-    /* Max width handled by .app-content */
-  }
-
   .page-header {
     display: flex;
     align-items: center;
@@ -91,10 +87,6 @@
     margin-top: 0; /* Handled by page-header */
     flex-grow: 1;
     text-align: left; /* Align with back button */
-  }
-  /* Adjust button specific style if needed */
-  :global(.back-button) {
-    /* font-size: var(--font-size-small); */
   }
 
 

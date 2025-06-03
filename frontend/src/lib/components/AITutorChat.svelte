@@ -20,6 +20,12 @@
   let chatMessagesElement: HTMLElement; // For scrolling
   let chatInputAreaElement: HTMLTextAreaElement; // For focusing
 
+  function handleKeydownEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      handleClose();
+    }
+  }
+
   onMount(() => {
     if (messages.length === 0) {
       messages = [
@@ -81,13 +87,20 @@
   // Using $: for reactivity to isOpen prop changes
   $: {
     if (typeof document !== 'undefined') {
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', handleKeydownEscape);
+      } else {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeydownEscape);
+      }
     }
   }
-  // Ensure body scroll is restored if component is destroyed while open
+  // Ensure body scroll is restored and listener removed if component is destroyed while open
   onDestroy(() => {
     if (typeof document !== 'undefined') {
         document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeydownEscape);
     }
   });
 

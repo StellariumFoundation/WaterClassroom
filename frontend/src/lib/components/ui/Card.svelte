@@ -2,7 +2,7 @@
   // No specific props for this basic version
 </script>
 
-<div class="card">
+<div class="card {$$props.class || ''}">
   {#if $$slots.header}
     <header class="card-header">
       <slot name="header"></slot>

@@ -22,7 +22,7 @@
   }
 </script>
 
-<div class="checkbox-control">
+<div class="checkbox-control {$$props.class || ''}">
   <input
     {id}
     {name}
