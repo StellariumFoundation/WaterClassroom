@@ -4,7 +4,7 @@
 # Date: May 30, 2025
 
 # Make all targets PHONY to ensure they always run
-.PHONY: help build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend build-auth-svc-prod-image \
+.PHONY: help build-backend-dev-images run-backend-dev stop-backend-dev logs-backend-dev test-backend test-frontend build-auth-svc-prod-image \
         install build test clean cloud-test-build
 
 # Variables
@@ -61,6 +61,11 @@ test-backend: ## Run tests for backend services
 	@make -C $(BACKEND_DIR) test
 	@echo -e "${GREEN}Backend tests completed.${NC}"
 
+test-frontend: ## Run tests for frontend application
+	@echo -e "${BLUE}Running frontend tests...${NC}"
+	@make -C frontend test
+	@echo -e "${GREEN}Frontend tests completed.${NC}"
+
 build-auth-svc-prod-image: ## Build production Docker image for auth-svc
 	@echo -e "${BLUE}Building production Docker image for auth-svc...${NC}"
 	@docker build -t wc-auth-svc:latest -f $(BACKEND_DIR)/auth-svc/Dockerfile $(BACKEND_DIR)/auth-svc
@@ -78,8 +83,8 @@ build: ## Build backend for production (without Docker)
 	@make -C backend build
 	@echo -e "${GREEN}Backend components built successfully!${NC}"
 
-test: test-backend ## Run all backend tests
-	@echo -e "${GREEN}Backend tests completed!${NC}"
+test: test-frontend test-backend ## Run all frontend and backend tests
+	@echo -e "${GREEN}All tests completed!${NC}"
 
 clean: ## Clean build artifacts
 	@echo -e "${BLUE}Cleaning build artifacts...${NC}"

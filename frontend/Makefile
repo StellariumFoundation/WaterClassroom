@@ -1,6 +1,6 @@
 # frontend/Makefile
 
-.PHONY: all build install-deps
+.PHONY: all build install-deps test
 
 all: build
 
@@ -17,3 +17,7 @@ clean:
 	@echo "Cleaning frontend build artifacts..."
 	rm -rf build
 	rm -rf .svelte-kit
+
+test:
+	@echo "Running frontend tests..."
+	npm test
