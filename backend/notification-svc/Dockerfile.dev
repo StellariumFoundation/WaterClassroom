@@ -9,8 +9,15 @@ RUN apk add --no-cache git curl make gcc libc-dev
 # Copy the source code
 COPY . .
 
-# Expose gRPC port
-EXPOSE 50057
+# Download Go modules
+RUN go mod tidy
 
-# Keep container running for development
-CMD ["tail", "-f", "/dev/null"]
+# Build the application
+# Make sure to include all .go files needed for the build
+RUN go build -o /app/notification-svc main.go config.go
+
+# Expose gRPC port (if used, otherwise remove or comment out)
+# EXPOSE 50057
+
+# Command to run the executable
+CMD ["/app/notification-svc"]

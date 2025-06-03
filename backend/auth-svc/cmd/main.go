@@ -34,7 +34,33 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	// "github.com/google/uuid" // Already imported below
 )
+
+// EmailRequest defines the structure for email sending requests (mirroring notification-svc)
+type EmailRequest struct {
+	To           string                 `json:"to"`
+	Subject      string                 `json:"subject"`
+	HTMLBody     string                 `json:"html_body,omitempty"`
+	TemplateName string                 `json:"template_name,omitempty"`
+	TemplateData map[string]interface{} `json:"template_data,omitempty"`
+}
+
+// ForgotPasswordRequest defines the structure for the forgot password request body
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+// VerifyEmailRequest defines the structure for the email verification request
+type VerifyEmailRequest struct {
+	Token string `json:"token" binding:"required"`
+}
+
+// ResetPasswordRequest defines the structure for the reset password request
+type ResetPasswordRequest struct {
+	Token       string `json:"token" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
 
 // GoogleUserInfo defines the structure for user information from Google
 type GoogleUserInfo struct {
@@ -647,6 +673,7 @@ func (app *Application) startGRPCServer(ctx context.Context) error {
 
 // Handler placeholder functions
 func (app *Application) handleRegister(c *gin.Context) {
+	totalStart := time.Now()
 	var req RegisterRequest
 
 	// Bind request body to struct
@@ -657,38 +684,48 @@ func (app *Application) handleRegister(c *gin.Context) {
 	}
 
 	// Check if user already exists
+	dbCheckStart := time.Now()
 	var existingUserID string
 	err := app.DB.QueryRowContext(c.Request.Context(), "SELECT id FROM users WHERE email = $1", req.Email).Scan(&existingUserID)
+	app.Logger.Debug("Register: DB check duration", zap.Duration("duration", time.Since(dbCheckStart)))
 	if err != nil && err != sql.ErrNoRows {
 		app.Logger.Error("Database error while checking for existing user", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		app.Logger.Info("Register: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 	if err == nil { // User found
 		app.Logger.Warn("Registration attempt with existing email", zap.String("email", req.Email))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User with this email already exists"})
+		app.Logger.Info("Register: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 	// If err is sql.ErrNoRows, then user does not exist, proceed.
 
 	// Hash the password
+	hashStart := time.Now()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), app.Config.PasswordHashCost)
+	app.Logger.Debug("Register: Password hash duration", zap.Duration("duration", time.Since(hashStart)))
 	if err != nil {
 		app.Logger.Error("Failed to hash password", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing password"})
+		app.Logger.Info("Register: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 
 	// Insert new user into the database
+	dbInsertStart := time.Now()
 	var newUserID string
 	// Assuming 'users' table has id (UUID), display_name, email, password_hash
 	// and returns the id of the newly inserted row.
 	// The actual schema uses 'display_name' for the user's name.
 	insertQuery := "INSERT INTO users (display_name, email, password_hash) VALUES ($1, $2, $3) RETURNING id"
 	err = app.DB.QueryRowContext(c.Request.Context(), insertQuery, req.Name, req.Email, string(hashedPassword)).Scan(&newUserID)
+	app.Logger.Debug("Register: DB insert duration", zap.Duration("duration", time.Since(dbInsertStart)))
 	if err != nil {
 		app.Logger.Error("Failed to insert new user into database", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		app.Logger.Info("Register: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 
@@ -699,10 +736,88 @@ func (app *Application) handleRegister(c *gin.Context) {
 		Email: req.Email,
 	}
 	app.Logger.Info("User registered successfully", zap.String("userID", newUserID), zap.String("email", req.Email))
+
+	// Publish message to RabbitMQ for email verification
+	if app.RabbitMQ != nil && app.Config.EmailVerificationRequired {
+		tokenGenAndRedisStart := time.Now()
+		verificationToken := uuid.NewString() // Token generation itself is very fast
+
+		// Store verification token in Redis
+		if app.Redis != nil {
+			redisStart := time.Now()
+			verificationKey := "verification:" + verificationToken
+			err := app.Redis.Set(c.Request.Context(), verificationKey, newUserID, app.Config.EmailVerificationTokenExpiry).Err()
+			app.Logger.Debug("Register: Redis op duration (set verification token)", zap.Duration("duration", time.Since(redisStart)))
+			if err != nil {
+				app.Logger.Error("Failed to store verification token in Redis", zap.Error(err), zap.String("userID", newUserID), zap.String("token", verificationToken))
+			} else {
+				app.Logger.Info("Verification token stored in Redis", zap.String("userID", newUserID), zap.String("key", verificationKey))
+			}
+		} else {
+			app.Logger.Warn("Redis client is nil, cannot store verification token", zap.String("userID", newUserID))
+		}
+		app.Logger.Debug("Register: Token gen and Redis storage duration", zap.Duration("duration", time.Since(tokenGenAndRedisStart)))
+
+
+		// TODO: Make frontend URL configurable
+		verificationLink := fmt.Sprintf("http://localhost:5173/verify-email?token=%s", verificationToken)
+
+		emailReq := EmailRequest{
+			To:           req.Email,
+			Subject:      "Verify Your Email Address - Water Classroom",
+			TemplateName: "email_verification.html", // Must match template name in notification-svc
+			TemplateData: map[string]interface{}{
+				"Name":             req.Name,
+				"VerificationLink": verificationLink,
+			},
+		}
+
+		jsonMarshalStart := time.Now()
+		jsonBody, err := json.Marshal(emailReq)
+		app.Logger.Debug("Register: JSON marshal emailReq duration", zap.Duration("duration", time.Since(jsonMarshalStart)))
+		if err != nil {
+			app.Logger.Error("Failed to marshal email request to JSON", zap.Error(err), zap.String("userID", newUserID))
+		} else {
+			rabbitMQStart := time.Now()
+			ch, err := app.RabbitMQ.Channel()
+			if err != nil {
+				app.Logger.Error("Failed to open RabbitMQ channel for email verification", zap.Error(err), zap.String("userID", newUserID))
+			} else {
+				defer ch.Close()
+
+				qName := "email_notifications"
+				_, err = ch.QueueDeclare(
+					qName, true, false, false, false, nil,
+				)
+				if err != nil {
+					app.Logger.Error("Failed to declare RabbitMQ queue for email verification", zap.Error(err), zap.String("queue", qName), zap.String("userID", newUserID))
+				} else {
+					err = ch.PublishWithContext(c.Request.Context(),
+						"", qName, false, false,
+						amqp091.Publishing{
+							ContentType: "application/json",
+							Body:        jsonBody,
+							DeliveryMode: amqp091.Persistent,
+						})
+					if err != nil {
+						app.Logger.Error("Failed to publish email verification message to RabbitMQ", zap.Error(err), zap.String("userID", newUserID))
+					} else {
+						app.Logger.Info("Email verification request published to RabbitMQ", zap.String("userID", newUserID), zap.String("email", req.Email))
+					}
+				}
+			}
+			app.Logger.Debug("Register: RabbitMQ publish duration", zap.Duration("duration", time.Since(rabbitMQStart)))
+		}
+	} else if app.RabbitMQ == nil {
+		app.Logger.Warn("RabbitMQ connection is nil, skipping email verification publishing", zap.String("userID", newUserID))
+	}
+
+	app.Logger.Info("Register: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 	c.JSON(http.StatusCreated, userResponse)
 }
 
 func (app *Application) handleLogin(c *gin.Context) {
+	totalStart := time.Now()
 	var req LoginRequest
 
 	// Bind request body to struct
@@ -713,35 +828,43 @@ func (app *Application) handleLogin(c *gin.Context) {
 	}
 
 	// Query database for user by email
+	dbQueryStart := time.Now()
 	var userID, userEmail, passwordHash string
 	// Assuming 'users' table has id, email, password_hash.
-	// We also fetch display_name to potentially use it later, though not strictly needed for login logic itself.
 	query := "SELECT id, email, password_hash FROM users WHERE email = $1"
 	err := app.DB.QueryRowContext(c.Request.Context(), query, req.Email).Scan(&userID, &userEmail, &passwordHash)
+	app.Logger.Debug("Login: DB query duration", zap.Duration("duration", time.Since(dbQueryStart)))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			app.Logger.Warn("Login attempt for non-existent email", zap.String("email", req.Email))
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"}) // Generic error for non-existent user or bad password
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			app.Logger.Info("Login: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 			return
 		}
 		app.Logger.Error("Database error during login", zap.Error(err), zap.String("email", req.Email))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		app.Logger.Info("Login: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 
 	// Compare provided password with stored hash
+	comparePassStart := time.Now()
 	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password))
+	app.Logger.Debug("Login: Password compare duration", zap.Duration("duration", time.Since(comparePassStart)))
 	if err != nil {
-		// This includes bcrypt.ErrMismatchedHashAndPassword
 		app.Logger.Warn("Invalid password attempt", zap.String("email", userEmail), zap.Error(err))
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"}) // Generic error
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		app.Logger.Info("Login: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 
+	tokenGenStart := time.Now()
 	signedAccessToken, signedRefreshToken, err := app.generateTokens(userID, userEmail)
+	app.Logger.Debug("Login: JWT generation duration", zap.Duration("duration", time.Since(tokenGenStart)))
 	if err != nil {
 		app.Logger.Error("Failed to generate tokens", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
+		app.Logger.Info("Login: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 		return
 	}
 
@@ -752,6 +875,7 @@ func (app *Application) handleLogin(c *gin.Context) {
 		AccessToken:  signedAccessToken,
 		RefreshToken: signedRefreshToken,
 	}
+	app.Logger.Info("Login: Total execution time", zap.Duration("duration", time.Since(totalStart)))
 	c.JSON(http.StatusOK, loginResponse)
 }
 
@@ -797,18 +921,272 @@ func (app *Application) handleRefreshToken(c *gin.Context) {
 }
 
 func (app *Application) handleForgotPassword(c *gin.Context) {
-	// TODO: Implement forgot password logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req ForgotPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind forgot password request", zap.Error(err))
+		// Still return a generic message to prevent email enumeration
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+
+	// Query database for user by email to get ID, email, and name
+	var userID, userEmail, userName string
+	query := "SELECT id, email, display_name FROM users WHERE email = $1"
+	err := app.DB.QueryRowContext(c.Request.Context(), query, req.Email).Scan(&userID, &userEmail, &userName)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			app.Logger.Info("Password reset requested for non-existent email", zap.String("email", req.Email))
+			// Do NOT reveal that the user was not found.
+		} else {
+			app.Logger.Error("Database error during password reset user lookup", zap.Error(err), zap.String("email", req.Email))
+			// Do NOT reveal database error to client.
+		}
+		// Always return a generic success message, regardless of whether the user was found or an error occurred.
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+
+	// User found, proceed to generate token and send email (if RabbitMQ is configured)
+	resetToken := uuid.NewString() // Generate token regardless of Redis/RabbitMQ to keep timing consistent
+
+	if app.Redis != nil {
+		resetKey := "password_reset:" + resetToken
+		errStoreToken := app.Redis.Set(c.Request.Context(), resetKey, userID, app.Config.PasswordResetTokenExpiry).Err()
+		if errStoreToken != nil {
+			app.Logger.Error("Failed to store password reset token in Redis", zap.Error(errStoreToken), zap.String("userID", userID))
+			// Log and continue. The generic success message will still be sent.
+			// The user might not be able to reset if token isn't stored, but we don't leak info.
+		} else {
+			app.Logger.Info("Password reset token stored in Redis", zap.String("userID", userID), zap.String("key", resetKey))
+		}
+	} else {
+		app.Logger.Warn("Redis client is nil, cannot store password reset token", zap.String("userID", userID))
+		// If Redis is unavailable, the reset link sent via email (if RabbitMQ works) will not be verifiable.
+		// Still send generic message.
+	}
+
+
+	if app.RabbitMQ == nil {
+		app.Logger.Warn("RabbitMQ connection is nil, cannot send password reset email", zap.String("userID", userID), zap.String("email", userEmail))
+		// Still return generic success message
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+
+	// TODO: Make frontend URL configurable
+	resetLink := fmt.Sprintf("http://localhost:5173/reset-password?token=%s", resetToken)
+
+	emailReq := EmailRequest{
+		To:           userEmail,
+		Subject:      "Password Reset Request - Water Classroom",
+		TemplateName: "password_reset.html", // Must match template name in notification-svc
+		TemplateData: map[string]interface{}{
+			"Name":      userName,
+			"ResetLink": resetLink,
+		},
+	}
+
+	jsonBody, err := json.Marshal(emailReq)
+	if err != nil {
+		app.Logger.Error("Failed to marshal password reset email request to JSON", zap.Error(err), zap.String("userID", userID))
+		// Non-fatal for the user, but log it.
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+
+	ch, err := app.RabbitMQ.Channel()
+	if err != nil {
+		app.Logger.Error("Failed to open RabbitMQ channel for password reset email", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+	defer ch.Close()
+
+	qName := "email_notifications" // Should match notification-svc queue
+	_, err = ch.QueueDeclare(
+		qName, true, false, false, false, nil,
+	)
+	if err != nil {
+		app.Logger.Error("Failed to declare RabbitMQ queue for password reset email", zap.Error(err), zap.String("queue", qName), zap.String("userID", userID))
+		c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
+		return
+	}
+
+	err = ch.PublishWithContext(c.Request.Context(),
+		"", qName, false, false,
+		amqp091.Publishing{
+			ContentType:  "application/json",
+			Body:         jsonBody,
+			DeliveryMode: amqp091.Persistent,
+		})
+	if err != nil {
+		app.Logger.Error("Failed to publish password reset email message to RabbitMQ", zap.Error(err), zap.String("userID", userID))
+		// Non-fatal
+	} else {
+		app.Logger.Info("Password reset email request published to RabbitMQ", zap.String("userID", userID), zap.String("email", userEmail))
+	}
+
+	// Always return a generic success message
+	c.JSON(http.StatusOK, gin.H{"message": "If an account with that email exists, a password reset link has been sent."})
 }
 
 func (app *Application) handleResetPassword(c *gin.Context) {
-	// TODO: Implement reset password logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req ResetPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind reset password request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	if req.Token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password reset token is required."})
+		return
+	}
+	if len(req.NewPassword) < 8 { // Ensure validator ran, or re-validate
+		c.JSON(http.StatusBadRequest, gin.H{"error": "New password must be at least 8 characters long."})
+		return
+	}
+
+
+	if app.Redis == nil {
+		app.Logger.Error("Redis client is nil, cannot verify password reset token")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Password reset service is currently unavailable."})
+		return
+	}
+
+	resetKey := "password_reset:" + req.Token
+	userID, err := app.Redis.Get(c.Request.Context(), resetKey).Result()
+
+	if err == redis.Nil {
+		app.Logger.Warn("Password reset token not found in Redis or expired", zap.String("token", req.Token))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired password reset token."})
+		return
+	}
+	if err != nil {
+		app.Logger.Error("Error retrieving password reset token from Redis", zap.Error(err), zap.String("token", req.Token))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error verifying password reset token."})
+		return
+	}
+
+	// Token is valid, user ID retrieved. Hash the new password.
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), app.Config.PasswordHashCost)
+	if err != nil {
+		app.Logger.Error("Failed to hash new password during reset", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing new password."})
+		return
+	}
+
+	// Update user's password_hash in the database.
+	updateQuery := "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2"
+	result, err := app.DB.ExecContext(c.Request.Context(), updateQuery, string(hashedNewPassword), userID)
+	if err != nil {
+		app.Logger.Error("Failed to update user password in database after reset", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password."})
+		return
+	}
+
+	rowsAffected, errDb := result.RowsAffected()
+	if errDb != nil {
+		app.Logger.Error("Failed to get rows affected after password reset update", zap.Error(errDb), zap.String("userID", userID))
+		// Non-fatal for the overall success, but log it. Password was updated.
+	}
+	if rowsAffected == 0 {
+		// This would be strange, as we just validated the token and got a userID.
+		// Implies user was deleted between Redis GET and DB UPDATE.
+		app.Logger.Error("No user found to update password for, despite valid token", zap.String("userID", userID), zap.String("token", req.Token))
+		c.JSON(http.StatusNotFound, gin.H{"error": "User associated with token not found."}) // Or a more generic 500
+		return
+	}
+
+	// Delete the token from Redis to prevent reuse
+	delErr := app.Redis.Del(c.Request.Context(), resetKey).Err()
+	if delErr != nil {
+		app.Logger.Error("Failed to delete password reset token from Redis after successful reset", zap.Error(delErr), zap.String("key", resetKey))
+		// This is not fatal to the user's password reset, but should be monitored.
+	}
+
+	app.Logger.Info("Password reset successfully", zap.String("userID", userID))
+	c.JSON(http.StatusOK, gin.H{"message": "Password reset successfully."})
 }
 
 func (app *Application) handleVerifyEmail(c *gin.Context) {
-	// TODO: Implement email verification logic
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Not implemented yet"})
+	var req VerifyEmailRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		app.Logger.Error("Failed to bind verify email request", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload: " + err.Error()})
+		return
+	}
+
+	if req.Token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Verification token is required"})
+		return
+	}
+
+	if app.Redis == nil {
+		app.Logger.Error("Redis client is nil, cannot verify email token")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Email verification service is currently unavailable."})
+		return
+	}
+
+	verificationKey := "verification:" + req.Token
+	userID, err := app.Redis.Get(c.Request.Context(), verificationKey).Result()
+
+	if err == redis.Nil {
+		app.Logger.Warn("Verification token not found in Redis or expired", zap.String("token", req.Token))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired verification token."})
+		return
+	}
+	if err != nil {
+		app.Logger.Error("Error retrieving token from Redis", zap.Error(err), zap.String("token", req.Token))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error verifying token."})
+		return
+	}
+
+	// Token is valid, user ID retrieved. Update user's is_verified status.
+	updateQuery := "UPDATE users SET is_verified = TRUE, updated_at = NOW() WHERE id = $1 AND is_verified = FALSE"
+	result, err := app.DB.ExecContext(c.Request.Context(), updateQuery, userID)
+	if err != nil {
+		app.Logger.Error("Failed to update user verification status in database", zap.Error(err), zap.String("userID", userID))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update email verification status."})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		app.Logger.Error("Failed to get rows affected after user verification update", zap.Error(err), zap.String("userID", userID))
+		// Continue to delete token even if this fails, but log it.
+	}
+
+	if rowsAffected == 0 {
+		// This could mean the user was already verified, or the user ID from Redis is invalid (less likely if token existed).
+		// Check if user is already verified to provide a more specific message.
+		var isVerified bool
+		checkQuery := "SELECT is_verified FROM users WHERE id = $1"
+		err := app.DB.QueryRowContext(c.Request.Context(), checkQuery, userID).Scan(&isVerified)
+		if err == nil && isVerified {
+			app.Logger.Info("Email already verified for user", zap.String("userID", userID))
+			// If already verified, still delete the token and return success.
+		} else {
+			// If not already verified, then rowsAffected = 0 is unexpected if user ID was valid.
+			app.Logger.Warn("User not found for verification or already verified, but rowsAffected was 0", zap.String("userID", userID))
+			// It's generally safe to proceed to delete token and return success,
+			// as the main goal (being verified) might already be true or token is now invalid.
+		}
+	}
+
+	// Delete the token from Redis to prevent reuse
+	delErr := app.Redis.Del(c.Request.Context(), verificationKey).Err()
+	if delErr != nil {
+		app.Logger.Error("Failed to delete verification token from Redis after successful verification", zap.Error(delErr), zap.String("key", verificationKey))
+		// This is not fatal to the user's verification status, but should be monitored.
+	}
+
+	app.Logger.Info("Email verified successfully", zap.String("userID", userID))
+	c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully."})
 }
 
 func (app *Application) handleGoogleOAuth(c *gin.Context) {
