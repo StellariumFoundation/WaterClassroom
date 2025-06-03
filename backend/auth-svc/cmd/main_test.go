@@ -2,14 +2,11 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
-	"strings"
+	"net/http/httptest" // Added
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock" // For mocking database interactions
 	"github.com/gin-gonic/gin"
