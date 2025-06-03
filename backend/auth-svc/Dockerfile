@@ -22,7 +22,7 @@ COPY . .
 COPY ../../backend/Makefile /Makefile.backend
 
 # Build the application
-RUN SERVICE=auth-svc BIN_PATH=./auth-service MODULE_DIR=. make -f /Makefile.backend build-service-docker
+RUN make SERVICE=auth-svc BIN_PATH=./auth-service MODULE_DIR=. -f /Makefile.backend build-service-docker
 
 # Final stage
 FROM alpine:3.19
