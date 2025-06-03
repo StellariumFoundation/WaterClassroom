@@ -9,8 +9,6 @@ WORKDIR /app
 # Copy the source code
 COPY . .
 
-RUN make build-internal
-
 # Expose ports (HTTP and gRPC)
 EXPOSE 8082 50053
 

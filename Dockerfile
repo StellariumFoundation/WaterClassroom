@@ -1,38 +1,71 @@
-# Build stage
-FROM node:18-alpine AS build
+# Stage 1: Frontend Build
+FROM node:18-alpine AS frontend-builder
 
-# Set working directory
-WORKDIR /app
+ARG GEMINI_API_KEY
+ENV VITE_GEMINI_API_KEY=$GEMINI_API_KEY
+ENV NODE_ENV=production
 
-# Copy package files for better caching
+WORKDIR /app/frontend
+
+# Copy package files
 COPY frontend/package.json frontend/package-lock.json* ./
+#COPY frontend/pnpm-lock.yaml ./ # Uncomment if using pnpm
 
-# Install dependencies - changed from npm ci to npm install to handle missing package-lock.json
-RUN npm install --legacy-peer-deps
+# Install dependencies
+RUN npm install --legacy-peer-deps --production
+# RUN pnpm install --frozen-lockfile # Uncomment if using pnpm
 
-# Copy the rest of the application code
+# Copy the rest of the frontend application code
 COPY frontend/. .
 
-# Create .env file with placeholder API key that will be replaced at runtime
-RUN echo "GEMINI_API_KEY=RUNTIME_PLACEHOLDER" > .env.production
-
-# Build the application
+# Build the SvelteKit application for static export
 RUN npm run build
+# The output will be in /app/frontend/build (by default for adapter-static)
 
-# Production stage
-FROM nginx:alpine
+# Stage 2: Backend Build (Go API Gateway)
+FROM golang:1.22-alpine AS go-builder
 
-# Copy the built files from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /app/backend/api-gateway
 
-# Copy custom nginx configuration to handle client-side routing
-RUN echo 'server {     listen 80;     server_name _;     root /usr/share/nginx/html;     index index.html;     location / {         try_files $uri $uri/ /index.html;     }     # Cache static assets     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {         expires 30d;         add_header Cache-Control "public, no-transform";     }     # No cache for HTML files     location ~* \.html$ {         add_header Cache-Control "no-cache";     } }' > /etc/nginx/conf.d/default.conf
+# Copy Go module files
+COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 
+# Download Go module dependencies
+RUN go mod download
 
-RUN echo '#!/bin/sh' > /docker-entrypoint.sh &&     echo '# Replace RUNTIME_PLACEHOLDER with actual API key at container startup' >> /docker-entrypoint.sh &&     echo 'if [ ! -z "$GEMINI_API_KEY" ]; then' >> /docker-entrypoint.sh &&     echo '  find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s/RUNTIME_PLACEHOLDER/$GEMINI_API_KEY/g" {} \;' >> /docker-entrypoint.sh &&     echo 'fi' >> /docker-entrypoint.sh &&     echo '# Start nginx' >> /docker-entrypoint.sh &&     echo 'nginx -g "daemon off;"' >> /docker-entrypoint.sh &&     chmod +x /docker-entrypoint.sh
+# Copy the rest of the API gateway source code
+COPY backend/api-gateway/. .
 
-# Expose port 80
-EXPOSE 80
+# Build the Go application
+# CGO_ENABLED=0 for static linking (optional, but good for alpine)
+# GOOS=linux to ensure Linux binary
+# -ldflags="-s -w" to strip debug information and reduce binary size (optional)
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/api-gateway -ldflags="-s -w" .
+# The compiled binary will be at /app/api-gateway
 
-# Set the entrypoint script
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Stage 3: Final Production Image
+FROM alpine:3.19
+
+WORKDIR /app
+
+# Set default port for the Go application
+ENV SERVER_PORT=8080
+# Ensure Go app can find static files relative to its execution path if needed.
+# The Go app is configured to look for "./static_frontend".
+# So, if WORKDIR is /app, and binary is /app/api-gateway, it looks for /app/static_frontend.
+
+# Copy the compiled Go binary from the go-builder stage
+COPY --from=go-builder /app/api-gateway /app/api-gateway
+
+# Copy the static frontend assets from the frontend-builder stage
+# The Go application is configured to serve files from "./static_frontend"
+COPY --from=frontend-builder /app/frontend/build ./static_frontend
+
+# Expose the port the Go application will listen on
+EXPOSE 8080
+
+# Set the entrypoint for the container
+ENTRYPOINT ["/app/api-gateway"]
+
+# Optional: Add a basic healthcheck
+# (Requires wget in alpine and a /health endpoint in the Go app)

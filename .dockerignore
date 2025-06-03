@@ -33,10 +33,10 @@ coverage/
 .editorconfig
 
 # Backend files (not needed for frontend build)
-backend/
-*.go
-go.mod
-go.sum
+# backend/
+# *.go
+# go.mod
+# go.sum
 
 # Documentation and markdown files (except README)
 *.md

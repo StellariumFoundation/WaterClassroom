@@ -9,8 +9,6 @@ WORKDIR /app
 # Copy the source code
 COPY . .
 
-RUN make build-internal
-
 # Expose ports
 # 8084: HTTP API
 # 50055: gRPC

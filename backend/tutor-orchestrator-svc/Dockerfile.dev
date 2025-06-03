@@ -9,8 +9,6 @@ WORKDIR /app
 # Copy the current directory contents into the container
 COPY . .
 
-RUN make build-internal
-
 # Expose HTTP and gRPC ports
 EXPOSE 8085 50056
 
