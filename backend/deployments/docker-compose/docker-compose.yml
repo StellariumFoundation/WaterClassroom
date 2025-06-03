@@ -89,7 +89,7 @@ services:
   # Backend Microservices
   api-gateway:
     build:
-      context: ../../api-gateway
+      context: ../../backend/api-gateway
       dockerfile: Dockerfile.dev
     container_name: wc-api-gateway
     ports:
@@ -123,7 +123,7 @@ services:
 
   auth-svc:
     build:
-      context: ../../auth-svc
+      context: ../../backend/auth-svc
       dockerfile: Dockerfile.dev
     container_name: wc-auth-svc
     ports:
@@ -156,7 +156,7 @@ services:
 
   user-svc:
     build:
-      context: ../../user-svc
+      context: ../../backend/user-svc
       dockerfile: Dockerfile.dev
     container_name: wc-user-svc
     ports:
@@ -183,7 +183,7 @@ services:
 
   curriculum-svc:
     build:
-      context: ../../curriculum-svc
+      context: ../../backend/curriculum-svc
       dockerfile: Dockerfile.dev
     container_name: wc-curriculum-svc
     ports:
@@ -213,7 +213,7 @@ services:
 
   progress-svc:
     build:
-      context: ../../progress-svc
+      context: ../../backend/progress-svc
       dockerfile: Dockerfile.dev
     container_name: wc-progress-svc
     ports:
@@ -237,7 +237,7 @@ services:
 
   assessment-svc:
     build:
-      context: ../../assessment-svc
+      context: ../../backend/assessment-svc
       dockerfile: Dockerfile.dev
     container_name: wc-assessment-svc
     ports:
@@ -264,7 +264,7 @@ services:
 
   tutor-orchestrator-svc:
     build:
-      context: ../../tutor-orchestrator-svc
+      context: ../../backend/tutor-orchestrator-svc
       dockerfile: Dockerfile.dev
     container_name: wc-tutor-orchestrator-svc
     ports:
@@ -294,7 +294,7 @@ services:
 
   notification-svc:
     build:
-      context: ../../notification-svc
+      context: ../../backend/notification-svc
       dockerfile: Dockerfile.dev
     container_name: wc-notification-svc
     ports:
