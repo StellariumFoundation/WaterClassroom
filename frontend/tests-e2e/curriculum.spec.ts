@@ -8,6 +8,7 @@ test.describe('Curriculum Pages', () => {
     await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).toBeVisible();
 
     // Check that there are multiple subject cards present
+
     const subjectCards = page.locator('a.subject-card-link');
     await expect(subjectCards.first()).toBeVisible();
     expect(await subjectCards.count()).toBeGreaterThan(0);
@@ -73,6 +74,7 @@ test.describe('Curriculum Pages', () => {
     // At this point, we are on the subject page URL (likely a 404 page).
     // The actual "← Curricula" link on this page does not exist to be tested.
     // So, we test browser's back functionality.
+
     await page.goBack();
     await expect(page).toHaveURL('/curriculum');
     await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).toBeVisible();
