@@ -3,7 +3,7 @@
 # Last updated: 28 May 2025
 
 # Variables
-SHELL := /bin/bash
+SHELL := /bin/sh
 DOCKER_COMPOSE := docker-compose -f deployments/docker-compose/docker-compose.yml
 GO := go
 GOOSE := goose
@@ -248,6 +248,12 @@ build-service-docker: ## Build a specific service for Docker production image (M
 	@echo "Debug: MAKE_SERVICE_NAME variable value is: [$(MAKE_SERVICE_NAME)]"
 	@echo "Debug: BIN_PATH variable value is: [$(BIN_PATH)]"
 	@echo "Debug: MODULE_DIR variable value is: [$(MODULE_DIR)]"
+	# ifndef MAKE_SERVICE_NAME
+	#	$(error MAKE_SERVICE_NAME is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
+	# endif
+	# ifndef BIN_PATH
+	#	$(error BIN_PATH is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
+	# endif
 	@# MODULE_DIR defaults to the service name relative to this Makefile if not set.
 	@# This means if MODULE_DIR is '.', it refers to the CWD of the make command.
 	@# If this Makefile is /app/backend/Makefile, and MODULE_DIR is not set, it assumes sources are in /app/backend/$(MAKE_SERVICE_NAME)/
