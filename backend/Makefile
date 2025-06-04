@@ -108,24 +108,21 @@ migrate-create: ## Create a new migration file (e.g., make migrate-create MAKE_S
 
 # Build Commands
 .PHONY: build
-build: ## Build all services
-	@echo -e "${BLUE}Building all services...${NC}"
-	@for service in $(SERVICES); do \
-		echo -e "${YELLOW}Building $$service...${NC}"; \
-		cd $$service && $(GO) build -o bin/$$service ./cmd && cd ..; \
-	done
-	@echo -e "${GREEN}All services built successfully!${NC}"
+build: $(addprefix build-, $(SERVICES)) ## Build all services in parallel (e.g., make -j build)
+	@echo -e "${BLUE}All specified services build process initiated in parallel.${NC}"
+	@echo -e "${YELLOW}Individual build status will be reported by each service build job.${NC}"
+	@echo -e "${GREEN}Build process complete. Review logs for status of individual services.${NC}"
+
+.PHONY: build-%
+build-%: ## Build a specific service, used by the parallel 'build' target
+	@$(MAKE) build-service MAKE_SERVICE_NAME=$*
 
 .PHONY: build-service
 build-service: ## Build a specific service (e.g., make build-service MAKE_SERVICE_NAME=auth-svc)
-	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then \
-		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; \
-		echo -e "Usage: make build-service MAKE_SERVICE_NAME=auth-svc"; \
-		exit 1; \
-	fi
-	@echo -e "${BLUE}Building $(MAKE_SERVICE_NAME)...${NC}"
-	@cd $(MAKE_SERVICE_NAME) && $(GO) build -o bin/$(MAKE_SERVICE_NAME) ./cmd
-	@echo -e "${GREEN}$(MAKE_SERVICE_NAME) built successfully!${NC}"
+	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then 		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; 		echo -e "Usage: make build-service MAKE_SERVICE_NAME=auth-svc"; 		exit 1; 	fi
+	@echo -e "${BLUE}Building service: $(MAKE_SERVICE_NAME)...${NC}"
+	@SERVICE_DIR=./$(MAKE_SERVICE_NAME); 	BIN_DIR=$$SERVICE_DIR/bin; 	OUTPUT_NAME=$$BIN_DIR/$(MAKE_SERVICE_NAME); 	GO_BUILD_SRC_PATH=""; 	ACTUAL_GO_BUILD_SRC_RELATIVE=""; 		if [ ! -d "$$SERVICE_DIR" ]; then 		echo -e "${RED}Error: Directory $$SERVICE_DIR for service $(MAKE_SERVICE_NAME) not found.${NC}"; 		exit 1; 	fi; 		# Determine the source path for the go build command
+	if [ "$(MAKE_SERVICE_NAME)" = "api-gateway" ] || 	   [ "$(MAKE_SERVICE_NAME)" = "assessment-svc" ] || 	   [ "$(MAKE_SERVICE_NAME)" = "user-svc" ] || 	   [ "$(MAKE_SERVICE_NAME)" = "progress-svc" ] || 	   [ "$(MAKE_SERVICE_NAME)" = "tutor-orchestrator-svc" ] || 	   [ "$(MAKE_SERVICE_NAME)" = "notification-svc" ]; then 		GO_BUILD_SRC_PATH="$$SERVICE_DIR/main.go"; 		ACTUAL_GO_BUILD_SRC_RELATIVE="main.go"; 	elif [ -f "$$SERVICE_DIR/cmd/main.go" ]; then 		GO_BUILD_SRC_PATH="$$SERVICE_DIR/cmd/main.go"; 		ACTUAL_GO_BUILD_SRC_RELATIVE="cmd/main.go"; 	elif [ -d "$$SERVICE_DIR/cmd" ]; then 		GO_BUILD_SRC_PATH="$$SERVICE_DIR/cmd"; 		ACTUAL_GO_BUILD_SRC_RELATIVE="cmd"; 	else 		GO_BUILD_SRC_PATH="$$SERVICE_DIR/main.go"; 		ACTUAL_GO_BUILD_SRC_RELATIVE="main.go"; 	fi; 		if ! [ -e "$$GO_BUILD_SRC_PATH" ]; then 		echo -e "${RED}Error: Source path '$$GO_BUILD_SRC_PATH' for service $(MAKE_SERVICE_NAME) not found or is invalid.${NC}"; 		exit 1; 	fi; 		echo -e "${YELLOW}Attempting to build $(MAKE_SERVICE_NAME) (Source: '$$GO_BUILD_SRC_PATH'). Output will be '$$OUTPUT_NAME'${NC}"; 	mkdir -p $$BIN_DIR; 	if (cd $$SERVICE_DIR && $(GO) build -o bin/$(MAKE_SERVICE_NAME) $$ACTUAL_GO_BUILD_SRC_RELATIVE); then 		echo -e "${GREEN}Successfully built $(MAKE_SERVICE_NAME) to $$OUTPUT_NAME (command executed, result depends on sandbox Go environment).${NC}"; 	else 		echo -e "${RED}Error: Failed to build $(MAKE_SERVICE_NAME) (command executed, result depends on sandbox Go environment). Check Go compiler logs if available.${NC}"; 		exit 1; 	fi
 
 # Test Commands
 .PHONY: test
