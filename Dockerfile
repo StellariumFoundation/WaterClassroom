@@ -36,16 +36,23 @@ COPY backend/Makefile /app/backend/Makefile
 # Download Go module dependencies
 RUN apk add --no-cache make
 
-ENV SERVICE=api-gateway
-
 # Copy the rest of the API gateway source code
 COPY backend/api-gateway/. .
+
+RUN echo "--- Debug Info Start ---"
+RUN apk add --no-cache coreutils alpine-sdk # alpine-sdk for make, coreutils for env if not present
+RUN echo "--- Environment Variables ---" && env
+RUN echo "--- Make Version ---" && make --version
+RUN echo "--- Current Directory (should be /app/backend/api-gateway initially) ---" && pwd
+RUN echo "--- Listing /app/backend ---" && ls -la /app/backend
+RUN echo "--- Grepping MAKE_SERVICE_NAME in /app/backend/Makefile ---" && cat /app/backend/Makefile | grep MAKE_SERVICE_NAME
+RUN echo "--- Debug Info End ---"
 
 # Build the Go application
 # CGO_ENABLED=0 for static linking (optional, but good for alpine)
 # GOOS=linux to ensure Linux binary
 # -ldflags="-s -w" to strip debug information and reduce binary size (optional)
-RUN make -f ../Makefile build-service-docker MAKE_SERVICE_NAME=api-gateway BIN_PATH="/app/api-gateway"
+RUN cd /app/backend && echo "--- Running Make Dry-Run from /app/backend ---" && make -f Makefile build-service-docker MAKE_SERVICE_NAME=api-gateway BIN_PATH="/app/api-gateway" --dry-run && echo "--- Make Dry-Run Finished ---"
 # The compiled binary will be at /app/api-gateway
 
 # Stage 3: Final Production Image
