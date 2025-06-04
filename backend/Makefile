@@ -241,16 +241,19 @@ generate-keys: ## Generate RSA keys for JWT authentication
 .DEFAULT_GOAL := help
 
 build-service-docker: ## Build a specific service for Docker production image (MAKE_SERVICE_NAME, BIN_PATH, MODULE_DIR are params)
+	@echo "DEBUG: Value of MAKE_SERVICE_NAME as seen by make: [$(MAKE_SERVICE_NAME)]"
+	@echo "DEBUG: Value of BIN_PATH as seen by make: [$(BIN_PATH)]"
+	@echo "DEBUG: Value of MODULE_DIR as seen by make: [$(MODULE_DIR)]"
 	@echo "Debug: Entered build-service-docker target."
 	@echo "Debug: MAKE_SERVICE_NAME variable value is: [$(MAKE_SERVICE_NAME)]"
 	@echo "Debug: BIN_PATH variable value is: [$(BIN_PATH)]"
 	@echo "Debug: MODULE_DIR variable value is: [$(MODULE_DIR)]"
-	ifndef MAKE_SERVICE_NAME
-		$(error MAKE_SERVICE_NAME is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
-	endif
-	ifndef BIN_PATH
-		$(error BIN_PATH is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
-	endif
+	# ifndef MAKE_SERVICE_NAME
+	#	$(error MAKE_SERVICE_NAME is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
+	# endif
+	# ifndef BIN_PATH
+	#	$(error BIN_PATH is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
+	# endif
 	@# MODULE_DIR defaults to the service name relative to this Makefile if not set.
 	@# This means if MODULE_DIR is '.', it refers to the CWD of the make command.
 	@# If this Makefile is /app/backend/Makefile, and MODULE_DIR is not set, it assumes sources are in /app/backend/$(MAKE_SERVICE_NAME)/
