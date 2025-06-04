@@ -1,4 +1,6 @@
 <script lang="ts">
+  export let title = '';
+  export let subtitle = '';
   // No specific props for this basic version
 </script>
 
@@ -10,6 +12,12 @@
   {/if}
 
   <div class="card-content">
+    {#if title}
+      <h2 class="card-title">{title}</h2>
+    {/if}
+    {#if subtitle}
+      <p class="card-subtitle">{subtitle}</p>
+    {/if}
     <slot></slot>
   </div>
 
@@ -37,6 +45,24 @@
     font-size: var(--font-size-h5); /* Example: 1.25rem */
     font-weight: var(--font-weight-semibold);
   }
+
+  .card-title {
+    font-size: var(--font-size-h4); /* Adjust as needed */
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-xs); /* Example: 4px if subtitle follows */
+  }
+
+  .card-subtitle {
+    font-size: var(--font-size-body); /* Adjust as needed */
+    color: var(--neutral-text-subtle);
+    margin-bottom: var(--spacing-md); /* Example: 12px before main content */
+  }
+
+  .card-title + .card-subtitle {
+    /* Less margin if both title and subtitle are present and subtitle directly follows title */
+    margin-top: var(--spacing-xs);
+  }
+
 
   .card-header :global(h1),
   .card-header :global(h2),

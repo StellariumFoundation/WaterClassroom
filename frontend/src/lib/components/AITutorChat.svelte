@@ -14,24 +14,51 @@
     timestamp: Date;
   }
 
-  let messages: Message[] = [];
-  let currentMessage: string = '';
   let messageIdCounter: number = 0;
+  let messages: Message[] = [];
+
+  // Initialize with a welcome message if isOpen is true initially.
+  // This will be part of the initial state.
+  if (isOpen && messages.length === 0) {
+    messages = [
+      {
+        id: messageIdCounter++,
+        text: "Hello! I'm your AI Tutor. How can I help you with your lessons today?",
+        sender: 'ai',
+        timestamp: new Date(),
+      },
+    ];
+  }
+  // Handle cases where isOpen becomes true later (e.g. modal is opened after initial load)
+  // and messages are still empty.
+  $: if (isOpen && messages.length === 0 && messageIdCounter === 0) {
+    messages = [
+      {
+        id: messageIdCounter++,
+        text: "Hello! I'm your AI Tutor. How can I help you with your lessons today?",
+        sender: 'ai',
+        timestamp: new Date(),
+      },
+    ];
+  }
+
+
+  let currentMessage: string = '';
   let chatMessagesElement: HTMLElement; // For scrolling
   let chatInputAreaElement: HTMLTextAreaElement; // For focusing
 
-  onMount(() => {
-    if (messages.length === 0) {
-      messages = [
-        {
-          id: messageIdCounter++,
-          text: "Hello! I'm your AI Tutor. How can I help you with your lessons today?",
-          sender: 'ai',
-          timestamp: new Date(),
-        },
-      ];
-    }
-  });
+  // onMount(() => {
+  //   if (messages.length === 0 && isOpen) { // Ensure it only adds if open
+  //     messages = [
+  //       {
+  //         id: messageIdCounter++,
+  //         text: "Hello! I'm your AI Tutor. How can I help you with your lessons today?",
+  //         sender: 'ai',
+  //         timestamp: new Date(),
+  //       },
+  //     ];
+  //   }
+  // });
 
   function sendMessage() {
     if (!currentMessage.trim()) return;
@@ -42,14 +69,15 @@
       sender: 'user',
       timestamp: new Date(),
     };
+    const userMessageText = currentMessage.trim(); // Capture the message text
+
     messages = [...messages, newUserMessage];
-    const previousMessage = currentMessage; // Store for potential retry or context
-    currentMessage = '';
+    currentMessage = ''; // Clear after capturing
 
     setTimeout(() => {
       const aiResponse: Message = {
         id: messageIdCounter++,
-        text: `Thinking about "${previousMessage.substring(0,20)}..." \n(This is a placeholder AI response. Actual AI integration will follow.)`,
+        text: `Thinking about "${userMessageText.substring(0,20)}..." \n(This is a placeholder AI response. Actual AI integration will follow.)`, // Use captured text
         sender: 'ai',
         timestamp: new Date(),
       };
@@ -101,7 +129,7 @@
 </script>
 
 {#if isOpen}
-  <div class="chat-overlay" on:click|self={handleClose} role="dialog" aria-modal="true" aria-labelledby="chat-header-title">
+  <div class="chat-overlay" data-testid="chat-overlay" on:click|self={handleClose} role="dialog" aria-modal="true" aria-labelledby="chat-header-title">
     <div class="chat-widget">
       <header class="chat-header">
         <h2 id="chat-header-title" class="chat-title">AI Tutor</h2>
@@ -110,7 +138,7 @@
 
       <div class="chat-messages" bind:this={chatMessagesElement}>
         {#each messages as message (message.id)}
-          <div class="message-wrapper {message.sender === 'user' ? 'user' : 'ai'}">
+          <div class="message-wrapper {message.sender === 'user' ? 'user' : 'ai'}" data-testid="message-wrapper">
             <div class="message-bubble">
               <p class="message-text">{message.text}</p>
               <span class="message-timestamp">

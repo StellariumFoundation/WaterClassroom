@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, fireEvent, screen, waitFor } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import AITutorChat from './AITutorChat.svelte';
 
 describe('AITutorChat.svelte', () => {
@@ -16,15 +17,17 @@ describe('AITutorChat.svelte', () => {
       expect(container.querySelector('.chat-widget')).toBeNull();
     });
 
-    it('is rendered when isOpen is true', () => {
+    it('is rendered when isOpen is true', async () => {
       render(AITutorChat, { props: { isOpen: true } });
+      await tick(); // Wait for onMount and subsequent updates
       expect(screen.getByRole('dialog', { name: 'AI Tutor' })).toBeInTheDocument();
-      expect(screen.getByText("Hello! I'm your AI Tutor. How can I help you with your lessons today?")).toBeInTheDocument();
+      expect(await screen.findByText("Hello! I'm your AI Tutor. How can I help you with your lessons today?")).toBeInTheDocument();
     });
 
-    it('shows initial AI welcome message when chat opens', () => {
+    it('shows initial AI welcome message when chat opens', async () => {
       render(AITutorChat, { props: { isOpen: true } });
-      const welcomeMessage = screen.getByText(/Hello! I'm your AI Tutor/i);
+      await tick(); // Wait for onMount and subsequent updates
+      const welcomeMessage = await screen.findByText(/Hello! I'm your AI Tutor/i);
       expect(welcomeMessage).toBeInTheDocument();
       // Check if it's marked as an AI message
       // This requires specific structure or class in the component, e.g., a wrapper with class 'ai'
@@ -73,14 +76,10 @@ describe('AITutorChat.svelte', () => {
 
       // Check for placeholder AI response initiation (often immediate, before timer)
       // No specific immediate text, but we expect an AI message to appear after timer
-      const aiMessagePromise = waitFor(() => {
-        const aiMessages = screen.getAllByText(/Thinking about "Test user message..."/i);
-        expect(aiMessages.length).toBeGreaterThan(0);
-        expect(aiMessages[0].closest('.message-wrapper.ai')).not.toBeNull();
-      });
-
-      await vi.advanceTimersByTimeAsync(1200);
-      await aiMessagePromise; // Ensure the AI message has rendered
+      await vi.advanceTimersByTimeAsync(1200); // Advance timer first
+      const aiMessage = await screen.findByText(/^Thinking about "Test user message..."/i);
+      expect(aiMessage).toBeInTheDocument();
+      expect(aiMessage.closest('.message-wrapper.ai')).not.toBeNull();
     });
 
     it('sending a message (Enter key) adds user message and queues AI response', async () => {
@@ -93,13 +92,10 @@ describe('AITutorChat.svelte', () => {
       expect(screen.getByText('Another test')).toBeInTheDocument();
       expect(screen.getByText('Another test').closest('.message-wrapper.user')).not.toBeNull();
 
-      const aiMessagePromise = waitFor(() => {
-        const aiMessages = screen.getAllByText(/Thinking about "Another test..."/i);
-        expect(aiMessages.length).toBeGreaterThan(0);
-        expect(aiMessages[0].closest('.message-wrapper.ai')).not.toBeNull();
-      });
-      await vi.advanceTimersByTimeAsync(1200);
-      await aiMessagePromise;
+      await vi.advanceTimersByTimeAsync(1200); // Advance timer first
+      const aiMessage = await screen.findByText(/^Thinking about "Another test..."/i);
+      expect(aiMessage).toBeInTheDocument();
+      expect(aiMessage.closest('.message-wrapper.ai')).not.toBeNull();
     });
 
     it('input field is cleared after sending a message', async () => {
@@ -131,9 +127,8 @@ describe('AITutorChat.svelte', () => {
       const closeHandler = vi.fn();
       component.$on('close', closeHandler);
 
-      // The overlay is the parent of .chat-widget with role 'dialog'
-      const overlay = screen.getByRole('dialog', { name: 'AI Tutor' }).parentElement;
-      if (!overlay) throw new Error('Chat overlay not found');
+      const overlay = screen.getByTestId('chat-overlay');
+      // if (!overlay) throw new Error('Chat overlay not found'); // Not strictly needed with getByTestId
 
       // Click the overlay itself, not its children
       await fireEvent.click(overlay);
@@ -145,23 +140,28 @@ describe('AITutorChat.svelte', () => {
   describe('Input Handling', () => {
     it('Shift+Enter in textarea creates a new line, does not send', async () => {
       render(AITutorChat, { props: { isOpen: true } });
+      await tick(); // Ensure initial messages are rendered if any
+
       const textarea = screen.getByPlaceholderText('Ask a question...') as HTMLTextAreaElement;
-      const initialMessages = screen.getAllByRole('generic', { name: /message bubble/i }); // A way to count messages
+      const initialMessages = screen.queryAllByTestId('message-wrapper');
+      const initialMessageCount = initialMessages.length;
 
       await fireEvent.input(textarea, { target: { value: 'First line' } });
       await fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });
-      await fireEvent.input(textarea, { target: { value: textarea.value + '\nSecond line' } }); // Simulate newline effect
+      // Note: svelte-testing-library might not automatically update textarea.value on keyDown alone
+      // if the component doesn't explicitly handle it to add '\n'.
+      // However, the default action of Shift+Enter *should* add the newline.
+      // We'll update the value as if the browser did it.
+      textarea.value += '\n'; // Manually append newline for test state consistency
+      await fireEvent.input(textarea, { target: { value: textarea.value + 'Second line' } });
+
 
       expect(textarea.value).toBe('First line\nSecond line');
+      expect(textarea.value).toContain('\n');
 
-      // Check that no new message was sent (message count remains the same, or no user message with this content)
-      // This requires a more robust way to count messages or check their content if possible.
-      // For simplicity, we'll check if the message "First line\nSecond line" is NOT present as a sent message.
-      expect(screen.queryByText('First line\nSecond line')).toBeNull();
-
-      // Ensure send was not called (no new messages beyond initial + any auto-responses from other tests if not isolated)
-      const currentMessages = screen.getAllByRole('generic', { name: /message bubble/i });
-      expect(currentMessages.length).toEqual(initialMessages.length); // Assuming no other messages were added
+      // Check that no new message was sent
+      const finalMessages = screen.queryAllByTestId('message-wrapper');
+      expect(finalMessages.length).toEqual(initialMessageCount);
     });
   });
 });

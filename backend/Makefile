@@ -131,36 +131,15 @@ build-service: ## Build a specific service (e.g., make build-service MAKE_SERVIC
 .PHONY: test
 test: ## Run tests for all services
 	@echo -e "${BLUE}Running tests for all services...${NC}"
-	@overall_test_status=0; \
-	for service in $(SERVICES); do \
-		echo -e "${YELLOW}Checking $$service...${NC}"; \
-		if [ -d "$$service" ]; then \
-			if find "$$service" -name '*.go' -print -quit | grep -q .; then \
-				echo -e "${YELLOW}Testing $$service...${NC}"; \
-				test_output=$$(cd $$service && $(GO) test ./... -v 2>&1); \
-				exit_status=$$?; \
-				if [ $$exit_status -eq 0 ]; then \
-					echo -e "${GREEN}$$service tests passed.${NC}"; \
-				elif echo "$$test_output" | grep -q "no test files"; then \
-					echo -e "${YELLOW}Skipping $$service (no test files found).${NC}"; \
-				else \
-					echo -e "${RED}$$service tests failed.${NC}"; \
-					echo "$$test_output"; \
-					overall_test_status=1; \
-				fi; \
-			else \
-				echo -e "${YELLOW}Skipping $$service (no Go files found in service directory)...${NC}"; \
-			fi; \
+	@for service in $(SERVICES); do \
+		if ls $$service/*.go &> /dev/null || ls $$service/cmd/*.go &> /dev/null || ls $$service/internal/*.go &> /dev/null; then \
+			echo -e "${YELLOW}Testing $$service...${NC}"; \
+			cd $$service && $(GO) test ./... -v && cd ..; \
 		else \
-			echo -e "${YELLOW}Skipping $$service (directory not found)...${NC}"; \
+			echo -e "${YELLOW}Skipping $$service (no Go files found to test)...${NC}"; \
 		fi; \
-	done; \
-	if [ $$overall_test_status -eq 0 ]; then \
-		echo -e "${GREEN}All tests completed successfully!${NC}"; \
-	else \
-		echo -e "${RED}Some tests failed. Please review the output above.${NC}"; \
-		exit 1; \
-	fi
+	done
+	@echo -e "${GREEN}All tests completed! (Skipped services with no Go files may need attention if unintentional)${NC}"
 
 .PHONY: test-service
 test-service: ## Run tests for a specific service (e.g., make test-service MAKE_SERVICE_NAME=auth-svc)

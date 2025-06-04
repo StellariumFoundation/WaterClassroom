@@ -1,57 +1,47 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, fireEvent, screen } from '@testing-library/svelte';
 import Modal from './Modal.svelte';
-
-// A simple component to use as slot content
-const SlotContent = {
-  Component: class {
-    $set() {}
-    $on() {}
-    $destroy() {}
-    // @ts-ignore
-    $$prop_def = {};
-    // @ts-ignore
-    $$slot_def = {};
-    // @ts-ignore
-    $$events_def = {};
-    constructor(options: any) {
-      // @ts-ignore
-      this.div = document.createElement('div');
-      // @ts-ignore
-      this.div.textContent = options.props.text || 'Default modal content';
-      // @ts-ignore
-      this.div.setAttribute('data-testid', 'slot-content');
-      options.target.appendChild(this.div);
-    }
-  },
-  // @ts-ignore
-  props: {},
-};
+import DefaultSlotModalContent from './DefaultSlotModalContent.svelte';
+import HeaderSlotModalContent from './HeaderSlotModalContent.svelte';
+import FooterSlotModalContent from './FooterSlotModalContent.svelte';
 
 describe('Modal.svelte', () => {
   it('does not render when isOpen is false', () => {
     const { container } = render(Modal, { props: { isOpen: false } });
-    // Check if the modal overlay (or any specific modal content) is not present
     expect(container.querySelector('.modal-overlay')).toBeNull();
   });
 
   it('renders when isOpen is true', () => {
-    // @ts-ignore
-    render(Modal, { props: { isOpen: true, slots: { default: SlotContent } } });
-    expect(screen.getByTestId('slot-content')).toBeInTheDocument();
+    render(Modal, {
+      props: {
+        isOpen: true,
+        $$slots: { default: DefaultSlotModalContent }
+      }
+    });
+    // Check for content from the slot, assuming SlotTestComponent renders identifiable text
+    expect(screen.getByText('Default modal content')).toBeInTheDocument();
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   it('displays the provided slot content', () => {
-    // @ts-ignore
-    render(Modal, { props: { isOpen: true, slots: { default: SlotContent } } });
+    render(Modal, {
+      props: {
+        isOpen: true,
+        $$slots: { default: DefaultSlotModalContent }
+      }
+    });
     expect(screen.getByText('Default modal content')).toBeInTheDocument();
   });
 
   it('calls onClose prop when close button is clicked', async () => {
     const handleCloseMock = vi.fn();
-    // @ts-ignore
-    render(Modal, { props: { isOpen: true, onClose: handleCloseMock, slots: { default: SlotContent } } });
+    render(Modal, {
+      props: {
+        isOpen: true,
+        onClose: handleCloseMock,
+        $$slots: { default: DefaultSlotModalContent }
+      }
+    });
     const closeButton = screen.getByLabelText('Close modal');
     await fireEvent.click(closeButton);
     expect(handleCloseMock).toHaveBeenCalledTimes(1);
@@ -61,8 +51,7 @@ describe('Modal.svelte', () => {
     const { component } = render(Modal, {
       props: {
         isOpen: true,
-        // @ts-ignore
-        slots: { default: SlotContent }
+        $$slots: { default: DefaultSlotModalContent }
       }
     });
     const handleCloseEvent = vi.fn();
@@ -75,9 +64,13 @@ describe('Modal.svelte', () => {
 
   it('calls onClose prop when overlay is clicked', async () => {
     const handleCloseMock = vi.fn();
-    // @ts-ignore
-    render(Modal, { props: { isOpen: true, onClose: handleCloseMock, slots: { default: SlotContent } } });
-    // The overlay is the div with class 'modal-overlay'
+    render(Modal, {
+      props: {
+        isOpen: true,
+        onClose: handleCloseMock,
+        $$slots: { default: DefaultSlotModalContent }
+      }
+    });
     const overlay = screen.getByRole('dialog').parentElement;
     if (!overlay) throw new Error('Modal overlay not found');
 
@@ -89,8 +82,7 @@ describe('Modal.svelte', () => {
      const { component } = render(Modal, {
       props: {
         isOpen: true,
-        // @ts-ignore
-        slots: { default: SlotContent }
+        $$slots: { default: DefaultSlotModalContent }
       }
     });
     const handleCloseEvent = vi.fn();
@@ -105,10 +97,14 @@ describe('Modal.svelte', () => {
 
   it('calls onClose prop when Escape key is pressed', async () => {
     const handleCloseMock = vi.fn();
-    // @ts-ignore
-    render(Modal, { props: { isOpen: true, onClose: handleCloseMock, slots: { default: SlotContent } } });
+    render(Modal, {
+      props: {
+        isOpen: true,
+        onClose: handleCloseMock,
+        $$slots: { default: DefaultSlotModalContent }
+      }
+    });
 
-    // Simulate Escape key press on the window
     await fireEvent.keyDown(window, { key: 'Escape' });
     expect(handleCloseMock).toHaveBeenCalledTimes(1);
   });
@@ -117,8 +113,7 @@ describe('Modal.svelte', () => {
     render(Modal, {
       props: {
         isOpen: true,
-        // @ts-ignore
-        slots: { header: { Component: SlotContent, props: { text: 'Modal Header Test' } } }
+        $$slots: { header: HeaderSlotModalContent }
       }
     });
     expect(screen.getByText('Modal Header Test')).toBeInTheDocument();
@@ -128,8 +123,7 @@ describe('Modal.svelte', () => {
     render(Modal, {
       props: {
         isOpen: true,
-        // @ts-ignore
-        slots: { footer: { Component: SlotContent, props: { text: 'Modal Footer Test' } } }
+        $$slots: { footer: FooterSlotModalContent }
       }
     });
     expect(screen.getByText('Modal Footer Test')).toBeInTheDocument();

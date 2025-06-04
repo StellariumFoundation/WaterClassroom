@@ -1,24 +1,35 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
+
   export let variant: 'primary' | 'secondary' | 'tertiary' | 'danger' = 'primary';
   export let onClick: (() => void) | undefined = undefined;
   export let disabled: boolean = false;
   export let type: 'button' | 'submit' | 'reset' = 'button'; // Added type prop
+  export let label = 'Submit';
 
   // Base classes + variant specific classes
   $: buttonClass = `btn btn-${variant}`;
 
-  const handleClick = (event: MouseEvent) => { // Added event param
-    if (onClick && !disabled) {
-      onClick();
+  const dispatch = createEventDispatcher();
+
+  const handleClick = (event: MouseEvent) => {
+    if (!disabled) {
+      // Dispatch the Svelte component event
+      dispatch('click', event);
+
+      // If an onClick prop is also provided, call it.
+      // This allows for both component event listening and direct prop handling.
+      if (onClick) {
+        onClick();
+      }
     }
-    // Allow default form submission if type="submit" and no onClick is defined,
-    // or if onClick doesn't preventDefault.
-    // For this component, we primarily rely on the onClick prop for actions.
+    // Default form submission behavior is implicitly handled by the button's type="submit"
+    // if not prevented by onClick or event.preventDefault() within onClick.
   };
 </script>
 
 <button {type} class={buttonClass} on:click={handleClick} {disabled}>
-  <slot />
+  {label}
 </button>
 
 <style>

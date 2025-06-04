@@ -3,13 +3,15 @@ import { render, fireEvent } from '@testing-library/svelte';
 import Checkbox from './Checkbox.svelte';
 
 describe('Checkbox.svelte', () => {
+  const testId = 'test-checkbox';
+
   it('renders with a label', () => {
-    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox' } });
+    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox', id: testId } });
     expect(getByLabelText('Test Checkbox')).toBeInTheDocument();
   });
 
   it('changes its checked state when clicked', async () => {
-    const { getByLabelText, component } = render(Checkbox, { props: { label: 'Test Checkbox', checked: false } });
+    const { getByLabelText, component } = render(Checkbox, { props: { label: 'Test Checkbox', checked: false, id: testId } });
     const checkboxInput = getByLabelText('Test Checkbox') as HTMLInputElement;
 
     expect(checkboxInput.checked).toBe(false);
@@ -25,7 +27,7 @@ describe('Checkbox.svelte', () => {
   });
 
   it('dispatches change event with the correct checked state', async () => {
-    const { getByLabelText, component } = render(Checkbox, { props: { label: 'Test Checkbox', checked: false } });
+    const { getByLabelText, component } = render(Checkbox, { props: { label: 'Test Checkbox', checked: false, id: testId } });
     const checkboxInput = getByLabelText('Test Checkbox') as HTMLInputElement;
     const handleChange = vi.fn();
     component.$on('change', handleChange);
@@ -43,22 +45,23 @@ describe('Checkbox.svelte', () => {
     // If it's `dispatch('change', { checked: newCheckedState })`, then:
     // expect(handleChange.mock.calls[0][0].detail).toEqual({ checked: true });
     // If it's `dispatch('change', newCheckedState)`, then:
-    expect(handleChange.mock.calls[0][0].detail).toBe(true);
+    // The event detail is the original DOM event.
+    expect((handleChange.mock.calls[0][0].detail.target as HTMLInputElement).checked).toBe(true);
 
 
     await fireEvent.click(checkboxInput);
     expect(handleChange).toHaveBeenCalledTimes(2);
-    expect(handleChange.mock.calls[1][0].detail).toBe(false);
+    expect((handleChange.mock.calls[1][0].detail.target as HTMLInputElement).checked).toBe(false);
   });
 
   it('is disabled when disabled prop is true', () => {
-    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox', disabled: true } });
+    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox', disabled: true, id: testId } });
     const checkboxInput = getByLabelText('Test Checkbox') as HTMLInputElement;
     expect(checkboxInput.disabled).toBe(true);
   });
 
   it('renders with checked state true if prop is passed', () => {
-    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox', checked: true } });
+    const { getByLabelText } = render(Checkbox, { props: { label: 'Test Checkbox', checked: true, id: testId } });
     const checkboxInput = getByLabelText('Test Checkbox') as HTMLInputElement;
     expect(checkboxInput.checked).toBe(true);
   });

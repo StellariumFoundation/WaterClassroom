@@ -1,0 +1,3173 @@
+Running frontend tests...
+npm test
+
+> frontend@0.0.1 test
+> npm run test:unit && npm run test:e2e
+
+
+> frontend@0.0.1 test:unit
+> vitest run
+
+
+ RUN  v3.2.1 /app/frontend
+
+4:38:23 PM [vite-plugin-svelte] /app/frontend/src/lib/components/AITutorChat.svelte:77:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+4:38:23 PM [vite-plugin-svelte] /app/frontend/src/lib/components/AITutorChat.svelte:77:2 A11y: Non-interactive element <div> should not be assigned mouse or keyboard event listeners.
+stderr | src/lib/components/ui/Card.spec.ts > Card.svelte > renders with default slot content
+<Card> was created with unknown prop 'slots'
+
+ ❯ src/lib/components/ui/Input.spec.ts (4 tests | 3 failed) 57ms
+   × Input.svelte > renders with default props 43ms
+     → Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ Input.svelte > renders with a custom placeholder 3ms
+   × Input.svelte > value changes when typed into 4ms
+     → Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Input.svelte > is disabled when disabled prop is true 4ms
+     → Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+stderr | src/lib/components/ui/Card.spec.ts > Card.svelte > renders with a title if title prop is provided
+<Card> was created with unknown prop 'title'
+
+stderr | src/lib/components/ui/Card.spec.ts > Card.svelte > renders with a subtitle if subtitle prop is provided
+<Card> was created with unknown prop 'subtitle'
+
+stderr | src/lib/components/ui/Card.spec.ts > Card.svelte > renders with title, subtitle and default slot content
+<Card> was created with unknown prop 'title'
+<Card> was created with unknown prop 'subtitle'
+<Card> was created with unknown prop 'slots'
+
+ ❯ src/lib/components/ui/Card.spec.ts (4 tests | 4 failed) 79ms
+   × Card.svelte > renders with default slot content 65ms
+     → Unable to find an element with the text: Default slot content. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Card.svelte > renders with a title if title prop is provided 4ms
+     → Unable to find an element with the text: Test Title. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Card.svelte > renders with a subtitle if subtitle prop is provided 5ms
+     → Unable to find an element with the text: Test Subtitle. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Card.svelte > renders with title, subtitle and default slot content 3ms
+     → Unable to find an element with the text: Test Title. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+(node:4335) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 3)
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4335) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 4)
+ ❯ src/lib/components/AITutorChat.spec.ts (11 tests | 6 failed) 281ms
+   ✓ AITutorChat.svelte > Visibility and Initial State > is not rendered when isOpen is false 9ms
+   × AITutorChat.svelte > Visibility and Initial State > is rendered when isOpen is true 78ms
+     → Unable to find an element with the text: Hello! I'm your AI Tutor. How can I help you with your lessons today?. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+   × AITutorChat.svelte > Visibility and Initial State > shows initial AI welcome message when chat opens 9ms
+     → Unable to find an element with the text: /Hello! I'm your AI Tutor/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ AITutorChat.svelte > Sending Messages > send button is initially disabled 21ms
+   ✓ AITutorChat.svelte > Sending Messages > typing a message enables the send button 14ms
+   × AITutorChat.svelte > Sending Messages > sending a message (button click) adds user message and queues AI response 74ms
+     → Unable to find an element with the text: /Thinking about "Test user message..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mTest user message[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mTest user message[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   × AITutorChat.svelte > Sending Messages > sending a message (Enter key) adds user message and queues AI response 33ms
+     → Unable to find an element with the text: /Thinking about "Another test..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mAnother test[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mAnother test[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   ✓ AITutorChat.svelte > Sending Messages > input field is cleared after sending a message 10ms
+   ✓ AITutorChat.svelte > Closing the Chat > clicking the close button dispatches a "close" event 7ms
+   × AITutorChat.svelte > Closing the Chat > clicking the chat overlay dispatches a "close" event 6ms
+     → expected "spy" to be called 1 times, but got 0 times
+   × AITutorChat.svelte > Input Handling > Shift+Enter in textarea creates a new line, does not send 17ms
+     → Unable to find an accessible element with the role "generic" and name `/message bubble/i`
+
+Here are the accessible roles:
+
+  dialog:
+
+  Name "AI Tutor":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"chat-header-title"[39m
+    [33maria-modal[39m=[32m"true"[39m
+    [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+    [33mrole[39m=[32m"dialog"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "AI Tutor":
+  [36m<h2[39m
+    [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+    [33mid[39m=[32m"chat-header-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Close Chat":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Close Chat"[39m
+    [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+    [33mtitle[39m=[32m"Close Chat"[39m
+  [36m/>[39m
+
+  Name "Send message":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Send message"[39m
+    [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<textarea[39m
+    [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+    [33mplaceholder[39m=[32m"Ask a question..."[39m
+    [33mrows[39m=[32m"1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+4:38:25 PM [vite-plugin-svelte] /app/frontend/src/lib/components/ui/Modal.svelte:40:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+4:38:25 PM [vite-plugin-svelte] /app/frontend/src/lib/components/ui/Modal.svelte:40:2 A11y: Non-interactive element <div> should not be assigned mouse or keyboard event listeners.
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders when isOpen is true
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > displays the provided slot content
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > calls onClose prop when close button is clicked
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > dispatches "close" event when close button is clicked and no onClose prop is given
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > calls onClose prop when overlay is clicked
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > dispatches "close" event when overlay is clicked and no onClose prop
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Button.spec.ts > Button.svelte > renders with a custom label
+<Button> was created with unknown prop 'label'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > calls onClose prop when Escape key is pressed
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders header slot content
+<Modal> was created with unknown prop 'slots'
+
+stderr | src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders footer slot content
+<Modal> was created with unknown prop 'slots'
+
+ ❯ src/lib/components/ui/Button.spec.ts (4 tests | 4 failed) 112ms
+   × Button.svelte > renders with default props 84ms
+     → Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Button.svelte > renders with a custom label 14ms
+     → Unable to find an element with the text: Click me. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Button.svelte > fires click event when clicked 9ms
+     → Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Button.svelte > is disabled when disabled prop is true 3ms
+     → Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ src/lib/components/ui/Modal.spec.ts (10 tests | 6 failed) 128ms
+   ✓ Modal.svelte > does not render when isOpen is false 11ms
+   × Modal.svelte > renders when isOpen is true 59ms
+     → Unable to find an element by: [data-testid="slot-content"]
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+   × Modal.svelte > displays the provided slot content 13ms
+     → Unable to find an element with the text: Default modal content. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ Modal.svelte > calls onClose prop when close button is clicked 8ms
+   ✓ Modal.svelte > dispatches "close" event when close button is clicked and no onClose prop is given 4ms
+   × Modal.svelte > calls onClose prop when overlay is clicked 12ms
+     → expected "spy" to be called 1 times, but got 0 times
+   × Modal.svelte > dispatches "close" event when overlay is clicked and no onClose prop 5ms
+     → expected "spy" to be called 1 times, but got 0 times
+   ✓ Modal.svelte > calls onClose prop when Escape key is pressed 4ms
+   × Modal.svelte > renders header slot content 6ms
+     → Unable to find an element with the text: Modal Header Test. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+   × Modal.svelte > renders footer slot content 5ms
+     → Unable to find an element with the text: Modal Footer Test. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ src/lib/components/ui/Checkbox.spec.ts (5 tests | 5 failed) 70ms
+   × Checkbox.svelte > renders with a label 53ms
+     → Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Checkbox.svelte > changes its checked state when clicked 4ms
+     → Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Checkbox.svelte > dispatches change event with the correct checked state 4ms
+     → Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Checkbox.svelte > is disabled when disabled prop is true 3ms
+     → Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label disabled svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × Checkbox.svelte > renders with checked state true if prop is passed 3ms
+     → Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 28 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Visibility and Initial State > is rendered when isOpen is true
+TestingLibraryElementError: Unable to find an element with the text: Hello! I'm your AI Tutor. How can I help you with your lessons today?. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/AITutorChat.spec.ts:22:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/28]⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Visibility and Initial State > shows initial AI welcome message when chat opens
+TestingLibraryElementError: Unable to find an element with the text: /Hello! I'm your AI Tutor/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/AITutorChat.spec.ts:27:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/28]⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Sending Messages > sending a message (button click) adds user message and queues AI response
+TestingLibraryElementError: Unable to find an element with the text: /Thinking about "Test user message..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mTest user message[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mTest user message[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Module.waitForWrapper node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1136:27
+    1134|   // create the error here so its stack trace is as close to the
+    1135|   // calling code as possible
+    1136|   const stackTraceError = new Error('STACK_TRACE_MESSAGE');
+       |                           ^
+    1137|   return getConfig().asyncWrapper(() => waitFor(callback, {
+    1138|     stackTraceError,
+ ❯ src/lib/components/AITutorChat.spec.ts:76:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/28]⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Sending Messages > sending a message (Enter key) adds user message and queues AI response
+TestingLibraryElementError: Unable to find an element with the text: /Thinking about "Another test..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mAnother test[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mAnother test[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Module.waitForWrapper node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1136:27
+    1134|   // create the error here so its stack trace is as close to the
+    1135|   // calling code as possible
+    1136|   const stackTraceError = new Error('STACK_TRACE_MESSAGE');
+       |                           ^
+    1137|   return getConfig().asyncWrapper(() => waitFor(callback, {
+    1138|     stackTraceError,
+ ❯ src/lib/components/AITutorChat.spec.ts:96:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/28]⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Closing the Chat > clicking the chat overlay dispatches a "close" event
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/lib/components/AITutorChat.spec.ts:140:28
+    138|       // Click the overlay itself, not its children
+    139|       await fireEvent.click(overlay);
+    140|       expect(closeHandler).toHaveBeenCalledTimes(1);
+       |                            ^
+    141|     });
+    142|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/28]⎯
+
+ FAIL  src/lib/components/AITutorChat.spec.ts > AITutorChat.svelte > Input Handling > Shift+Enter in textarea creates a new line, does not send
+TestingLibraryElementError: Unable to find an accessible element with the role "generic" and name `/message bubble/i`
+
+Here are the accessible roles:
+
+  dialog:
+
+  Name "AI Tutor":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"chat-header-title"[39m
+    [33maria-modal[39m=[32m"true"[39m
+    [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+    [33mrole[39m=[32m"dialog"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "AI Tutor":
+  [36m<h2[39m
+    [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+    [33mid[39m=[32m"chat-header-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Close Chat":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Close Chat"[39m
+    [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+    [33mtitle[39m=[32m"Close Chat"[39m
+  [36m/>[39m
+
+  Name "Send message":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Send message"[39m
+    [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<textarea[39m
+    [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+    [33mplaceholder[39m=[32m"Ask a question..."[39m
+    [33mrows[39m=[32m"1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m/>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1244:15
+ ❯ src/lib/components/AITutorChat.spec.ts:149:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/28]⎯
+
+ FAIL  src/lib/components/ui/Button.spec.ts > Button.svelte > renders with default props
+TestingLibraryElementError: Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Button.spec.ts:8:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/28]⎯
+
+ FAIL  src/lib/components/ui/Button.spec.ts > Button.svelte > renders with a custom label
+TestingLibraryElementError: Unable to find an element with the text: Click me. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Button.spec.ts:13:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/28]⎯
+
+ FAIL  src/lib/components/ui/Button.spec.ts > Button.svelte > fires click event when clicked
+TestingLibraryElementError: Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Button.spec.ts:18:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/28]⎯
+
+ FAIL  src/lib/components/ui/Button.spec.ts > Button.svelte > is disabled when disabled prop is true
+TestingLibraryElementError: Unable to find an element with the text: Submit. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"btn btn-primary svelte-18556yu"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Button.spec.ts:27:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/28]⎯
+
+ FAIL  src/lib/components/ui/Card.spec.ts > Card.svelte > renders with default slot content
+TestingLibraryElementError: Unable to find an element with the text: Default slot content. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Card.spec.ts:34:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/28]⎯
+
+ FAIL  src/lib/components/ui/Card.spec.ts > Card.svelte > renders with a title if title prop is provided
+TestingLibraryElementError: Unable to find an element with the text: Test Title. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Card.spec.ts:39:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/28]⎯
+
+ FAIL  src/lib/components/ui/Card.spec.ts > Card.svelte > renders with a subtitle if subtitle prop is provided
+TestingLibraryElementError: Unable to find an element with the text: Test Subtitle. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Card.spec.ts:44:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/28]⎯
+
+ FAIL  src/lib/components/ui/Card.spec.ts > Card.svelte > renders with title, subtitle and default slot content
+TestingLibraryElementError: Unable to find an element with the text: Test Title. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"card svelte-1xv4wel"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<div[39m
+        [33mclass[39m=[32m"card-content svelte-1xv4wel"[39m
+      [36m/>[39m
+      [0m [0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Card.spec.ts:56:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/28]⎯
+
+ FAIL  src/lib/components/ui/Checkbox.spec.ts > Checkbox.svelte > renders with a label
+TestingLibraryElementError: Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1405:27
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Checkbox.spec.ts:8:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/28]⎯
+
+ FAIL  src/lib/components/ui/Checkbox.spec.ts > Checkbox.svelte > changes its checked state when clicked
+TestingLibraryElementError: Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1405:27
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Checkbox.spec.ts:13:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/28]⎯
+
+ FAIL  src/lib/components/ui/Checkbox.spec.ts > Checkbox.svelte > dispatches change event with the correct checked state
+TestingLibraryElementError: Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1405:27
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Checkbox.spec.ts:29:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/28]⎯
+
+ FAIL  src/lib/components/ui/Checkbox.spec.ts > Checkbox.svelte > is disabled when disabled prop is true
+TestingLibraryElementError: Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label disabled svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1405:27
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Checkbox.spec.ts:56:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/28]⎯
+
+ FAIL  src/lib/components/ui/Checkbox.spec.ts > Checkbox.svelte > renders with checked state true if prop is passed
+TestingLibraryElementError: Found a label with the text of: Test Checkbox, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"checkbox-control svelte-movd12"[39m
+    [36m>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-checkbox svelte-movd12"[39m
+        [33mtype[39m=[32m"checkbox"[39m
+      [36m/>[39m
+      [0m [0m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-label  svelte-movd12"[39m
+      [36m>[39m
+        [0mTest Checkbox[0m
+      [36m</label>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1405:27
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Checkbox.spec.ts:62:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/28]⎯
+
+ FAIL  src/lib/components/ui/Input.spec.ts > Input.svelte > renders with default props
+TestingLibraryElementError: Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Input.spec.ts:8:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/28]⎯
+
+ FAIL  src/lib/components/ui/Input.spec.ts > Input.svelte > value changes when typed into
+TestingLibraryElementError: Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Input.spec.ts:18:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/28]⎯
+
+ FAIL  src/lib/components/ui/Input.spec.ts > Input.svelte > is disabled when disabled prop is true
+TestingLibraryElementError: Unable to find an element with the placeholder text of: Enter text...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"form-control svelte-1n77v29"[39m
+    [36m>[39m
+      [0m [0m
+      [36m<input[39m
+        [33mclass[39m=[32m"styled-input svelte-1n77v29"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mplaceholder[39m=[32m""[39m
+        [33mtype[39m=[32m"text"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Input.spec.ts:31:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders when isOpen is true
+TestingLibraryElementError: Unable to find an element by: [data-testid="slot-content"]
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Modal.spec.ts:41:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > displays the provided slot content
+TestingLibraryElementError: Unable to find an element with the text: Default modal content. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Modal.spec.ts:48:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > calls onClose prop when overlay is clicked
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/lib/components/ui/Modal.spec.ts:85:29
+     83|
+     84|     await fireEvent.click(overlay);
+     85|     expect(handleCloseMock).toHaveBeenCalledTimes(1);
+       |                             ^
+     86|   });
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > dispatches "close" event when overlay is clicked and no onClose prop
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ src/lib/components/ui/Modal.spec.ts:103:30
+    101|
+    102|     await fireEvent.click(overlay);
+    103|     expect(handleCloseEvent).toHaveBeenCalledTimes(1);
+       |                              ^
+    104|   });
+    105|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders header slot content
+TestingLibraryElementError: Unable to find an element with the text: Modal Header Test. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Modal.spec.ts:124:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/28]⎯
+
+ FAIL  src/lib/components/ui/Modal.spec.ts > Modal.svelte > renders footer slot content
+TestingLibraryElementError: Unable to find an element with the text: Modal Footer Test. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-overlay svelte-1jzumi0"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"modal-content svelte-1jzumi0"[39m
+        [33mrole[39m=[32m"document"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Close modal"[39m
+          [33mclass[39m=[32m"modal-close-btn modal-close-btn-absolute svelte-1jzumi0"[39m
+        [36m>[39m
+          [0m×[0m
+        [36m</button>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"modal-body svelte-1jzumi0"[39m
+        [36m/>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:339:19
+    337|   getElementError(message, container) {
+    338|     const prettifiedDOM = prettyDOM(container);
+    339|     const error = new Error([message, "Ignored nodes: comments, " + co…
+       |                   ^
+    340|     error.name = 'TestingLibraryElementError';
+    341|     return error;
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1206:25
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1185:17
+ ❯ node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1228:19
+ ❯ src/lib/components/ui/Modal.spec.ts:135:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/28]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TestingLibraryElementError: Unable to find an element with the text: /Thinking about "Test user message..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mTest user message[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mTest user message[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Module.waitForWrapper node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1136:27
+    1134|   // create the error here so its stack trace is as close to the
+    1135|   // calling code as possible
+    1136|   const stackTraceError = new Error('STACK_TRACE_MESSAGE');
+       |                           ^
+    1137|   return getConfig().asyncWrapper(() => waitFor(callback, {
+    1138|     stackTraceError,
+ ❯ src/lib/components/AITutorChat.spec.ts:76:32
+ ❯ processTicksAndRejections node:internal/process/task_queues:95:5
+ ❯ node_modules/@vitest/runner/dist/chunk-hooks.js:751:20
+
+This error originated in "src/lib/components/AITutorChat.spec.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "sending a message (button click) adds user message and queues AI response". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TestingLibraryElementError: Unable to find an element with the text: /Thinking about "Another test..."/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"chat-header-title"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+            [33mid[39m=[32m"chat-header-title"[39m
+          [36m>[39m
+            [0mAI Tutor[0m
+          [36m</h2>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Close Chat"[39m
+            [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+            [33mtitle[39m=[32m"Close Chat"[39m
+          [36m>[39m
+            [0m×[0m
+          [36m</button>[39m
+        [36m</header>[39m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+              [36m>[39m
+                [0mAnother test[0m
+              [36m</p>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+              [36m>[39m
+                [0m04:38 PM[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [36m<footer[39m
+          [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+        [36m>[39m
+          [36m<textarea[39m
+            [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+            [33mplaceholder[39m=[32m"Ask a question..."[39m
+            [33mrows[39m=[32m"1"[39m
+          [36m/>[39m
+          [0m [0m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Send message"[39m
+            [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m
+    [0m
+            [36m<svg[39m
+              [33mfill[39m=[32m"currentColor"[39m
+              [33mheight[39m=[32m"20px"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20px"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [0m
+      [0m
+              [36m<path[39m
+                [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+              [36m/>[39m
+              [0m
+    [0m
+            [36m</svg>[39m
+            [0m
+  [0m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m"overflow: hidden;"[39m
+  [36m>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"chat-header-title"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"chat-overlay svelte-136q3j"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"chat-widget svelte-136q3j"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"chat-header svelte-136q3j"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"chat-title svelte-136q3j"[39m
+              [33mid[39m=[32m"chat-header-title"[39m
+            [36m>[39m
+              [0mAI Tutor[0m
+            [36m</h2>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Close Chat"[39m
+              [33mclass[39m=[32m"close-button svelte-136q3j"[39m
+              [33mtitle[39m=[32m"Close Chat"[39m
+            [36m>[39m
+              [0m×[0m
+            [36m</button>[39m
+          [36m</header>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-messages svelte-136q3j"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"message-wrapper user svelte-136q3j"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"message-bubble svelte-136q3j"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"message-text svelte-136q3j"[39m
+                [36m>[39m
+                  [0mAnother test[0m
+                [36m</p>[39m
+                [0m [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"message-timestamp svelte-136q3j"[39m
+                [36m>[39m
+                  [0m04:38 PM[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [0m [0m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<footer[39m
+            [33mclass[39m=[32m"chat-input-area svelte-136q3j"[39m
+          [36m>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"chat-textarea svelte-136q3j"[39m
+              [33mplaceholder[39m=[32m"Ask a question..."[39m
+              [33mrows[39m=[32m"1"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send message"[39m
+              [33mclass[39m=[32m"send-button svelte-136q3j"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [0m
+    [0m
+              [36m<svg[39m
+                [33mfill[39m=[32m"currentColor"[39m
+                [33mheight[39m=[32m"20px"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20px"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [0m
+      [0m
+                [36m<path[39m
+                  [33md[39m=[32m"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"[39m
+                [36m/>[39m
+                [0m
+    [0m
+              [36m</svg>[39m
+              [0m
+  [0m
+            [36m</button>[39m
+          [36m</footer>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [0m[0m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Module.waitForWrapper node_modules/@testing-library/dom/dist/@testing-library/dom.esm.js:1136:27
+    1134|   // create the error here so its stack trace is as close to the
+    1135|   // calling code as possible
+    1136|   const stackTraceError = new Error('STACK_TRACE_MESSAGE');
+       |                           ^
+    1137|   return getConfig().asyncWrapper(() => waitFor(callback, {
+    1138|     stackTraceError,
+ ❯ src/lib/components/AITutorChat.spec.ts:96:32
+ ❯ node_modules/@vitest/runner/dist/chunk-hooks.js:751:20
+
+This error originated in "src/lib/components/AITutorChat.spec.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "sending a message (Enter key) adds user message and queues AI response". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  6 failed (6)
+      Tests  28 failed | 10 passed (38)
+     Errors  2 errors
+   Start at  16:38:22
+   Duration  3.43s (transform 1.58s, setup 706ms, collect 3.59s, tests 727ms, environment 2.95s, prepare 678ms)
+
+make: *** [Makefile:23: test] Error 1

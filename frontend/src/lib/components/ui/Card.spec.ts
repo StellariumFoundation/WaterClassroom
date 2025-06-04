@@ -1,36 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
 import Card from './Card.svelte';
-
-// A simple component to use as slot content
-const SlotContent = {
-  Component: class {
-    $set() {}
-    $on() {}
-    $destroy() {}
-    // @ts-ignore
-    $$prop_def = {};
-    // @ts-ignore
-    $$slot_def = {};
-    // @ts-ignore
-    $$events_def = {};
-    constructor(options: any) {
-      // @ts-ignore
-      this.div = document.createElement('div');
-      // @ts-ignore
-      this.div.textContent = options.props.text || 'Default slot content';
-      options.target.appendChild(this.div);
-    }
-  },
-  // @ts-ignore
-  props: {},
-};
-
+import SlotTestComponent from './SlotTestComponent.svelte';
 
 describe('Card.svelte', () => {
   it('renders with default slot content', () => {
-    // @ts-ignore
-    const { getByText } = render(Card, { props: { slots: { default: SlotContent } } });
+    const { getByText } = render(Card, {
+      props: {
+        $$slots: { default: SlotTestComponent }
+      },
+    });
     expect(getByText('Default slot content')).toBeInTheDocument();
   });
 
@@ -49,9 +28,8 @@ describe('Card.svelte', () => {
       props: {
         title: 'Test Title',
         subtitle: 'Test Subtitle',
-        // @ts-ignore
-        slots: { default: SlotContent }
-      }
+        $$slots: { default: SlotTestComponent }
+      },
     });
     expect(getByText('Test Title')).toBeInTheDocument();
     expect(getByText('Test Subtitle')).toBeInTheDocument();

@@ -3,7 +3,7 @@
 
   export let type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' = 'text';
   export let value: string | number = '';
-  export let placeholder: string = '';
+  export let placeholder: string = 'Enter text...';
   export let label: string | undefined = undefined;
   export let disabled: boolean = false;
   export let name: string | undefined = undefined; // Useful for forms
