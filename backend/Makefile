@@ -132,10 +132,14 @@ build-service: ## Build a specific service (e.g., make build-service SERVICE=aut
 test: ## Run tests for all services
 	@echo -e "${BLUE}Running tests for all services...${NC}"
 	@for service in $(SERVICES); do \
-		echo -e "${YELLOW}Testing $$service...${NC}"; \
-		cd $$service && $(GO) test ./... -v && cd ..; \
+		if ls $$service/*.go &> /dev/null || ls $$service/cmd/*.go &> /dev/null || ls $$service/internal/*.go &> /dev/null; then \
+			echo -e "${YELLOW}Testing $$service...${NC}"; \
+			cd $$service && $(GO) test ./... -v && cd ..; \
+		else \
+			echo -e "${YELLOW}Skipping $$service (no Go files found to test)...${NC}"; \
+		fi; \
 	done
-	@echo -e "${GREEN}All tests passed successfully!${NC}"
+	@echo -e "${GREEN}All tests completed! (Skipped services with no Go files may need attention if unintentional)${NC}"
 
 .PHONY: test-service
 test-service: ## Run tests for a specific service (e.g., make test-service SERVICE=auth-svc)

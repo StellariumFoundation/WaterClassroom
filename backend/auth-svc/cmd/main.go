@@ -986,16 +986,14 @@ func (app *Application) handleForgotPassword(c *gin.Context) {
 	}
 
 	// Store reset token and its expiry in the database
-	// Assumes `users` table has `reset_token_hash` (TEXT) and `reset_token_expires_at` (TIMESTAMPTZ) columns.
-	hashedResetToken, err := bcrypt.GenerateFromPassword([]byte(resetToken), app.Config.PasswordHashCost)
-	if err != nil {
-		app.Logger.Error("Failed to hash password reset token", zap.Error(err), zap.String("userID", userID))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process password reset request"})
-		return
-	}
+	// Assumes `users` table has `reset_token_hash` (TEXT) (intended to store the raw token)
+	// and `reset_token_expires_at` (TIMESTAMPTZ) columns.
+	// The resetToken is a JWT and should not be bcrypt hashed.
+	// Storing it directly or a standard hash (e.g. SHA256) if truncation is needed.
+	// For current logic to work (parsing JWT in resetPassword), storing raw token.
 
 	updateQuery := "UPDATE users SET reset_token_hash = $1, reset_token_expires_at = $2, updated_at = NOW() WHERE id = $3"
-	_, updateErr := app.DB.ExecContext(c.Request.Context(), updateQuery, string(hashedResetToken), expiryTime, userID)
+	_, updateErr := app.DB.ExecContext(c.Request.Context(), updateQuery, resetToken, expiryTime, userID)
 	if updateErr != nil {
 		app.Logger.Error("Failed to store password reset token hash in database", zap.Error(updateErr), zap.String("userID", userID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process password reset request"})
@@ -1137,10 +1135,9 @@ func (app *Application) handleResetPassword(c *gin.Context) {
 		return
 	}
 
-	// Compare the provided raw token (from request body) with the stored hash
-	err = bcrypt.CompareHashAndPassword([]byte(storedResetTokenHash.String), []byte(req.Token))
-	if err != nil {
-		app.Logger.Warn("Reset token mismatch for user", zap.String("userID", userID), zap.Error(err))
+	// Compare the provided raw token (from request body) with the stored token
+	if storedResetTokenHash.String != req.Token {
+		app.Logger.Warn("Reset token mismatch for user", zap.String("userID", userID))
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired reset token"})
 		return
 	}
