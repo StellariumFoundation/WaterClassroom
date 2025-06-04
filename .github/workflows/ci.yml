@@ -2,13 +2,13 @@ name: Water Classroom CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, development ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
   pull_request:
-    branches: [ main ]
+    branches: [ main, development ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
