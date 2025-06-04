@@ -24,28 +24,18 @@ RUN make install-deps
 RUN make build
 # The output will be in /app/frontend/build (by default for adapter-static)
 
-# Stage 2: Backend Build (Go API Gateway)
+# Stage 2: Backend Build (All go microsevices)
 FROM golang:1.24-alpine AS go-builder
 
-WORKDIR /app/backend/api-gateway
+WORKDIR /app/
 
-# Copy Go module files
-COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 
-COPY backend/Makefile /app/backend/Makefile
+COPY backend/Makefile /app/Makefile
 # Download Go module dependencies and bash
 RUN apk add --no-cache make bash
 RUN echo "--- Contents of /app/backend/Makefile before make execution: ---" && cat /app/backend/Makefile && echo "--- End of /app/backend/Makefile contents ---"
 
-# Copy the rest of the API gateway source code
-COPY backend/api-gateway/. .
-
-# Build the Go application
-# CGO_ENABLED=0 for static linking (optional, but good for alpine)
-# GOOS=linux to ensure Linux binary
-# -ldflags="-s -w" to strip debug information and reduce binary size (optional)
-RUN cd /app/backend && make -f Makefile build-service-docker MAKE_SERVICE_NAME=api-gateway BIN_PATH="/app/api-gateway"
-# The compiled binary will be at /app/api-gateway
+RUN cd /app/backend && make build-docker
 
 # Stage 3: Final Production Image
 FROM alpine:3.19
@@ -53,23 +43,12 @@ FROM alpine:3.19
 WORKDIR /app
 
 # Set default port for the Go application
-ENV SERVER_PORT=8080
-# Ensure Go app can find static files relative to its execution path if needed.
-# The Go app is configured to look for "./static_frontend".
-# So, if WORKDIR is /app, and binary is /app/api-gateway, it looks for /app/static_frontend.
+COPY --from=go-builder /apps
 
-# Copy the compiled Go binary from the go-builder stage
-COPY --from=go-builder /app/api-gateway /app/api-gateway
-
-# Copy the static frontend assets from the frontend-builder stage
-# The Go application is configured to serve files from "./static_frontend"
 COPY --from=frontend-builder /app/frontend/build ./static_frontend
 
 # Expose the port the Go application will listen on
 EXPOSE 8080
 
 # Set the entrypoint for the container
-ENTRYPOINT ["/app/api-gateway"]
-
-# Optional: Add a basic healthcheck
-# (Requires wget in alpine and a /health endpoint in the Go app)
+ENTRYPOINT ["/app/app"]
