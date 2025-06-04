@@ -33,6 +33,7 @@ WORKDIR /app/backend/api-gateway
 COPY backend/api-gateway/go.mod backend/api-gateway/go.sum ./
 
 COPY backend/Makefile /app/backend/Makefile
+RUN echo "--- Contents of /app/backend/Makefile before make execution: ---" && cat /app/backend/Makefile && echo "--- End of /app/backend/Makefile contents ---"
 # Download Go module dependencies
 RUN apk add --no-cache make
 
