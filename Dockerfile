@@ -43,7 +43,7 @@ COPY backend/api-gateway/. .
 # CGO_ENABLED=0 for static linking (optional, but good for alpine)
 # GOOS=linux to ensure Linux binary
 # -ldflags="-s -w" to strip debug information and reduce binary size (optional)
-RUN make SERVICE=api-gateway BIN_PATH="/app/api-gateway" -f ../Makefile build-service-docker
+RUN SERVICE=api-gateway make BIN_PATH="/app/api-gateway" -f ../Makefile build-service-docker
 # The compiled binary will be at /app/api-gateway
 
 # Stage 3: Final Production Image
