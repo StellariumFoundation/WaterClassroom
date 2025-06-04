@@ -81,6 +81,10 @@ jobs:
       - name: Install frontend dependencies
         run: make -C frontend install-deps
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: frontend # Ensure playwright is found and installs browsers correctly
+
       - name: Run frontend tests
         run: make -C frontend test
 

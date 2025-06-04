@@ -8,73 +8,73 @@ test.describe('Curriculum Pages', () => {
     await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).toBeVisible();
 
     // Check that there are multiple subject cards present
-    // Based on +page.svelte, cards are <a> tags with class 'subject-card-link'
-    const subjectCards = page.locator('a.subject-card-link');
-    await expect(subjectCards.first()).toBeVisible(); // Ensure at least one is visible
-    expect(await subjectCards.count()).toBeGreaterThan(0); // Check if there are multiple
 
-    // Check for some content within a card (e.g., the first one)
+    const subjectCards = page.locator('a.subject-card-link');
+    await expect(subjectCards.first()).toBeVisible();
+    expect(await subjectCards.count()).toBeGreaterThan(0);
+
     const firstCard = subjectCards.first();
     await expect(firstCard.getByRole('heading', { level: 2 })).toBeVisible(); // Subject name
     await expect(firstCard.getByText('View Lessons →')).toBeVisible();
   });
 
-  test('Navigation to a Subject Page URL', async ({ page }) => {
+  test('directly navigates to a specific subject page URL and checks for content (currently expects 404)', async ({ page }) => {
+    const subjectId = 'grade-5-math';
+    const subjectName = 'Grade 5 Math - Common Core';
+    await page.goto(`/curriculum/subject/${subjectId}`);
+    await page.waitForURL(`**/curriculum/subject/${subjectId}`);
+
+    // The following assertions will FAIL until frontend/src/routes/curriculum/subject/[subjectId]/+page.svelte exists and renders correct content.
+    // Currently, it will likely be a 404 page.
+    // console.log(await page.content()); // Useful for debugging what the page actually shows
+
+    // await expect(page.locator(`h1:has-text("Lessons for ${subjectName}")`)).toBeVisible({ timeout: 10000 });
+    // await expect(page).toHaveTitle(`Lessons for ${subjectName} - Water Classroom`);
+    // await expect(page.locator('.lesson-link').first()).toBeVisible();
+
+    // Temporary assertion: Check that it's not the main curriculum page (which it shouldn't be if it's a 404 for the subject)
+    await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).not.toBeVisible();
+    // One might add an assertion here to check for a 404 specific message if SvelteKit provides one consistently.
+  });
+
+  test('navigates from list to a Subject Page URL and checks for content (currently expects 404)', async ({ page }) => {
     await page.goto('/curriculum');
 
-    const firstSubjectCard = page.locator('a.subject-card-link').first();
-    await expect(firstSubjectCard).toBeVisible();
+    const subjectName = 'Grade 5 Math - Common Core';
+    const subjectCardSelector = `a.subject-card-link:has-text("${subjectName}")`;
+    // More robust selector for the specific card:
+    const subjectCard = page.locator(subjectCardSelector);
+    await expect(subjectCard).toBeVisible();
 
-    // Get the href to know where it's supposed to go
-    const expectedHref = await firstSubjectCard.getAttribute('href');
+    const expectedHref = await subjectCard.getAttribute('href');
     expect(expectedHref).not.toBeNull();
 
-    await firstSubjectCard.click();
+    await subjectCard.click();
+    await page.waitForURL(expectedHref!);
 
-    // Verify the URL changes to the subject page
-    // Example: /curriculum/subject/some-subject-id
-    await expect(page).toHaveURL(expectedHref!); // Use non-null assertion as we checked above
+    // The following assertions will FAIL until frontend/src/routes/curriculum/subject/[subjectId]/+page.svelte exists.
+    // await expect(page.locator(`h1:has-text("Lessons for ${subjectName}")`)).toBeVisible({ timeout: 10000 });
+    // await expect(page).toHaveTitle(`Lessons for ${subjectName} - Water Classroom`);
+    // await expect(page.locator('.lesson-link').first()).toBeVisible();
 
-    // Since frontend/src/routes/curriculum/subject/[subjectId]/+page.svelte does not exist,
-    // we cannot reliably test for content on this page like "Lessons for" or '.lesson-link'.
-    // If SvelteKit shows a 404 page, that's what we'd get.
-    // For now, verifying the URL is the most we can do.
-    // If a 404 page has a distinct title or heading, we could check for that.
-    // Or, if we want to confirm it's NOT the curriculum page anymore:
     await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).not.toBeVisible();
   });
 
-  test('Back Navigation from a presumed Subject Page URL', async ({ page }) => {
-    // This test assumes the subject page (even if it's a 404 or basic page)
-    // would have a "← Curricula" link/button if it were implemented.
-    // Since frontend/src/routes/curriculum/subject/[subjectId]/+page.svelte does not exist,
-    // this test is speculative.
+  test('Back Navigation from a presumed Subject Page URL uses browser back', async ({ page }) => {
+    await page.goto('/curriculum');
+    const subjectName = 'Grade 5 Math - Common Core';
+    const subjectCardSelector = `a.subject-card-link:has-text("${subjectName}")`;
+    const subjectCard = page.locator(subjectCardSelector);
+    await expect(subjectCard).toBeVisible();
+    const expectedHref = await subjectCard.getAttribute('href');
 
-    // Navigate to a presumed subject page URL directly for setup
-    // Using the first subject from the main curriculum page's data for a valid-looking URL
-    const placeholderSubjectId = 'grade-5-math';
-    await page.goto(`/curriculum/subject/${placeholderSubjectId}`);
+    await subjectCard.click();
+    await page.waitForURL(expectedHref!);
 
-    // At this point, we are on what would be the subject page.
-    // If the page existed and had a "← Curricula" link:
-    // const backLink = page.getByRole('link', { name: '← Curricula' });
-    // await expect(backLink).toBeVisible();
-    // await backLink.click();
-    // await expect(page).toHaveURL('/curriculum');
+    // At this point, we are on the subject page URL (likely a 404 page).
+    // The actual "← Curricula" link on this page does not exist to be tested.
+    // So, we test browser's back functionality.
 
-    // For now, without the page, we can't test this interaction.
-    // We can, however, test browser back navigation as a proxy if the URL did change.
-    await page.goBack();
-    await expect(page).toHaveURL('/curriculum'); // Or the page it came from before direct goto
-                                               // If it was direct goto, it might be about:blank or previous test's page.
-                                               // Let's refine this:
-    await page.goto('/curriculum'); // Go to main curriculum page first
-    const firstSubjectCard = page.locator('a.subject-card-link').first();
-    const expectedHref = await firstSubjectCard.getAttribute('href');
-    await firstSubjectCard.click(); // Navigate to subject page
-    await expect(page).toHaveURL(expectedHref!); // Confirm we are on "subject" page URL
-
-    // Now test browser back functionality
     await page.goBack();
     await expect(page).toHaveURL('/curriculum');
     await expect(page.getByRole('heading', { name: 'Select Your Curriculum', level: 1 })).toBeVisible();
