@@ -58,8 +58,8 @@ logs: ## Show logs from all services
 	@$(DOCKER_COMPOSE) logs -f
 
 .PHONY: logs-service
-logs-service: ## Show logs from a specific service (e.g., make logs-service SERVICE=auth-svc)
-	@$(DOCKER_COMPOSE) logs -f $(SERVICE)
+logs-service: ## Show logs from a specific service (e.g., make logs-service MAKE_SERVICE_NAME=auth-svc)
+	@$(DOCKER_COMPOSE) logs -f $(MAKE_SERVICE_NAME)
 
 # Database Migration Commands
 .PHONY: migrate-up
@@ -87,23 +87,23 @@ migrate-down: ## Rollback the latest migration for all services
 	@echo -e "${GREEN}All rollbacks completed successfully!${NC}"
 
 .PHONY: migrate-create
-migrate-create: ## Create a new migration file (e.g., make migrate-create SERVICE=auth-svc NAME=add_user_fields)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo -e "${RED}Error: SERVICE parameter is required${NC}"; \
-		echo -e "Usage: make migrate-create SERVICE=auth-svc NAME=add_user_fields"; \
+migrate-create: ## Create a new migration file (e.g., make migrate-create MAKE_SERVICE_NAME=auth-svc NAME=add_user_fields)
+	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then \
+		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; \
+		echo -e "Usage: make migrate-create MAKE_SERVICE_NAME=auth-svc NAME=add_user_fields"; \
 		exit 1; \
 	fi
 	@if [ -z "$(NAME)" ]; then \
 		echo -e "${RED}Error: NAME parameter is required${NC}"; \
-		echo -e "Usage: make migrate-create SERVICE=auth-svc NAME=add_user_fields"; \
+		echo -e "Usage: make migrate-create MAKE_SERVICE_NAME=auth-svc NAME=add_user_fields"; \
 		exit 1; \
 	fi
-	@if [ ! -d "$(SERVICE)/migrations" ]; then \
-		echo -e "${YELLOW}Creating migrations directory for $(SERVICE)...${NC}"; \
-		mkdir -p $(SERVICE)/migrations; \
+	@if [ ! -d "$(MAKE_SERVICE_NAME)/migrations" ]; then \
+		echo -e "${YELLOW}Creating migrations directory for $(MAKE_SERVICE_NAME)...${NC}"; \
+		mkdir -p $(MAKE_SERVICE_NAME)/migrations; \
 	fi
-	@echo -e "${BLUE}Creating migration file for $(SERVICE)...${NC}"
-	@cd $(SERVICE) && $(GOOSE) -dir migrations create $(NAME) sql
+	@echo -e "${BLUE}Creating migration file for $(MAKE_SERVICE_NAME)...${NC}"
+	@cd $(MAKE_SERVICE_NAME) && $(GOOSE) -dir migrations create $(NAME) sql
 	@echo -e "${GREEN}Migration file created successfully!${NC}"
 
 # Build Commands
@@ -117,15 +117,15 @@ build: ## Build all services
 	@echo -e "${GREEN}All services built successfully!${NC}"
 
 .PHONY: build-service
-build-service: ## Build a specific service (e.g., make build-service SERVICE=auth-svc)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo -e "${RED}Error: SERVICE parameter is required${NC}"; \
-		echo -e "Usage: make build-service SERVICE=auth-svc"; \
+build-service: ## Build a specific service (e.g., make build-service MAKE_SERVICE_NAME=auth-svc)
+	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then \
+		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; \
+		echo -e "Usage: make build-service MAKE_SERVICE_NAME=auth-svc"; \
 		exit 1; \
 	fi
-	@echo -e "${BLUE}Building $(SERVICE)...${NC}"
-	@cd $(SERVICE) && $(GO) build -o bin/$(SERVICE) ./cmd
-	@echo -e "${GREEN}$(SERVICE) built successfully!${NC}"
+	@echo -e "${BLUE}Building $(MAKE_SERVICE_NAME)...${NC}"
+	@cd $(MAKE_SERVICE_NAME) && $(GO) build -o bin/$(MAKE_SERVICE_NAME) ./cmd
+	@echo -e "${GREEN}$(MAKE_SERVICE_NAME) built successfully!${NC}"
 
 # Test Commands
 .PHONY: test
@@ -142,15 +142,15 @@ test: ## Run tests for all services
 	@echo -e "${GREEN}All tests completed! (Skipped services with no Go files may need attention if unintentional)${NC}"
 
 .PHONY: test-service
-test-service: ## Run tests for a specific service (e.g., make test-service SERVICE=auth-svc)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo -e "${RED}Error: SERVICE parameter is required${NC}"; \
-		echo -e "Usage: make test-service SERVICE=auth-svc"; \
+test-service: ## Run tests for a specific service (e.g., make test-service MAKE_SERVICE_NAME=auth-svc)
+	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then \
+		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; \
+		echo -e "Usage: make test-service MAKE_SERVICE_NAME=auth-svc"; \
 		exit 1; \
 	fi
-	@echo -e "${BLUE}Running tests for $(SERVICE)...${NC}"
-	@cd $(SERVICE) && $(GO) test ./... -v
-	@echo -e "${GREEN}Tests for $(SERVICE) completed successfully!${NC}"
+	@echo -e "${BLUE}Running tests for $(MAKE_SERVICE_NAME)...${NC}"
+	@cd $(MAKE_SERVICE_NAME) && $(GO) test ./... -v
+	@echo -e "${GREEN}Tests for $(MAKE_SERVICE_NAME) completed successfully!${NC}"
 
 .PHONY: test-coverage
 test-coverage: ## Run tests with coverage for all services
@@ -172,15 +172,15 @@ lint: ## Run linter for all services
 	@echo -e "${GREEN}All services linted successfully!${NC}"
 
 .PHONY: lint-service
-lint-service: ## Run linter for a specific service (e.g., make lint-service SERVICE=auth-svc)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo -e "${RED}Error: SERVICE parameter is required${NC}"; \
-		echo -e "Usage: make lint-service SERVICE=auth-svc"; \
+lint-service: ## Run linter for a specific service (e.g., make lint-service MAKE_SERVICE_NAME=auth-svc)
+	@if [ -z "$(MAKE_SERVICE_NAME)" ]; then \
+		echo -e "${RED}Error: MAKE_SERVICE_NAME parameter is required${NC}"; \
+		echo -e "Usage: make lint-service MAKE_SERVICE_NAME=auth-svc"; \
 		exit 1; \
 	fi
-	@echo -e "${BLUE}Running linter for $(SERVICE)...${NC}"
-	@cd $(SERVICE) && $(GOLANGCI_LINT) run ./...
-	@echo -e "${GREEN}$(SERVICE) linted successfully!${NC}"
+	@echo -e "${BLUE}Running linter for $(MAKE_SERVICE_NAME)...${NC}"
+	@cd $(MAKE_SERVICE_NAME) && $(GOLANGCI_LINT) run ./...
+	@echo -e "${GREEN}$(MAKE_SERVICE_NAME) linted successfully!${NC}"
 
 # Protobuf Commands
 .PHONY: proto-gen
@@ -240,24 +240,24 @@ generate-keys: ## Generate RSA keys for JWT authentication
 # Default target
 .DEFAULT_GOAL := help
 
-build-service-docker: ## Build a specific service for Docker production image (SERVICE, BIN_PATH, MODULE_DIR are params)
+build-service-docker: ## Build a specific service for Docker production image (MAKE_SERVICE_NAME, BIN_PATH, MODULE_DIR are params)
 	@echo "Debug: Entered build-service-docker target."
-	@echo "Debug: SERVICE variable value is: [$(SERVICE)]"
+	@echo "Debug: MAKE_SERVICE_NAME variable value is: [$(MAKE_SERVICE_NAME)]"
 	@echo "Debug: BIN_PATH variable value is: [$(BIN_PATH)]"
 	@echo "Debug: MODULE_DIR variable value is: [$(MODULE_DIR)]"
-	ifndef SERVICE
-		$(error SERVICE is not set. Usage: make build-service-docker SERVICE=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_SERVICE_name>])
+	ifndef MAKE_SERVICE_NAME
+		$(error MAKE_SERVICE_NAME is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
 	endif
 	ifndef BIN_PATH
-		$(error BIN_PATH is not set. Usage: make build-service-docker SERVICE=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_SERVICE_name>])
+		$(error BIN_PATH is not set. Usage: make build-service-docker MAKE_SERVICE_NAME=<name> BIN_PATH=<output_path> [MODULE_DIR=<path_to_module_root_if_not_MAKE_SERVICE_NAME_name>])
 	endif
 	@# MODULE_DIR defaults to the service name relative to this Makefile if not set.
 	@# This means if MODULE_DIR is '.', it refers to the CWD of the make command.
-	@# If this Makefile is /app/backend/Makefile, and MODULE_DIR is not set, it assumes sources are in /app/backend/$(SERVICE)/
+	@# If this Makefile is /app/backend/Makefile, and MODULE_DIR is not set, it assumes sources are in /app/backend/$(MAKE_SERVICE_NAME)/
 	MODULE_PATH_PREFIX := "."
 	ifeq ($(MODULE_DIR),)
-		# If MODULE_DIR is empty, assume service sources are in a subdirectory named $(SERVICE) relative to this Makefile
-		ACTUAL_MODULE_DIR := $(MODULE_PATH_PREFIX)/$(SERVICE)
+		# If MODULE_DIR is empty, assume service sources are in a subdirectory named $(MAKE_SERVICE_NAME) relative to this Makefile
+		ACTUAL_MODULE_DIR := $(MODULE_PATH_PREFIX)/$(MAKE_SERVICE_NAME)
 	else
 		# If MODULE_DIR is set (e.g. to "."), use that path.
 		ACTUAL_MODULE_DIR := $(MODULE_DIR)
@@ -265,12 +265,12 @@ build-service-docker: ## Build a specific service for Docker production image (S
 
 	# Determine Go build source path
 	GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/cmd/main.go" # Default for most services
-	# If SERVICE is 'api-gateway' or 'assessment-svc', then expect main.go in the root of the module directory.
-	ifeq ($(filter $(SERVICE),api-gateway assessment-svc),$(SERVICE))
+	# If MAKE_SERVICE_NAME is 'api-gateway' or 'assessment-svc', then expect main.go in the root of the module directory.
+	ifeq ($(filter $(MAKE_SERVICE_NAME),api-gateway assessment-svc),$(MAKE_SERVICE_NAME))
 		GO_BUILD_SRC_PATH := "$(ACTUAL_MODULE_DIR)/main.go"
 	endif
 
-	@echo "--- Building service $(SERVICE) for Docker ---"
+	@echo "--- Building service $(MAKE_SERVICE_NAME) for Docker ---"
 	@echo "Source directory: $(ACTUAL_MODULE_DIR)"
 	@echo "Go build source: $(GO_BUILD_SRC_PATH)"
 	@echo "Output binary: $(BIN_PATH)"
@@ -278,4 +278,4 @@ build-service-docker: ## Build a specific service for Docker production image (S
 		-ldflags="-w -s" \
 		-o $(BIN_PATH) \
 		$(GO_BUILD_SRC_PATH)
-	@echo "--- Finished building service $(SERVICE) for Docker ---"
+	@echo "--- Finished building service $(MAKE_SERVICE_NAME) for Docker ---"
