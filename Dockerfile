@@ -52,7 +52,7 @@ RUN echo "--- Debug Info End ---"
 # CGO_ENABLED=0 for static linking (optional, but good for alpine)
 # GOOS=linux to ensure Linux binary
 # -ldflags="-s -w" to strip debug information and reduce binary size (optional)
-RUN cd /app/backend && echo "--- Running Make Dry-Run from /app/backend ---" && make -f Makefile build-service-docker MAKE_SERVICE_NAME=api-gateway BIN_PATH="/app/api-gateway" --dry-run && echo "--- Make Dry-Run Finished ---"
+RUN cd /app/backend && echo "--- Running Make with Print Database & Verbose Debug ---" && make --print-data-base --debug=v -f Makefile build-service-docker MAKE_SERVICE_NAME=api-gateway BIN_PATH="/app/api-gateway" && echo "--- Make Print Database & Verbose Debug Finished ---"
 # The compiled binary will be at /app/api-gateway
 
 # Stage 3: Final Production Image
