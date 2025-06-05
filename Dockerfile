@@ -7,6 +7,11 @@ WORKDIR /app
 # Copy the entire project
 COPY . .
 
+# Install bun
+RUN apk add --no-cache curl
+RUN curl -fsSL https://bun.sh/install | sh
+ENV PATH="/root/.bun/bin:$PATH"
+
 # Run the build command from the root Makefile
 # This will build both backend and frontend
 RUN make build

@@ -8,8 +8,8 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:unit": "vitest run",
-		"test:e2e": "playwright test",
+		"test:unit": "bunx vitest run",
+		"test:e2e": "bunx playwright test",
 		"test": "npm run test:unit && npm run test:e2e"
 	},
 	"devDependencies": {
@@ -27,5 +27,8 @@
 		"vite": "^5.0.3",
 		"vitest": "^3.2.1"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"jsdom": "^26.1.0"
+	}
 }

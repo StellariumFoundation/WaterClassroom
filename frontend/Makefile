@@ -6,11 +6,11 @@ all: build
 
 install-deps:
 	@echo "Installing frontend dependencies..."
-	npm install --legacy-peer-deps
+	bun install --legacy-peer-deps
 
 build: install-deps
 	@echo "Building frontend application..."
-	npx vite build
+	bun run build
 
 clean:
 	@echo "Cleaning frontend build artifacts..."
