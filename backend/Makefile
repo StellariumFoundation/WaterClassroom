@@ -3,11 +3,11 @@
 # Go parameters
 GOBASE := $(shell pwd)
 GOPATH := $(GOBASE)/vendor:$(GOPATH)
-GOBIN := $(GOBASE)/build
+GOBIN := $(GOBASE)/server
 GOFILES := $(wildcard *.go) $(wildcard cmd/*/*.go) $(wildcard internal/*/*.go) $(wildcard internal/*/*/*.go) $(wildcard pkg/*/*.go)
 
 # Target application details
-APP_NAME := monolith_server
+APP_NAME := Backend
 CMD_PATH := ./cmd/server/main.go
 
 # Output binary path
