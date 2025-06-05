@@ -1,21 +1,15 @@
-# Stage 1: Build the Go application
+# Stage 1: Build the application using the root Makefile
 FROM golang:1.21-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy go.mod and go.sum and download dependencies
-COPY backend/go.mod backend/go.sum ./backend/
-RUN cd backend && go mod download
+# Copy the entire project
+COPY . .
 
-# Copy the entire backend source code
-COPY backend/ ./backend/
-
-# Set the working directory to the backend
-WORKDIR /app/backend/
-
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server/main.go
+# Run the build command from the root Makefile
+# This will build both backend and frontend
+RUN make build
 
 # Stage 2: Prepare the runtime environment
 FROM alpine:latest
@@ -23,8 +17,11 @@ FROM alpine:latest
 # Set the working directory
 WORKDIR /app
 
-# Copy the built binary from the builder stage
-COPY --from=builder /app/server /app/server
+# Copy the built backend binary from the builder stage
+COPY --from=builder /app/backend/server /app/server
+
+# Copy the frontend static assets from the builder stage
+COPY --from=builder /app/frontend/dist /app/frontend/dist
 
 # Copy the configuration files
 COPY backend/configs /app/configs

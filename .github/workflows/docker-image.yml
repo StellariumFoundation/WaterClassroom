@@ -21,29 +21,16 @@ jobs:
       with:
         go-version: '1.24' # Specify your Go version
 
-    - name: Run backend tests
-      working-directory: backend
-      run: make test
-
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20' # Specify your Node.js version, adjust if needed
 
-    - name: Install frontend dependencies and run tests
-      working-directory: frontend
-      run: |
-        make test # This should handle npm install and npm test as per frontend/Makefile
+    - name: Run tests
+      run: make test
 
-    # Note: The frontend is built here, but its static assets are not currently
-    # included in the Docker image built in the subsequent step.
-    # The Dockerfile would need to be modified to include these assets
-    # if the goal is a self-contained application image.
-    - name: Build frontend
-      working-directory: frontend
-      run: make build # This should handle npm install and vite build as per frontend/Makefile
+    - name: Build application
+      run: make build
 
-    # Note: This Docker build currently only includes the backend application.
-    # Frontend assets built in previous steps are not packaged into this image.
-    - name: Build the Docker image (Backend)
+    - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
