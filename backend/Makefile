@@ -46,6 +46,13 @@ tidy:
 	go mod tidy
 	@echo "Dependencies tidied."
 
+# Run tests
+.PHONY: test
+test:
+	@echo "Running tests..."
+	go test ./...
+	@echo "Tests complete."
+
 # Help
 .PHONY: help
 help:
@@ -55,4 +62,5 @@ help:
 	@echo "  run         - Build and run the application"
 	@echo "  clean       - Remove build artifacts"
 	@echo "  tidy        - Tidy Go module dependencies"
+	@echo "  test        - Run tests"
 	@echo "  help        - Show this help message"
