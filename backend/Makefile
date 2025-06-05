@@ -14,7 +14,10 @@ services:
 
 # Pattern rule to build each binary
 services/% : % | services
-    go build -o $@ ./$<
+    for dir in $(SUBDIRS); do \
+        ( go build -o $@ ./$< ) & \
+    done; \
+    wait
 
 # Run all binaries in the background
 run: $(BINARIES)
