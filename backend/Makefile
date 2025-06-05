@@ -21,7 +21,6 @@ services/% : $(wildcard % anchoring/*.go) | services
         ( go build -o $@ ./$* ) & \
     done; \
     wait
-    go build -o $@ ./$*
 
 # Run all binaries in the background
 run: $(BINARIES)
