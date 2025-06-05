@@ -20,9 +20,9 @@ import (
 	_ "github.com/mattn/go-sqlite3" // SQLite driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/water-classroom/backend/internal/app"
-	"github.com/water-classroom/backend/internal/config"
-	"github.com/water-classroom/backend/internal/router"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/config"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/router"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )

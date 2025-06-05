@@ -18,19 +18,19 @@ import (
 	"golang.org/x/oauth2/google"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/water-classroom/backend/internal/app"
-	"github.com/water-classroom/backend/internal/auth"
-	"github.com/water-classroom/backend/internal/config"
-	"github.com/water-classroom/backend/internal/database"
-	"github.com/water-classroom/backend/internal/middleware"
-	"github.com/water-classroom/backend/internal/router"
-	"github.com/water-classroom/backend/internal/assessment"        // Added
-	"github.com/water-classroom/backend/internal/curriculum"
-	"github.com/water-classroom/backend/internal/notification"     // Added
-	"github.com/water-classroom/backend/internal/payment"
-	"github.com/water-classroom/backend/internal/progress"         // Added
-	"github.com/water-classroom/backend/internal/tutor_orchestrator" // Added
-	"github.com/water-classroom/backend/pkg/logger"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/auth"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/config"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/database"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/middleware"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/router"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/assessment"        // Added
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/curriculum"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/notification"     // Added
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/payment"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/progress"         // Added
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/tutor_orchestrator" // Added
+	"github.com/StellariumFoundation/WaterClassroom/backend/pkg/logger"
 	"go.uber.org/zap"
 	// _ "google.golang.org/grpc/reflection" // Keep for later if gRPC is fully integrated
 	// "google.golang.org/grpc" // Keep for later

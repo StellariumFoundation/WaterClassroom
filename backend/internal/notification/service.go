@@ -1,7 +1,7 @@
 package notification
 
 import (
-	"github.com/water-classroom/backend/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
 	// "context" // If context is used in service methods
 	// "go.uber.org/zap" // If logging is needed
 )

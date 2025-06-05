@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/water-classroom/water-classroom-monolith/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
 	"go.uber.org/zap"
 )
 

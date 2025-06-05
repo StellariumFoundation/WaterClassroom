@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/rabbitmq/amqp091-go"
-	"github.com/water-classroom/backend/internal/config" // Adjusted import path
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/config" // Adjusted import path
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"

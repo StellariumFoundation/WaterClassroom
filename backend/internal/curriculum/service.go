@@ -1,7 +1,7 @@
 package curriculum
 
 import (
-	"github.com/water-classroom/backend/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
 )
 
 // CurriculumService defines the service layer for curriculum-related operations.

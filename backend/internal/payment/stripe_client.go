@@ -5,7 +5,7 @@ import (
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/paymentintent"
 	"github.com/stripe/stripe-go/v76/webhook"
-	"github.com/water-classroom/water-classroom-monolith/internal/app" // For app.Logger
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app" // For app.Logger
 	"go.uber.org/zap"
 )
 

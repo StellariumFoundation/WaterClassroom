@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v76"
-	"github.com/water-classroom/water-classroom-monolith/internal/app"
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app"
 	"go.uber.org/zap"
 	"github.com/google/uuid"
 )

@@ -12,7 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/water-classroom/backend/internal/app" // Adjusted
+	"github.com/StellariumFoundation/WaterClassroom/backend/internal/app" // Adjusted
 	"go.uber.org/zap"                                                  // Added
 	"golang.org/x/crypto/bcrypt"
 	"github.com/golang-jwt/jwt/v5"
