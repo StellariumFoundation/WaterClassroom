@@ -16,7 +16,7 @@ services:
     mkdir -p services
 
 # Pattern rule to build each binary from its .go files
-services/% : $(wildcard % anchoring/*.go) | services
+services/% : $(wildcard % anchoring) | services
     for dir in $(SUBDIRS); do \
         ( go build -o $@ ./$* ) & \
     done; \
