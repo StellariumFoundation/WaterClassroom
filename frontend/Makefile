@@ -7,7 +7,6 @@ all: build
 install-deps:
 	@echo "Installing frontend dependencies..."
 	npm install --legacy-peer-deps
-	npm install @sveltejs/kit
 
 build: install-deps
 	@echo "Building frontend application..."
