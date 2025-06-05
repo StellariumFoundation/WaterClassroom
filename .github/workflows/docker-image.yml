@@ -23,7 +23,7 @@ jobs:
 
     - name: Run backend tests
       working-directory: backend
-      run: go test ./...
+      run: make test
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
