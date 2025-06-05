@@ -32,6 +32,13 @@ run: build
 	@echo "Running $(APP_NAME)... (Ensure configs are set up in ./configs/)"
 	@$(BINARY_PATH)
 
+# Test the application
+.PHONY: test
+test:
+	@echo "Running tests..."
+	go test ./...
+	@echo "Tests complete."
+
 # Clean build artifacts
 .PHONY: clean
 clean:
@@ -53,6 +60,7 @@ help:
 	@echo "  all         - Build the application (default)"
 	@echo "  build       - Build the application"
 	@echo "  run         - Build and run the application"
+	@echo "  test        - Run tests"
 	@echo "  clean       - Remove build artifacts"
 	@echo "  tidy        - Tidy Go module dependencies"
 	@echo "  help        - Show this help message"
