@@ -1,7 +1,7 @@
 Water Classroom: AI-Powered Learning Revolution – Comprehensive Project Dossier
 
-Version: 1.1
-Date: October 27, 2023 (Updated)
+Version: 1.2 (Monolith Update)
+Date: October 28, 2023
 Project Lead: John Victor, Founder, Stellarium Foundation
 
 Table of Contents:
@@ -62,13 +62,13 @@ The Water Classroom Experience (User Journey)
 5.4. Completing Homework & Assessments (Proctored for "Water School" Students)
 
 Technical Architecture & Implementation
-6.1. System Architecture Overview (Frontend, Backend Services, AI Model Integration)
+6.1. System Architecture Overview (Frontend, Backend Monolith, AI Model Integration)
 6.2. Frontend Technologies & Design
 6.2.1. Web: Svelte
 6.2.2. Mobile: Flutter (iOS & Android)
 6.2.3. Desktop: Tauri (Windows, macOS, Linux)
-6.3. Backend Infrastructure & Services
-6.3.1. Microservices Architecture with Go
+6.3. Backend Infrastructure & Application
+6.3.1. Modular Monolith Architecture with Go
 6.4. AI Model Integration & Capabilities
 6.4.1. Tutoring & Content Adaptation AI: State-of-the-art LLMs (e.g., Gemini) with Water Classroom Custom System Prompts
 6.4.2. Proctoring AI: Hugging Face Vision-Language Models (VLMs) for identity and activity monitoring (for "Water School" students)
@@ -90,7 +90,7 @@ Impact & Vision for the Future
 Open Source Strategy & Community Engagement
 9.1. Rationale for Open Source
 9.2. Licensing (MIT License)
-9.3. Contribution Guidelines & Ways to Get Involved (Frontend Components, Go Microservice Templates, System Prompt Refinements)
+9.3. Contribution Guidelines & Ways to Get Involved (Frontend Components, Go Module Templates/Skeletons, System Prompt Refinements)
 9.4. Building a Global Community
 
 Development Roadmap (High-Level)
@@ -218,7 +218,7 @@ A multi-tiered architecture comprising:
 
 Frontend Clients: Web (Svelte), Mobile (Flutter), Desktop (Tauri).
 
-Backend Application Layer: Go microservices managing business logic, user authentication, API gateways, and AI model interactions.
+Backend Application Layer: A **Go monolithic application** managing business logic, user authentication, API endpoints, and AI model interactions. It contains well-defined internal modules for different functionalities.
 
 Data Layer: PostgreSQL database for all persistent data.
 
@@ -232,17 +232,17 @@ Focus on intuitive UI/UX, responsive design, and engaging interactive elements.
 
 6.2.3. Desktop: Tauri for secure, lightweight, cross-platform desktop applications (Windows, macOS, Linux) using web frontend technologies.
 
-6.3. Backend Infrastructure & Services:
+6.3. Backend Infrastructure & Application:
 
 Cloud-native design for scalability and reliability (AWS, Google Cloud, Azure).
 
-6.3.1. Microservices Architecture with Go: Backend built as a suite of independent, scalable microservices written in Go, communicating via gRPC or RESTful APIs.
+6.3.1. Modular Monolith Architecture with Go: The backend is built as a single, deployable Go application. This application is structured internally into logical **modules** (e.g., `auth`, `curriculum`, `payment`, `progress`, `tutor_orchestrator`) that handle specific domains of business logic. Communication between these modules occurs primarily through direct Go function/method calls within the same process, ensuring low latency and strong consistency.
 
-Secure authentication (OAuth 2.0, OpenID Connect).
+Secure authentication (OAuth 2.0, OpenID Connect handled by the `auth` module).
 
 6.4. AI Model Integration & Capabilities:
-* 6.4.1. Tutoring & Content Adaptation AI: State-of-the-art LLMs (e.g., Gemini) with Water Classroom Custom System Prompts: Advanced Large Language Models like Google's Gemini will be utilized. Interaction will be guided by carefully crafted Water Classroom custom system prompts that provide context from the specific curriculum, student progress, and interaction history. This approach, a form of Retrieval Augmented Generation (RAG) through prompt engineering, grounds the AI's responses and teaching methods. Real-time streaming for voice will leverage the chosen LLM's capabilities.
-* 6.4.2. Proctoring AI: Hugging Face Vision-Language Models (VLMs) for identity and activity monitoring (for "Water School" students): For AI proctoring, selected Vision-Language Models available through Hugging Face (or similar model hubs/APIs) will be employed. These models will analyze camera feeds to help verify student identity against a profile and monitor for activities like unauthorized chatting or presence of other individuals during exams. This feature is exclusively for "Water School" students requiring verified assessments.
+* 6.4.1. Tutoring & Content Adaptation AI: State-of-the-art LLMs (e.g., Gemini) with Water Classroom Custom System Prompts: Advanced Large Language Models like Google's Gemini will be utilized. Interaction will be guided by carefully crafted Water Classroom custom system prompts (managed by the `tutor_orchestrator` module) that provide context from the specific curriculum, student progress, and interaction history. This approach, a form of Retrieval Augmented Generation (RAG) through prompt engineering, grounds the AI's responses and teaching methods. Real-time streaming for voice will leverage the chosen LLM's capabilities.
+* 6.4.2. Proctoring AI: Hugging Face Vision-Language Models (VLMs) for identity and activity monitoring (for "Water School" students): For AI proctoring, selected Vision-Language Models available through Hugging Face (or similar model hubs/APIs) will be employed. These models will analyze camera feeds to help verify student identity against a profile and monitor for activities like unauthorized chatting or presence of other individuals during exams. This feature is exclusively for "Water School" students requiring verified assessments and will be managed by the `assessment` module.
 
 6.5. Database & Data Storage: PostgreSQL
 
@@ -284,7 +284,7 @@ Water Classroom aims for accessibility with tailored offerings:
 9.2. Licensing (MIT License): (No changes from V1.0)
 9.3. Contribution Guidelines & Ways to Get Involved: A clear CONTRIBUTING.md will outline contributions. Given the tech stack, this could include:
 * Development of Svelte UI components or Flutter widgets.
-* Contributions to Go microservice templates or common libraries.
+* Contributions to **Go module templates/skeletons within the monolith** or common libraries.
 * Refinements or suggestions for the custom system prompts used with LLMs.
 * Educational game concepts or prototypes.
 * Localization and curriculum adaptation.
@@ -306,7 +306,7 @@ Basic "Water School" Onboarding: Registration and curriculum selection for this 
 
 Database: PostgreSQL setup.
 
-Backend: Initial set of Go microservices for core functionality (users, content, basic progress).
+Backend: Initial set of **Go modules within the monolith** for core functionality (users, content, basic progress).
 
 10.2. Phase 2 (Expansion):
 

@@ -36,7 +36,7 @@ This document outlines the requirements for the Minimum Viable Product (MVP) of 
     *   Basic student performance dashboard (completed lessons, scores).
     *   "Water School" student onboarding flow.
     *   Frontend: Web (Svelte), Mobile (Flutter - one OS initially).
-    *   Backend: Go microservices for core functions.
+    *   Backend: Go **monolithic application** with internal modules for core functions.
     *   Database: PostgreSQL.
 *   **Out of Scope for MVP (Defer to Phase 2+):**
     *   Voice-based AI Tutoring.
@@ -110,7 +110,7 @@ This document outlines the requirements for the Minimum Viable Product (MVP) of 
     *   Game load time: < 10 seconds.
 *   **6.2. Scalability (Initial):**
     *   Support for up to 1,000 concurrent users for MVP.
-    *   System should be designed for horizontal scaling of backend services.
+    *   System should be designed for horizontal scaling of the **monolith backend application**.
 *   **6.3. Usability:**
     *   Intuitive navigation.
     *   Clear instructions for games and interactive elements.
@@ -221,119 +221,104 @@ This document outlines the UX/UI design direction for the Water Classroom MVP. T
 
 **Document 3: System Architecture Document - MVP**
 
-**Version:** 1.0
-**Date:** October 27, 2023
+**Version:** 1.1 (Updated for Monolith)
+**Date:** October 28, 2023
 **Based on:** PRD-MVP, Dossier v1.1 (Sections 6, 10.1)
 
 **1. Introduction & Overview**
-This document details the technical architecture for the Water Classroom MVP. It outlines the structure of the frontend clients, backend microservices, AI model integration, database, and other key technical aspects for Phase 1. The architecture prioritizes modularity, scalability for future growth, and leveraging the specified tech stack.
+This document details the technical architecture for the Water Classroom MVP. It outlines the structure of the frontend clients, the **backend monolith application**, AI model integration, database, and other key technical aspects for Phase 1. The architecture prioritizes modularity within the monolith for maintainability, scalability for future growth, and leveraging the specified tech stack.
 
 **2. High-Level Architecture Diagram (Textual Description of Components & Flow)**
 *(A visual diagram (e.g., using draw.io, Lucidchart) will be created and maintained, showing these components and their primary interactions.)*
 
 *   **Clients:**
-    *   **Web Browser (Svelte App):** User interacts, makes API calls to Backend API Gateway.
-    *   **Mobile App (Flutter - Android/iOS):** User interacts, makes API calls to Backend API Gateway.
+    *   **Web Browser (Svelte App):** User interacts, makes API calls to the Backend Monolith.
+    *   **Mobile App (Flutter - Android/iOS):** User interacts, makes API calls to the Backend Monolith.
 *   **Backend (Cloud Hosted - AWS/Google Cloud/Azure):**
-    *   **API Gateway:** Single entry point for all client requests, routes to appropriate microservices. Handles authentication, rate limiting.
-    *   **Go Microservices:** Suite of services handling specific business logic.
-        *   Communicate with each other (e.g., gRPC or async messaging via a queue for certain tasks).
-        *   Communicate with PostgreSQL Database.
-        *   Communicate with external AI Services (e.g., Gemini API).
+    *   **Backend Monolith (Go Application):** Single entry point and application server for all client requests.
+        *   Contains internal **modules** (e.g., `auth`, `curriculum`, `payment`, `progress`, `ai_tutor_orchestrator`) that handle specific business logic.
+        *   Interactions between these modules primarily occur via direct Go function/method calls within the same process.
+        *   Exposes a unified API (REST, potentially gRPC for specific internal uses later) for clients.
+        *   Serves static frontend assets (HTML, CSS, JS for the Svelte SPA).
+        *   Communicates with PostgreSQL Database.
+        *   Communicates with external AI Services (e.g., Gemini API) and Payment Gateways (e.g., Stripe).
     *   **PostgreSQL Database:** Stores all persistent application data.
+    *   **(Optional) RabbitMQ:** For asynchronous tasks like sending emails or notifications, if not handled by direct API calls to third-party services.
 *   **External Services:**
     *   **AI LLM Service (e.g., Google Gemini API):** For AI tutoring.
+    *   **Payment Gateway (e.g., Stripe API):** For processing payments.
 
 **3. Frontend Architecture (MVP)**
 
 *   **3.1. Web (Svelte & SvelteKit):**
-    *   **Structure:** SvelteKit for routing, server-side rendering (SSR) or static site generation (SSG) where appropriate for landing/info pages, client-side rendering (CSR) for the dynamic application interior.
-    *   **State Management:** Svelte stores, or a lightweight global state manager if needed.
-    *   **API Communication:** `fetch` API or a library like `axios` to interact with the backend API Gateway.
+    *   **Structure:** SvelteKit for routing, client-side rendering (CSR) for the dynamic application interior (served by the Go monolith).
+    *   **State Management:** Svelte stores.
+    *   **API Communication:** `fetch` API or `axios` to interact with the monolith's backend API.
     *   **Component-Based:** UI built from reusable Svelte components.
 *   **3.2. Mobile (Flutter):**
-    *   **Structure:** Widget-based UI. Clear separation of UI, business logic (e.g., using BLoC, Provider, Riverpod for state management).
-    *   **Navigation:** Flutter's Navigator 2.0 or a package like `go_router`.
-    *   **API Communication:** `http` package or `dio` to interact with the backend API Gateway.
-    *   **Platform Channels:** If any native device features are needed (unlikely for MVP core).
+    *   **Structure:** Widget-based UI, state management (e.g., BLoC, Provider).
+    *   **Navigation:** Flutter's Navigator or `go_router`.
+    *   **API Communication:** `http` package or `dio` to interact with the monolith's backend API.
 
-**4. Backend Microservices Architecture (Go - MVP)**
-*(Services deployed as Docker containers, orchestrated by Kubernetes or a simpler PaaS.)*
+**4. Backend Monolith Architecture (Go - MVP)**
+*(The application deployed as a Docker container, potentially orchestrated by Kubernetes or a simpler PaaS.)*
 
-*   **4.1. List of MVP Microservices & Core Responsibilities:**
-    *   **4.1.1. User Service:**
-        *   Manages user registration, login, authentication (JWTs), profile data, "Water School" status.
-    *   **4.1.2. Curriculum Service:**
-        *   Manages curriculum structure, subjects, lessons, interactive content metadata (not the assets themselves, which might be in object storage).
-    *   **4.1.3. Progress Service:**
-        *   Tracks student progress: lesson completion, quiz scores, game achievements (simple for MVP).
-    *   **4.1.4. Content Delivery Service (or part of Curriculum Service for MVP):**
-        *   Serves lesson content, game configurations/data to clients.
-    *   **4.1.5. AI Tutor Orchestration Service:**
-        *   Receives tutoring requests from clients.
-        *   Formats requests and custom system prompts.
-        *   Interfaces with the external LLM (e.g., Gemini API).
-        *   Processes LLM responses before returning to the client.
-*   **4.2. Inter-service Communication:**
-    *   **Synchronous:** gRPC preferred for performance and typed contracts between Go services. REST as a fallback or for simpler internal APIs.
-    *   **Asynchronous (Future Consideration):** Message queue (e.g., RabbitMQ, Kafka, NATS) for tasks like sending confirmation emails (if added), or complex background processing (not critical for MVP core).
+*   **4.1. List of MVP Modules & Core Responsibilities:**
+    *   **4.1.1. Auth Module (`auth`):** Manages user registration, login, authentication (JWTs), profile data.
+    *   **4.1.2. Curriculum Module (`curriculum`):** Manages curriculum structure, subjects, lessons.
+    *   **4.1.3. Progress Module (`progress`):** Tracks student progress.
+    *   **4.1.4. Payment Module (`payment`):** Integrates with Stripe for payments.
+    *   **4.1.5. AI Tutor Orchestration Module (`tutor_orchestrator`):** Interfaces with external LLM.
+    *   **4.1.6. Static File Serving (Core Router):** Serves the Svelte SPA.
+    *   **(Placeholder Modules for `assessment`, `notification`)**
+*   **4.2. Inter-module Communication:**
+    *   **Primary Method:** Direct Go function/method calls between packages/modules.
+    *   **Shared Context:** Request-scoped context (`gin.Context`) and shared `app.Application` struct.
+    *   **Asynchronous Operations (if applicable):** Specific modules publishing to RabbitMQ, consumed by internal workers or dedicated goroutines.
 
 **5. AI Model Integration (MVP)**
 
 *   **5.1. Gemini (or similar LLM) for Text-Based Tutoring:**
-    *   AI Tutor Orchestration Service will make secure API calls to the chosen LLM.
-    *   **System Prompts:** Carefully crafted prompts providing context (e.g., student's current lesson, curriculum, relevant prior interactions stored in Progress Service or cached) will be sent with each user query.
-    *   Focus on RAG-like behavior through prompt engineering: grounding responses in Water Classroom's curriculum data.
+    *   The **AI Tutor Orchestration Module** within the monolith makes secure API calls to the LLM.
+    *   System prompts use data from `curriculum` and `progress` modules (via direct calls).
 
 **6. Database Design (PostgreSQL - MVP)**
-*(Detailed ERD and table schemas to be created.)*
+*(Detailed ERD and table schemas in `/migrations`.)*
 
-*   **6.1. Key Entities & Relationships (Conceptual):**
-    *   `Users` (user_id, email, password_hash, is_water_school_student, created_at)
-    *   `Curricula` (curriculum_id, name, description)
-    *   `Subjects` (subject_id, curriculum_id, name)
-    *   `Lessons` (lesson_id, subject_id, title, content_metadata_url)
-    *   `Games` (game_id, lesson_id, name, config_url)
-    *   `UserProgress` (user_id, lesson_id, status, score, game_attempts)
-    *   `TutorInteractions` (user_id, session_id, timestamp, user_query, ai_response)
-    *   (Relationships: User-Curriculum (selected), User-Progress, Lesson-Games, etc.)
-*   **Storage:** Cloud object storage (AWS S3, GCS) for multimedia assets (game assets, videos - referenced by URLs in DB).
+*   **6.1. Key Entities:** `Users`, `Curricula`, `Subjects`, `Lectures`, `UserProgress`, `Payments`.
+*   **Storage:** Cloud object storage (S3, GCS) for large assets (referenced by URLs in DB).
 
 **7. Data Flow Diagrams (Conceptual - Example: AI Tutor Request)**
-*(To be visualized)*
-1.  Client (Svelte/Flutter) sends tutor request (user_id, current_lesson_context, user_query) to API Gateway.
-2.  API Gateway authenticates, routes to AI Tutor Orchestration Service.
-3.  AI Tutor Service fetches relevant curriculum context (from Curriculum Service or its cache) and student history snippets (from Progress Service).
-4.  AI Tutor Service constructs detailed system prompt + user_query, calls Gemini API.
+1.  Client sends request to **Monolith API**.
+2.  **Monolith API** authenticates (`auth_module`), routes to **AI Tutor Orchestration Module**.
+3.  **AI Tutor Orchestration Module** fetches context from `curriculum_module` and `progress_module` (direct calls).
+4.  **AI Tutor Orchestration Module** calls Gemini API.
 5.  Gemini API returns response.
-6.  AI Tutor Service processes response (e.g., basic filtering, formatting), logs interaction, returns to client via API Gateway.
+6.  **AI Tutor Orchestration Module** processes response, returns to client via Monolith API.
 
-**8. Technology Stack Summary (MVP - from Dossier v1.1)**
+**8. Technology Stack Summary (MVP - from Dossier v1.1, adapted)**
 *   **Frontend Web:** Svelte, SvelteKit
 *   **Frontend Mobile:** Flutter (Dart)
-*   **Frontend Desktop (Phase 2):** Tauri
-*   **Backend:** Go (Microservices)
+*   **Backend:** Go (**Monolith with internal modules**)
 *   **Database:** PostgreSQL
 *   **AI Tutoring:** Gemini (or similar LLM) via API
-*   **AI Proctoring (Phase 2):** Hugging Face VLMs
+*   **Payment Processing:** Stripe API
 *   **Deployment:** Docker, Cloud Platform (AWS/GCP/Azure)
 
 **9. Security Considerations (MVP)**
-*   Standard input validation and output encoding.
-*   Secure API authentication (JWTs).
-*   Secrets management for API keys (e.g., HashiCorp Vault, cloud provider's KMS).
+*   Standard input validation, output encoding.
+*   Secure API authentication (JWTs via `auth_module`).
+*   Secrets management for API keys.
 *   Regular dependency scanning.
-*   Role-based access control (RBAC) for internal APIs if multiple user types (admin vs student) access them, though simple for MVP.
 
 **10. Scalability & Performance Considerations (MVP)**
-*   Stateless backend services where possible for easier horizontal scaling.
+*   Horizontal scaling of the **monolith application instances**.
+*   Stateless application handlers/modules where possible.
 *   Efficient database queries and indexing.
-*   Connection pooling for database and external API calls.
-*   Basic caching strategies (e.g., for frequently accessed curriculum data).
-*   Monitoring and logging in place from day one (e.g., Prometheus, Grafana, ELK stack or cloud equivalents).
+*   Connection pooling.
+*   Basic caching (in-memory or Redis).
+*   Monitoring and logging for the monolith.
 
 ---
 
 John Victor, these condensed documents should give your engineering team a solid foundation to begin discussing implementation details, breaking down tasks, and starting development on the Water Classroom MVP. Each section here can and should be expanded with more detail as the project progresses.
-
-
