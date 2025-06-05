@@ -35,9 +35,15 @@ jobs:
       run: |
         make test # This should handle npm install and npm test as per frontend/Makefile
 
+    # Note: The frontend is built here, but its static assets are not currently
+    # included in the Docker image built in the subsequent step.
+    # The Dockerfile would need to be modified to include these assets
+    # if the goal is a self-contained application image.
     - name: Build frontend
       working-directory: frontend
       run: make build # This should handle npm install and vite build as per frontend/Makefile
 
+    # Note: This Docker build currently only includes the backend application.
+    # Frontend assets built in previous steps are not packaged into this image.
     - name: Build the Docker image (Backend)
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
