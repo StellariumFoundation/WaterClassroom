@@ -1,5 +1,8 @@
-# List all subdirectories except 'services/'
-SUBDIRS := $(filter-out services/, $(wildcard */))
+# Find all immediate subdirectories containing .go files
+GO_FILES := $(wildcard */*.go)
+GO_DIRS := $(sort $(dir $(GO_FILES)))
+SUBDIRS := $(filter-out services/, $(GO_DIRS))
+
 # Remove trailing slashes to get project names
 PROJECTS := $(patsubst %/,%,$(SUBDIRS))
 # Define binary paths in the 'services' folder
@@ -12,12 +15,13 @@ build: $(BINARIES)
 services:
     mkdir -p services
 
-# Pattern rule to build each binary
-services/% : % | services
+# Pattern rule to build each binary from its .go files
+services/% : $(wildcard % anchoring/*.go) | services
     for dir in $(SUBDIRS); do \
-        ( go build -o $@ ./$< ) & \
+        ( go build -o $@ ./$* ) & \
     done; \
     wait
+    go build -o $@ ./$*
 
 # Run all binaries in the background
 run: $(BINARIES)
