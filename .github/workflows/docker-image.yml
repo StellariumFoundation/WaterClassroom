@@ -13,6 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21' # Specify your Go version
+
+    - name: Run backend tests
+      working-directory: backend
+      run: go test ./...
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Specify your Node.js version, adjust if needed
+
+    - name: Install frontend dependencies and run tests
+      working-directory: frontend
+      run: |
+        make test # This should handle npm install and npm test as per frontend/Makefile
+
+    - name: Build frontend
+      working-directory: frontend
+      run: make build # This should handle npm install and vite build as per frontend/Makefile
+
+    - name: Build the Docker image (Backend)
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
