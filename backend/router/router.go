@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/water-classroom/water-classroom-monolith/internal/app" // Adjusted import path
+	// "github.com/water-classroom/water-classroom-monolith/internal/app" // Adjusted import path
 	"go.uber.org/zap"
 	"path/filepath" // Added
 	"strings"       // Added
