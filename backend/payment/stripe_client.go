@@ -79,7 +79,7 @@ func NewStripeClient(application *app.Application, secretKey string) *StripeClie
 func (sc *StripeClient) CreatePaymentIntent(amount int64, currency string) (*stripe.PaymentIntent, error) {
 	if sc.SecretKey == "" { // Check if client was initialized without a key
 		sc.App.Logger.Error("Stripe client called without a secret key.")
-		return nil, &stripe.InvalidRequestError{Msg: "Stripe client not configured with a secret key."}
+		return nil, &stripe.InvalidRequestError{Message: "Stripe client not configured with a secret key."}
 	}
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(amount),
@@ -107,7 +107,7 @@ func (sc *StripeClient) CreatePaymentIntent(amount int64, currency string) (*str
 func (sc *StripeClient) HandleWebhook(payload []byte, signatureHeader string, webhookSecret string) (*stripe.Event, error) {
 	if webhookSecret == "" {
 		sc.App.Logger.Error("Stripe webhook secret is not configured.")
-		return nil, &stripe.InvalidRequestError{Msg: "Stripe webhook secret not configured."}
+		return nil, &stripe.InvalidRequestError{Message: "Stripe webhook secret not configured."}
 	}
 	event, err := sc.WHClient.ConstructEvent(payload, signatureHeader, webhookSecret)
 	if err != nil {
