@@ -140,7 +140,7 @@ func (ph *PaymentHandler) HandleStripeWebhook(c *gin.Context) {
 		isSignatureError := false
 		if stripeErr, ok := err.(*stripe.Error); ok {
 			errMsgLower = strings.ToLower(stripeErr.Msg)
-			if stripeErr.Type == stripe.ErrorTypeSignatureVerification {
+			if stripeErr.Type == stripe.ErrorTypeStripeSignatureVerification {
 				isSignatureError = true
 			}
 		}
