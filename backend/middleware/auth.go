@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/water-classroom/backend/internal/app" // Adjusted
+	"github.com/water-classroom/backend/app" // Adjusted
 	"go.uber.org/zap"                                                 // Ensure zap is imported
 )
 

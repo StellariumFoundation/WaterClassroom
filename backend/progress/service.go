@@ -1,7 +1,7 @@
 package progress
 
 import (
-	// "github.com/water-classroom/water-classroom-monolith/internal/app"
+	"github.com/water-classroom/backend/app"
 	// "context"
 	// "go.uber.org/zap"
 )

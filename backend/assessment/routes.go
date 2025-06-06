@@ -2,7 +2,6 @@ package assessment
 
 import (
 	"github.com/gin-gonic/gin"
-	// "github.com/water-classroom/backend/internal/app" // Not strictly needed here if handler has App
 )
 
 // RegisterRoutes sets up the assessment-related routes.

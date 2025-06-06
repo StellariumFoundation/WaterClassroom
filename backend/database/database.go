@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/water-classroom/backend/internal/config" // Adjusted import path
+	"github.com/water-classroom/backend/config" // Adjusted import path
 	_ "github.com/lib/pq"                                                  // Postgres driver
 	"go.uber.org/zap"
 )

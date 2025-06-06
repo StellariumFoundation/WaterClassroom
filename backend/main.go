@@ -18,18 +18,18 @@ import (
 	"golang.org/x/oauth2/google"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/water-classroom/backend/internal/app"
-	"github.com/water-classroom/backend/internal/auth"
-	"github.com/water-classroom/backend/internal/config"
-	"github.com/water-classroom/backend/internal/database"
-	"github.com/water-classroom/backend/internal/middleware"
-	"github.com/water-classroom/backend/internal/router"
-	"github.com/water-classroom/backend/internal/assessment"        // Added
-	"github.com/water-classroom/backend/internal/curriculum"
-	"github.com/water-classroom/backend/internal/notification"     // Added
-	"github.com/water-classroom/backend/internal/payment"
-	"github.com/water-classroom/backend/internal/progress"         // Added
-	"github.com/water-classroom/backend/internal/tutor_orchestrator" // Added
+	"github.com/water-classroom/backend/app"
+	"github.com/water-classroom/backend/auth"
+	"github.com/water-classroom/backend/config"
+	"github.com/water-classroom/backend/database"
+	"github.com/water-classroom/backend/middleware"
+	"github.com/water-classroom/backend/router"
+	"github.com/water-classroom/backend/assessment"        // Added
+	"github.com/water-classroom/backend/curriculum"
+	"github.com/water-classroom/backend/notification"     // Added
+	"github.com/water-classroom/backend/payment"
+	"github.com/water-classroom/backend/progress"         // Added
+	"github.com/water-classroom/backend/tutor_orchestrator" // Added
 	"github.com/water-classroom/backend/pkg/logger"
 	"go.uber.org/zap"
 	// _ "google.golang.org/grpc/reflection" // Keep for later if gRPC is fully integrated
