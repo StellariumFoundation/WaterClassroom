@@ -1,7 +1,7 @@
 package assessment
 
 import (
-	"github.com/water-classroom/backend/internal/app"
+	"github.com/water-classroom/backend/app"
 	// "go.uber.org/zap" // If logging is needed in service methods directly
 	// "context" // If context is used in service methods
 )

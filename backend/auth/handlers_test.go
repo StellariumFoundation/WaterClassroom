@@ -15,8 +15,8 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/water-classroom/backend/internal/app"
-	"github.com/water-classroom/backend/internal/config"
+	"github.com/water-classroom/backend/app"
+	"github.com/water-classroom/backend/config"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
