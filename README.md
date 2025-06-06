@@ -1,3 +1,5 @@
+[![Docker Image CI](https://github.com/StellariumFoundation/WaterClassroom/actions/workflows/docker-image.yml/badge.svg?branch=Development)](https://github.com/StellariumFoundation/WaterClassroom/actions/workflows/docker-image.yml)
+
 # Water Classroom 🌊🎓  
 AI-Powered Learning Ecosystem  
 
