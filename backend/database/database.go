@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/water-classroom/backend/config" // Adjusted import path
 	_ "github.com/lib/pq"                                                  // Postgres driver
