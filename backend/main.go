@@ -26,8 +26,7 @@ import (
 	"github.com/water-classroom/backend/router"
 	"github.com/water-classroom/backend/assessment"        // Added
 	"github.com/water-classroom/backend/curriculum"
-	"github.com/water-classroom/backend/notification"     // Added
-	"github.com/water-classroom/backend/payment"
+	"github.com/water-classroom/backend/notification"     // Adde
 	"github.com/water-classroom/backend/progress"         // Added
 	"github.com/water-classroom/backend/tutor_orchestrator" // Added
 	"github.com/water-classroom/backend/pkg/logger"
