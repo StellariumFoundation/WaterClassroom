@@ -85,7 +85,7 @@ func (ph *PaymentHandler) HandleCreatePaymentIntent(c *gin.Context) {
 		UserID:                userIDStr,
 		StripePaymentIntentID: pi.ID,
 		Amount:                pi.Amount,
-		Currency:              pi.Currency,
+		Currency:              string(pi.Currency),
 		Status:                string(pi.Status), // e.g., "requires_payment_method"
 		Description:           &req.Description,  // Save description from request
 		CreatedAt:             time.Now(),

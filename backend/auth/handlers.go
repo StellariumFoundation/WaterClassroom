@@ -502,8 +502,8 @@ func (h *AuthHandler) HandleGoogleCallback(c *gin.Context) {
 		HttpOnly: true, Secure: h.App.Config.Env == "production", Path: "/", SameSite: http.SameSiteLaxMode,
 	})
 
-	if c.Query("state") != oauthStateCookie.Value { // Corrected: oauthStateCookie.Value
-		h.App.Logger.Error("Invalid OAuth state", zap.String("query_state", c.Query("state")), zap.String("cookie_state", oauthStateCookie.Value))
+	if c.Query("state") != oauthStateCookie { // Corrected: oauthStateCookie.Value
+		h.App.Logger.Error("Invalid OAuth state", zap.String("query_state", c.Query("state")), zap.String("cookie_state", oauthStateCookie))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state value."})
 		return
 	}

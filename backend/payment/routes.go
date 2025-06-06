@@ -2,7 +2,6 @@ package payment
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/water-classroom/backend/app"
 	"go.uber.org/zap"
 )
 
