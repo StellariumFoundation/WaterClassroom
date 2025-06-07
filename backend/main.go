@@ -27,6 +27,7 @@ import (
 	"github.com/water-classroom/backend/assessment"        // Added
 	"github.com/water-classroom/backend/curriculum"
 	"github.com/water-classroom/backend/notification"     // Adde
+	"github.com/water-classroom/backend/payment" // Added for new payment service
 	"github.com/water-classroom/backend/progress"         // Added
 	"github.com/water-classroom/backend/tutor_orchestrator" // Added
 	"github.com/water-classroom/backend/pkg/logger"
@@ -137,17 +138,24 @@ func main() {
 	curriculum.RegisterRoutes(apiV1, curriculumHandler, authMw)
 	appLogger.Info("Curriculum routes registered under /api/v1")
 
-	// Initialize StripeClient, PaymentService, PaymentHandler and Register Payment Routes
-	if cfg.StripeSecretKey == "" {
-		appLogger.Warn("Stripe secret key not configured. Payment functionality will be limited/disabled.")
-		// Decide if this is fatal. For now, we'll let it run but Stripe dependent endpoints will fail.
+	// Initialize Payment Service and Register Payment Routes
+	// Ensure StripeSecretKey is checked as NewPaymentService relies on it from cfg.Stripe.SecretKey
+	if cfg.Stripe.SecretKey == "" { // Adjusted to check the correct config field used by NewPaymentService
+		appLogger.Warn("Stripe secret key (cfg.Stripe.SecretKey) not configured. Payment functionality will be limited/disabled.")
 	}
-	stripeClient := payment.NewStripeClient(application, cfg.StripeSecretKey)
-
-	paymentSvc := payment.NewPaymentService(application) // For DB interactions by handlers/stripeclient
-
-	paymentHandler := payment.NewPaymentHandler(application, stripeClient, paymentSvc)
-	payment.RegisterRoutes(apiV1, paymentHandler, authMw)
+	// The database (application.DB) and logger (appLogger) are already initialized.
+	// cfg is also available.
+	// authMw is the *middleware.AuthMiddleware
+	paymentService, err := payment.NewPaymentService(cfg, application.DB, appLogger)
+	if err != nil {
+		// NewPaymentService currently doesn't return an error, but if it did, this is how to handle it.
+		// For now, the error check might be for future-proofing or if NewPaymentService changes.
+		// Based on current payment.NewPaymentService, it always returns (service, nil).
+		// However, it logs "Stripe client initialized successfully" or could panic if cfg is nil.
+		// Let's assume it could return an error for robustness.
+		appLogger.Fatal("Failed to initialize payment service", zap.Error(err))
+	}
+	payment.RegisterPaymentRoutes(apiV1, paymentService, appLogger, cfg, authMw) // Pass cfg as required
 	appLogger.Info("Payment routes registered under /api/v1")
 
 	// Initialize AssessmentHandler, Service and Register Routes
