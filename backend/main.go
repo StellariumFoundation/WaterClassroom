@@ -29,6 +29,7 @@ import (
 	"github.com/water-classroom/backend/notification"     // Adde
 	"github.com/water-classroom/backend/progress"         // Added
 	"github.com/water-classroom/backend/tutor_orchestrator" // Added
+	"github.com/water-classroom/backend/payment"           // Added
 	"github.com/water-classroom/backend/pkg/logger"
 	"go.uber.org/zap"
 	// _ "google.golang.org/grpc/reflection" // Keep for later if gRPC is fully integrated

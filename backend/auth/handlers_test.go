@@ -42,8 +42,8 @@ func setupTestEnv(t *testing.T) (*AuthHandler, sqlmock.Sqlmock, *app.Application
 			PasswordHashCost:     bcrypt.MinCost, // Use MinCost for tests
 			JWTIssuer:            "test-issuer",
 			JWTAudience:          "test-audience",
-			AccessTokenDuration:  time.Hour * 1,
-			RefreshTokenDuration: time.Hour * 24 * 7,
+			JWTAccessTokenExpiry:  time.Hour * 1,
+			JWTRefreshTokenExpiry: time.Hour * 24 * 7,
 			// JWTSecretKey: "test-secret-key-minimum-32-characters", // Not needed for RSA
 		},
 		PrivateKey: privateKey,
