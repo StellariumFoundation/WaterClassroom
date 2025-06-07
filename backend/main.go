@@ -27,7 +27,7 @@ import (
 	"github.com/water-classroom/backend/assessment"        // Added
 	"github.com/water-classroom/backend/curriculum"
 	"github.com/water-classroom/backend/notification"     // Adde
-	"github.com/water-classroom/backend/payment" // Added for new payment service
+	"github.com/water-classroom/backend/payment"           // Ensured: Added for new payment service
 	"github.com/water-classroom/backend/progress"         // Added
 	"github.com/water-classroom/backend/tutor_orchestrator" // Added
 	"github.com/water-classroom/backend/pkg/logger"
@@ -146,14 +146,14 @@ func main() {
 	// The database (application.DB) and logger (appLogger) are already initialized.
 	// cfg is also available.
 	// authMw is the *middleware.AuthMiddleware
-	paymentService, err := payment.NewPaymentService(cfg, application.DB, appLogger)
-	if err != nil {
+	paymentService, errPaymentService := payment.NewPaymentService(cfg, application.DB, appLogger) // Renamed err to errPaymentService for clarity
+	if errPaymentService != nil { // Using renamed error variable
 		// NewPaymentService currently doesn't return an error, but if it did, this is how to handle it.
 		// For now, the error check might be for future-proofing or if NewPaymentService changes.
 		// Based on current payment.NewPaymentService, it always returns (service, nil).
 		// However, it logs "Stripe client initialized successfully" or could panic if cfg is nil.
 		// Let's assume it could return an error for robustness.
-		appLogger.Fatal("Failed to initialize payment service", zap.Error(err))
+		appLogger.Fatal("Failed to initialize payment service", zap.Error(errPaymentService)) // Using renamed error variable
 	}
 	payment.RegisterPaymentRoutes(apiV1, paymentService, appLogger, cfg, authMw) // Pass cfg as required
 	appLogger.Info("Payment routes registered under /api/v1")
@@ -322,10 +322,10 @@ func startGRPCServer(ctx context.Context, app *app.Application) error {
 	}
 
 	addr := fmt.Sprintf("%s:%d", app.Config.ServerHost, app.Config.GRPCPort)
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		return fmt.Errorf("failed to listen on gRPC addr %s: %w", addr, err)
-	}
+	// listener, errListener := net.Listen("tcp", addr) // Commented out as listener is unused
+	// if errListener != nil { // Commented out
+	// 	return fmt.Errorf("failed to listen on gRPC addr %s: %w", addr, errListener) // Commented out
+	// } // Commented out
 
 	// This is where you would initialize your gRPC server:
 	// grpcServer := grpc.NewServer(...)
