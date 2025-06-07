@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stripe/stripe-go/v82"
-	"github.com/stripe/stripe-go/v82/testutil" // Stripe's testing utilities
+	// "github.com/stripe/stripe-go/v82/testutil" // Removed: This package does not exist in v82
 
 	"github.com/water-classroom/backend/app"
 	"github.com/water-classroom/backend/config"
