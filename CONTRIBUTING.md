@@ -1,6 +1,6 @@
 # Contributing to **Water Classroom**
 
-🎉 Thanks for your interest in improving Water Classroom!  
+🎉 Thanks for your interest in improving Water Classroom!
 This document explains how to get a local environment running, our coding & style conventions, the pull-request (PR) workflow, and community norms.
 
 ---
@@ -21,8 +21,8 @@ This document explains how to get a local environment running, our coding & styl
 
 ## 1. Getting Help
 
-* **Discussion Board** – Use GitHub Discussions for questions & proposals.  
-* **Chat** – Join the `#water-classroom` channel on our Discord.  
+* **Discussion Board** – Use GitHub Discussions for questions & proposals.
+* **Chat** – Join the `#water-classroom` channel on our Discord.
 * **Bugs** – Open an issue with a **minimal, reproducible example**.
 
 ---
@@ -31,7 +31,7 @@ This document explains how to get a local environment running, our coding & styl
 
 Water Classroom is a multi-platform, AI-powered learning ecosystem.
 
-Current repo contains the **Web POC** (React + TypeScript + Vite).  
+Current repo contains the **Web POC** (React + TypeScript + Vite).
 Road-map targets a Go micro-services backend & Flutter clients (see `Technical.md`).
 
 ---
@@ -139,7 +139,7 @@ Use `npm run commit` (powered by **commitizen**) to help.
 ### 5.3 Syncing With Main
 
 1. `git fetch origin`
-2. `git rebase origin/main` (preferred)  
+2. `git rebase origin/main` (preferred)
 3. Resolve conflicts, run tests, force-push.
 
 ---
@@ -197,17 +197,17 @@ Label appropriately (`bug`, `feature`, `good-first-issue`).
 
 ## 9. Community Code of Conduct
 
-We follow the [Contributor Covenant v2.1](CODE_OF_CONDUCT.md).  
+We follow the [Contributor Covenant v2.1](CODE_OF_CONDUCT.md).
 Be respectful, assume good intent, and keep discussions constructive.
 
 ---
 
 ## 10. License & CLA
 
-Water Classroom is licensed under **Apache 2.0**.  
+Water Classroom is licensed under **Apache 2.0**.
 By contributing you agree to license your work under the same terms and to sign the **Stellarium Individual Contributor License Agreement (CLA)** when prompted by the CLA-bot.
 
 ---
 
-Happy coding! 🚀  
+Happy coding! 🚀
 _– Water Classroom Engineering Team_

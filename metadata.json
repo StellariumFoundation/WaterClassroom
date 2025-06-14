@@ -1,7 +1,0 @@
-{
-  "name": "Water Classroom: AI-Powered Learning",
-  "description": "An AI-driven educational platform offering personalized curriculum, AI tutoring, interactive lectures, and gamified learning experiences for K-12 to undergraduate levels.",
-  "requestFramePermissions": [
-    "camera"
-  ]
-}
