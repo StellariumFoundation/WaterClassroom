@@ -24,6 +24,7 @@ import (
 	"github.com/water-classroom/backend/database"
 	"github.com/water-classroom/backend/middleware"
 	"github.com/water-classroom/backend/router"
+	"github.com/water-classroom/backend/payment"          // <- stubbed payment package
 	"github.com/water-classroom/backend/assessment"        // Added
 	"github.com/water-classroom/backend/curriculum"
 	"github.com/water-classroom/backend/notification"     // Adde
@@ -318,6 +319,9 @@ func startGRPCServer(ctx context.Context, app *app.Application) error {
 	if err != nil {
 		return fmt.Errorf("failed to listen on gRPC addr %s: %w", addr, err)
 	}
+	// placeholder to silence unused variable lint/compile error while
+	// gRPC server is not yet implemented.
+	_ = listener
 
 	// This is where you would initialize your gRPC server:
 	// grpcServer := grpc.NewServer(...)
