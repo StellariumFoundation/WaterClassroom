@@ -3,7 +3,7 @@
 
 @font-face {
   font-family: 'Neue Frutiger World';
-  src: url('../public/neue_frutiger_world_regular.ttf') format('truetype');
+  src: url('/neue_frutiger_world_regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -100,4 +100,18 @@ body {
   animation: neon-pulse 3s infinite ease-in-out;
 }
 
-
+/* Custom scrollbar for onboarding dropdowns */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0f172a;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Water Classroom — A Global World-Class School</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #030712;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      width: 1080px;
+    }
+
+    #particle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 1080px; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    section {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-logo {
+      width: 90px; height: 90px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #1e3a5f, #0a162f);
+      border: 2px solid rgba(59, 130, 246, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      overflow: hidden;
+      animation: logoPulse 3s ease-in-out infinite;
+    }
+    .hero-logo span {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #60a5fa;
+      text-shadow: 0 0 30px rgba(96, 165, 250, 0.6);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    .hero-logo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(96, 165, 250, 0.1) 50%, transparent 60%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    @keyframes logoPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3); }
+      50% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 20px rgba(96, 165, 250, 0.4); }
+      to { text-shadow: 0 0 40px rgba(96, 165, 250, 0.8), 0 0 60px rgba(96, 165, 250, 0.3); }
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      background: rgba(30, 58, 95, 0.6);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 9vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #60a5fa, #a78bfa, #60a5fa);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      color: #94a3b8;
+      font-weight: 300;
+      max-width: 600px;
+      margin: 1rem auto 2rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 2rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .hero-cta:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(96, 165, 250, 0.4);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: #475569;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .scroll-indicator .mouse {
+      width: 20px; height: 32px;
+      border: 2px solid #475569;
+      border-radius: 10px;
+      position: relative;
+    }
+    .scroll-indicator .mouse::after {
+      content: '';
+      position: absolute;
+      top: 5px; left: 50%;
+      transform: translateX(-50%);
+      width: 2px; height: 8px;
+      background: #60a5fa;
+      border-radius: 2px;
+      animation: scrollWheel 2s ease-in-out infinite;
+    }
+    @keyframes scrollWheel {
+      0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+      100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+    }
+
+    /* ── Stats Bar ── */
+    #stats {
+      min-height: auto;
+      padding: 2.5rem 2rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: 16px;
+      padding: 1.5rem 1rem;
+      transition: all 0.4s ease;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .stat-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-label {
+      font-size: 0.65rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.4rem;
+    }
+
+    /* ── Feature Sections ── */
+    .feature-section {
+      min-height: 100vh;
+      padding: 3rem 1.75rem;
+    }
+    .feature-section:nth-child(even) {
+      background: radial-gradient(ellipse at center, rgba(30, 58, 95, 0.08) 0%, transparent 70%);
+    }
+
+    .feature-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #60a5fa;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .feature-number.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.6s ease;
+    }
+
+    .feature-title {
+      font-size: clamp(1.6rem, 5vw, 2.5rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .feature-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.8s ease 0.1s;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.7;
+      max-width: 550px;
+      margin: 0 auto;
+      font-weight: 300;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .feature-desc.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.8s ease 0.2s;
+    }
+
+    /* ── Visual Feature Cards (single column for portrait) ── */
+    .feature-visuals {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 600px;
+    }
+    .visual-card {
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(59, 130, 246, 0.1);
+      border-radius: 18px;
+      padding: 1.5rem;
+      text-align: left;
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    .visual-card.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition: all 0.6s ease;
+    }
+    .visual-card .icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .visual-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+    .visual-card p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* ── Globe ── */
+    .globe-container {
+      width: 160px; height: 160px;
+      margin: 1.5rem auto;
+      position: relative;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .globe-ring {
+      position: absolute;
+      inset: 0;
+      border: 2px solid rgba(59, 130, 246, 0.15);
+      border-radius: 50%;
+      animation: spin 12s linear infinite;
+    }
+    .globe-ring:nth-child(2) {
+      border-color: rgba(96, 165, 250, 0.08);
+      transform: rotateX(60deg);
+      animation-duration: 8s;
+    }
+    .globe-ring:nth-child(3) {
+      border-color: rgba(167, 139, 250, 0.1);
+      transform: rotateY(60deg);
+      animation-duration: 15s;
+    }
+    .globe-dot {
+      position: absolute;
+      width: 5px; height: 5px;
+      background: #60a5fa;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(96, 165, 250, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Chat Bubble ── */
+    .chat-container {
+      max-width: 480px;
+      margin: 1.5rem auto;
+      background: rgba(15,23,42,0.5);
+      border: 1px solid rgba(59,130,246,0.1);
+      border-radius: 18px;
+      padding: 1.25rem;
+      text-align: left;
+    }
+    .chat-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+      opacity: 0;
+    }
+    .chat-row:last-child { margin-bottom: 0; }
+    .chat-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+    .chat-bubble {
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    /* ── Code lines ── */
+    .code-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 1.5rem auto;
+      width: 100%;
+      max-width: 500px;
+    }
+    .code-line {
+      background: rgba(15,23,42,0.5);
+      border: 1px solid rgba(59,130,246,0.08);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Badge Cards ── */
+    .badge-row {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+    .badge-card {
+      background: rgba(15,23,42,0.6);
+      border-radius: 14px;
+      padding: 1.25rem 1rem;
+      width: 150px;
+      text-align: center;
+    }
+    .badge-icon {
+      font-size: 2rem;
+      margin-bottom: 0.4rem;
+    }
+    .badge-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .badge-sub {
+      font-size: 0.6rem;
+      color: #475569;
+      margin-top: 0.2rem;
+    }
+
+    /* ── Dashboard Stats ── */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 1.5rem auto;
+      width: 100%;
+      max-width: 450px;
+    }
+    .dash-stat {
+      background: rgba(15,23,42,0.5);
+      border-radius: 14px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+    }
+    .dash-stat .number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .dash-stat .label {
+      font-size: 0.6rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Pricing ── */
+    .pricing-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .pricing-card {
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+    }
+    .pricing-card.primary {
+      background: linear-gradient(135deg, rgba(30,58,95,0.3), rgba(10,22,47,0.3));
+      border: 2px solid rgba(59,130,246,0.4);
+    }
+    .pricing-card.secondary {
+      background: linear-gradient(135deg, rgba(30,58,95,0.15), rgba(10,22,47,0.15));
+      border: 1px solid rgba(167,139,250,0.2);
+    }
+    .pricing-card h3 {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-card .price {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-card .price small {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 400;
+    }
+    .pricing-card ul {
+      list-style: none;
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.9;
+    }
+    .pricing-card ul li { opacity: 0; transform: translateY(10px); }
+    .pricing-card ul li.visible { opacity: 1; transform: translateY(0); transition: all 0.5s ease; }
+
+    /* ── CTA ── */
+    #cta {
+      min-height: 80vh;
+      padding: 3rem 2rem;
+      position: relative;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
+    }
+    .cta-title {
+      font-size: clamp(2rem, 7vw, 3.5rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    .cta-desc {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      max-width: 450px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* ── Footer ── */
+    .video-footer {
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: #475569;
+      font-size: 0.65rem;
+      border-top: 1px solid rgba(59, 130, 246, 0.06);
+    }
+    .video-footer a { color: #60a5fa; text-decoration: none; }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-badge">✦ Stellarium Foundation</div>
+      <div class="hero-logo"><span>W</span></div>
+      <h1 class="hero-title">
+        Water<br />
+        <span class="highlight">Classroom</span>
+      </h1>
+      <p class="hero-sub">
+        A complete AI-powered school — dismantling barriers to education
+        with personalized curriculum, 24/7 AI tutoring, verified exams,
+        and a global collaborative ecosystem.
+      </p>
+      <button class="hero-cta" onclick="document.getElementById('stats').scrollIntoView({behavior:'smooth'})">
+        Discover the Future of Learning
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+    <div class="scroll-indicator">
+      <div class="mouse"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ─── STATS ─── -->
+  <section id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" data-target="500">0</div><div class="stat-label">K+ Concurrent Students</div></div>
+        <div class="stat-card"><div class="stat-number" data-target="99.9">0</div><div class="stat-label">% Platform Uptime</div></div>
+        <div class="stat-card"><div class="stat-number" data-target="6">0</div><div class="stat-label">Second AI Response</div></div>
+        <div class="stat-card"><div class="stat-number" data-target="24">0</div><div class="stat-label">/7 AI Tutor Availability</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 1: AI-Tailored Curriculum ─── -->
+  <section class="feature-section" id="feature-1">
+    <div class="container">
+      <div class="feature-number">01</div>
+      <h2 class="feature-title">AI-Tailored Curriculum</h2>
+      <p class="feature-desc">
+        Dynamic lessons aligned with national and international standards —
+        U.S. Common Core, UK GCSE, International Baccalaureate — adapting
+        to each student's pace, style, and chosen track.
+      </p>
+      <div class="globe-container">
+        <div class="globe-ring"></div>
+        <div class="globe-ring"></div>
+        <div class="globe-ring"></div>
+        <div class="globe-dot" style="top:30%;left:50%;"></div>
+        <div class="globe-dot" style="top:60%;left:25%;animation-delay:0.5s;"></div>
+        <div class="globe-dot" style="top:40%;left:75%;animation-delay:1s;"></div>
+        <div class="globe-dot" style="top:70%;left:55%;animation-delay:1.5s;"></div>
+      </div>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">📚</div>
+          <h4>K-12 & Undergraduate</h4>
+          <p>Complete coverage from elementary through university-level material across all major global standards.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">🎮</div>
+          <h4>Interactive Multimedia</h4>
+          <p>Gamified lessons, simulations, and interactive content that supercharges engagement and retention.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1f4a3d80,#0a1f1880);color:#34d399;">🧠</div>
+          <h4>Adaptive Learning Paths</h4>
+          <p>AI dynamically adjusts difficulty and pacing based on comprehension, ensuring no student is left behind.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 2: 24/7 AI Tutoring ─── -->
+  <section class="feature-section" id="feature-2">
+    <div class="container">
+      <div class="feature-number">02</div>
+      <h2 class="feature-title">24/7 AI Tutoring<br />&amp; Homework Help</h2>
+      <p class="feature-desc">
+        An always-available Socratic companion that guides students through
+        complex problems with step-by-step reasoning, real-time feedback,
+        and adaptive teaching styles for every learner.
+      </p>
+      <div class="chat-container">
+        <div class="chat-row" data-delay="0">
+          <div class="chat-avatar" style="background:linear-gradient(135deg,#1e3a5f,#0a162f);border:1px solid rgba(59,130,246,0.3);">🤖</div>
+          <div class="chat-bubble" style="background:rgba(30,58,95,0.4);color:#cbd5e1;border-radius:12px 12px 12px 4px;">
+            Let's approach this physics problem using first principles. What forces are acting on the object?
+          </div>
+        </div>
+        <div class="chat-row" style="justify-content:flex-end;" data-delay="1">
+          <div class="chat-bubble" style="background:rgba(37,99,235,0.3);color:#e2e8f0;border-radius:12px 12px 4px 12px;max-width:75%;">
+            Gravity pulling down, and maybe air resistance pushing up?
+          </div>
+          <div class="chat-avatar" style="background:linear-gradient(135deg,#3b1f6e,#1a0a30);border:1px solid rgba(167,139,250,0.3);">👤</div>
+        </div>
+        <div class="chat-row" data-delay="2">
+          <div class="chat-avatar" style="background:linear-gradient(135deg,#1e3a5f,#0a162f);border:1px solid rgba(59,130,246,0.3);">🤖</div>
+          <div class="chat-bubble" style="background:rgba(30,58,95,0.4);color:#cbd5e1;border-radius:12px 12px 12px 4px;">
+            Exactly! Now let's quantify those forces using Newton's Second Law...
+          </div>
+        </div>
+      </div>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">💬</div>
+          <h4>Real-Time Text & Voice</h4>
+          <p>Chat or speak with the AI tutor anytime. It understands context, remembers your progress, and builds on previous lessons.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">📝</div>
+          <h4>Automated Grading</h4>
+          <p>Instant feedback on homework and exams with detailed explanations — not just scores, but actionable insights for improvement.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1f4a3d80,#0a1f1880);color:#34d399;">🎯</div>
+          <h4>Adaptive to Every Learner</h4>
+          <p>From gifted students seeking deeper challenges to learners needing extra support — the tutor adjusts its approach in real-time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 3: Innovation Labs ─── -->
+  <section class="feature-section" id="feature-3">
+    <div class="container">
+      <div class="feature-number">03</div>
+      <h2 class="feature-title">Real-World Application<br />&amp; Creativity Labs</h2>
+      <p class="feature-desc">
+        Project-based learning that connects abstract concepts to tangible
+        outcomes. Engineering challenges, robotics simulations, incentive
+        equation modeling — all gamified to foster critical thinking.
+      </p>
+      <div class="code-grid">
+        <div class="code-line" data-idx="0">
+          <span style="color:#60a5fa;">Trinity</span> <span style="color:#34d399;">Balance</span> <span style="color:#f59e0b;">↓ 100%</span>
+        </div>
+        <div class="code-line" data-idx="1">
+          <span style="color:#a78bfa;">Robotics</span> <span style="color:#f59e0b;">Calibration</span> <span style="color:#34d399;">✓ Balanced</span>
+        </div>
+        <div class="code-line" data-idx="2">
+          <span style="color:#34d399;">Incentive</span> <span style="color:#60a5fa;">Equation</span> <span style="color:#f59e0b;">↻ 4.2x</span>
+        </div>
+      </div>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1f4a3d80,#0a1f1880);color:#34d399;">⚙️</div>
+          <h4>Robotics Simulator</h4>
+          <p>Calibrate joint angles, balance humanoid robots, and learn mechanical physics through hands-on digital experimentation.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">📊</div>
+          <h4>Incentive Economics</h4>
+          <p>Model real-world business incentives: optimize revenue, costs, and energy pricing to discover optimal reward structures.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">🏆</div>
+          <h4>Gamified Challenges</h4>
+          <p>Earn achievement badges, maintain learning streaks, and climb optional leaderboards — turning education into an engaging journey.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 4: Verified Exams ─── -->
+  <section class="feature-section" id="feature-4">
+    <div class="container">
+      <div class="feature-number">04</div>
+      <h2 class="feature-title">Verified Exams<br />&amp; Credentialing</h2>
+      <p class="feature-desc">
+        Secure, browser-based proctored exams with camera verification.
+        Every passed assessment generates a cryptographically hashed
+        certificate — a permanent, verifiable credential on the student's transcript.
+      </p>
+      <div class="badge-row">
+        <div class="badge-card" style="border:1px solid rgba(59,130,246,0.15);">
+          <div class="badge-icon">🛡️</div>
+          <div class="badge-label" style="color:#60a5fa;">Proctor VLM</div>
+          <div class="badge-sub">Facial &amp; eye tracking</div>
+        </div>
+        <div class="badge-card" style="border:1px solid rgba(167,139,250,0.15);">
+          <div class="badge-icon">🔐</div>
+          <div class="badge-label" style="color:#a78bfa;">SHA-256 Ledger</div>
+          <div class="badge-sub">Tamper-proof records</div>
+        </div>
+        <div class="badge-card" style="border:1px solid rgba(52,211,153,0.15);">
+          <div class="badge-icon">🎓</div>
+          <div class="badge-label" style="color:#34d399;">Certificates</div>
+          <div class="badge-sub">Verifiable transcripts</div>
+        </div>
+      </div>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">📹</div>
+          <h4>Camera Proctoring</h4>
+          <p>AI monitors facial alignment, eye movement, and ambient audio to ensure exam integrity — all processed locally for privacy.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">📜</div>
+          <h4>Blockchain-Backed Records</h4>
+          <p>Each exam certificate is hashed with SHA-256, creating an immutable, verifiable transcript that students can share with institutions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 5: Progress Dashboard ─── -->
+  <section class="feature-section" id="feature-5">
+    <div class="container">
+      <div class="feature-number">05</div>
+      <h2 class="feature-title">Progress Analytics<br />&amp; Dashboard</h2>
+      <p class="feature-desc">
+        Track academic performance, engagement streaks, skill development,
+        and XP growth in real-time. Customizable reports for students,
+        parents, and educators to monitor progress.
+      </p>
+      <div class="dash-grid">
+        <div class="dash-stat" style="border:1px solid rgba(59,130,246,0.1);">
+          <div class="number" style="color:#60a5fa;" data-count="2840">0</div>
+          <div class="label">Total XP</div>
+        </div>
+        <div class="dash-stat" style="border:1px solid rgba(245,158,11,0.1);">
+          <div class="number" style="color:#f59e0b;" data-count="12">0</div>
+          <div class="label">Day Streak</div>
+        </div>
+        <div class="dash-stat" style="border:1px solid rgba(52,211,153,0.1);">
+          <div class="number" style="color:#34d399;" data-count="8">0</div>
+          <div class="label">Badges Earned</div>
+        </div>
+        <div class="dash-stat" style="border:1px solid rgba(167,139,250,0.1);">
+          <div class="number" style="color:#a78bfa;" data-count="24">0</div>
+          <div class="label">Lessons Done</div>
+        </div>
+      </div>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">📈</div>
+          <h4>Real-Time Tracking</h4>
+          <p>Live XP updates, streak counters, level progression, and study hour charts give students and parents full visibility.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">📋</div>
+          <h4>Customizable Reports</h4>
+          <p>Generate detailed performance reports for parent-teacher conferences, homeschool audits, or institutional record-keeping.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURE 6: Collaborative Ecosystem ─── -->
+  <section class="feature-section" id="feature-6">
+    <div class="container">
+      <div class="feature-number">06</div>
+      <h2 class="feature-title">Collaborative Learning<br />Ecosystem</h2>
+      <p class="feature-desc">
+        Virtual classrooms, peer discussion forums, and educator tools
+        create a shared environment for curriculum management and
+        community-driven education.
+      </p>
+      <div class="feature-visuals">
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1e3a5f80,#0a162f80);color:#60a5fa;">🏫</div>
+          <h4>Virtual Classrooms</h4>
+          <p>Institutional sandboxes with custom assignments, shared curricula, and administrator dashboards for seamless classroom management.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#3b1f6e80,#1a0a3080);color:#a78bfa;">💭</div>
+          <h4>Peer Discussion Forums</h4>
+          <p>Moderated community threads where students discuss first-principles, share insights, and collaborate on interdisciplinary projects.</p>
+        </div>
+        <div class="visual-card">
+          <div class="icon" style="background:linear-gradient(135deg,#1f4a3d80,#0a1f1880);color:#34d399;">🔑</div>
+          <h4>Access Key System</h4>
+          <p>Schools generate secure access keys — students enter the key to join their institution's private sandbox with zero personal cost.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section class="feature-section" id="pricing">
+    <div class="container">
+      <div class="feature-number">—</div>
+      <h2 class="feature-title">Simple, Transparent<br />Pricing</h2>
+      <p class="feature-desc">
+        Education should be accessible. Individual students pay a flat
+        rate. Institutions pay per student per month — no hidden fees,
+        no setup costs, no integration surcharges.
+      </p>
+      <div class="pricing-grid">
+        <div class="pricing-card primary">
+          <h3 style="color:#60a5fa;">Individual</h3>
+          <div class="price">$19<small>/mo</small></div>
+          <ul>
+            <li data-delay="0">✓ Unlimited AI Tutoring</li>
+            <li data-delay="1">✓ Proctored Exams</li>
+            <li data-delay="2">✓ Robotics &amp; Sims</li>
+            <li data-delay="3">✓ Verified Certificates</li>
+          </ul>
+        </div>
+        <div class="pricing-card secondary">
+          <h3 style="color:#a78bfa;">Institutional</h3>
+          <div class="price">$12<small>/stud/mo</small></div>
+          <ul>
+            <li data-delay="0">✓ Bulk Account Deployments</li>
+            <li data-delay="1">✓ Admin Dashboard</li>
+            <li data-delay="2">✓ Custom Curricula</li>
+            <li data-delay="3">✓ Priority Support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CALL TO ACTION ─── -->
+  <section id="cta">
+    <div class="container">
+      <h2 class="cta-title">Ready to Transform<br />Education?</h2>
+      <p class="cta-desc">
+        Join the global movement to democratize learning. The Water Classroom
+        is open for students, educators, and institutions worldwide.
+      </p>
+      <div class="cta-buttons">
+        <a href="/" class="hero-cta" style="position:relative;z-index:2;">
+          Enter the Classroom
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="mailto:support@stellarium.org" style="display:inline-flex;align-items:center;gap:0.6rem;padding:0.9rem 2rem;border-radius:14px;border:1px solid rgba(59,130,246,0.25);color:#94a3b8;font-weight:600;font-size:0.75rem;text-decoration:none;transition:all 0.3s ease;">
+          Contact Us
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="video-footer">
+    <p>© 2026 Water Classroom &amp; <a href="#">Stellarium Foundation</a>, Inc. All rights reserved.</p>
+    <p style="margin-top:0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.55rem;">SHA-256 LEDGER: [VERIFIED] &nbsp;·&nbsp; MONERO GATEWAY: [ON-LINE]</p>
+  </footer>
+
+  <script>
+    // ─── Particle Canvas ───
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let w = 1080, h = window.innerHeight;
+
+    function resize() {
+      w = canvas.width = 1080;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.opacity = Math.random() * 0.4 + 0.1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    const count = Math.min(80, Math.floor((w * h) / 15000));
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(96, 165, 250, ${0.06 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => { p.update(); p.draw(); });
+      drawConnections();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ─── Scroll Animations ───
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.stat-card, .feature-number, .feature-title, .feature-desc, .visual-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // ─── Stats Counter ───
+    function animateCounters() {
+      document.querySelectorAll('.stat-number').forEach(el => {
+        const target = parseFloat(el.dataset.target);
+        const isFloat = target % 1 !== 0;
+        const duration = 2000;
+        const start = performance.now();
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = target * eased;
+          el.textContent = isFloat ? current.toFixed(1) + (target === 99.9 ? '%' : '') : Math.floor(current).toLocaleString();
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+      document.querySelectorAll('.dash-stat .number').forEach(el => {
+        const target = parseInt(el.dataset.count);
+        const duration = 1500;
+        const start = performance.now();
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.floor(target * eased);
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+
+    // ─── Chat Bubble Animations ───
+    function animateChatBubbles() {
+      document.querySelectorAll('.chat-row').forEach(el => {
+        const delay = parseInt(el.dataset.delay) * 800;
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, delay + 500);
+      });
+    }
+
+    // ─── Code line animation ───
+    document.querySelectorAll('.code-line').forEach(el => {
+      const idx = parseInt(el.dataset.idx);
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-20px)';
+    });
+    const codeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.code-line').forEach((el, i) => {
+            setTimeout(() => {
+              el.style.opacity = '1';
+              el.style.transform = 'translateX(0)';
+            }, i * 300 + 200);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.code-line').forEach(el => codeObserver.observe(el));
+
+    // ─── Badge card animation ───
+    document.querySelectorAll('.badge-card').forEach((el, i) => {
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(15px) scale(0.9)';
+    });
+    const badgeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.badge-card').forEach((el, i) => {
+            setTimeout(() => {
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0) scale(1)';
+            }, i * 200 + 200);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.badge-card').forEach(el => badgeObserver.observe(el));
+
+    // ─── Pricing list animation ───
+    const pricingObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('li').forEach((el, i) => {
+            setTimeout(() => {
+              el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            }, i * 150 + 300);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.pricing-card').forEach(el => pricingObserver.observe(el));
+
+    // ─── Init ───
+    setTimeout(animateChatBubbles, 500);
+
+    // ─── Stats counter on scroll ───
+    let statsCounted = false;
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !statsCounted) {
+          statsCounted = true;
+          animateCounters();
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.stats-grid').forEach(el => statsObserver.observe(el));
+
+    // ─── Dashboard counters ───
+    let dashCounted = false;
+    const dashObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !dashCounted) {
+          dashCounted = true;
+          document.querySelectorAll('.dash-stat .number').forEach(el => {
+            const target = parseInt(el.dataset.count);
+            const duration = 1500;
+            const start = performance.now();
+            function update(now) {
+              const progress = Math.min((now - start) / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              el.textContent = Math.floor(target * eased);
+              if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    const feature5 = document.getElementById('feature-5');
+    if (feature5) dashObserver.observe(feature5);
+
+    console.log('🌊 Water Classroom — Portrait Hypermotion Loaded');
+  </script>
+</body>
+</html>

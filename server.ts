@@ -8,10 +8,35 @@ import dotenv from "dotenv";
 import { createClient } from "@libsql/client";
 import Stripe from "stripe";
 
+interface TursoRecord {
+  id: string;
+  type: string;
+  name: string;
+  email: string;
+  representative: string;
+  academicTrack: string;
+  studentVolume: number;
+  kindOfSchool: string;
+  billingCycle: string;
+  calculatedPrice: string;
+  registeredAt: string;
+  dbStatus: string;
+  passcode?: string;
+  affiliatedCode?: string;
+  isActivated?: boolean | number;
+}
+
+interface SeedRecord extends Omit<TursoRecord, 'email'> {
+  email?: string;
+  passcode?: string;
+  affiliatedCode?: string;
+}
+
 dotenv.config();
 
 const app = new Hono();
 const PORT = 3000;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // In-memory / Mock Persistence database
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -23,7 +48,7 @@ const PROGRESS_FILE = path.join(DATA_DIR, "progress.json");
 const TASKS_FILE = path.join(DATA_DIR, "tasks.json");
 const TURSO_FILE = path.join(DATA_DIR, "turso_db.json");
 
-const SEED_TURSO_RECORDS = [
+const SEED_TURSO_RECORDS: SeedRecord[] = [
   {
     id: "turso-1",
     type: "Institution",
@@ -65,7 +90,7 @@ const SEED_TURSO_RECORDS = [
   }
 ];
 
-function getTursoRecords() {
+function getTursoRecords(): TursoRecord[] | SeedRecord[] {
   if (fs.existsSync(TURSO_FILE)) {
     try {
       return JSON.parse(fs.readFileSync(TURSO_FILE, "utf-8"));
@@ -76,7 +101,7 @@ function getTursoRecords() {
   return SEED_TURSO_RECORDS;
 }
 
-function saveTursoRecords(data: any) {
+function saveTursoRecords(data: TursoRecord[]) {
   fs.writeFileSync(TURSO_FILE, JSON.stringify(data, null, 2), "utf-8");
 }
 
@@ -149,11 +174,11 @@ function getTasks() {
 }
 
 // Save helpers
-function saveProgress(data: any) {
+function saveProgress(data: Record<string, unknown>) {
   fs.writeFileSync(PROGRESS_FILE, JSON.stringify(data, null, 2), "utf-8");
 }
 
-function saveTasks(data: any) {
+function saveTasks(data: Record<string, unknown>[]) {
   fs.writeFileSync(TASKS_FILE, JSON.stringify(data, null, 2), "utf-8");
 }
 
@@ -219,8 +244,8 @@ async function getTursoClient() {
           sql: `INSERT INTO turso_records (id, type, name, email, representative, academicTrack, studentVolume, kindOfSchool, billingCycle, calculatedPrice, registeredAt, dbStatus, passcode, affiliatedCode)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           args: [
-            record.id, record.type, record.name, (record as any).email || "", record.representative, record.academicTrack, record.studentVolume,
-            record.kindOfSchool, record.billingCycle, record.calculatedPrice, record.registeredAt, record.dbStatus, (record as any).passcode || "", (record as any).affiliatedCode || ""
+            record.id, record.type, record.name, (record as SeedRecord).email || "", record.representative, record.academicTrack, record.studentVolume,
+            record.kindOfSchool, record.billingCycle, record.calculatedPrice, record.registeredAt, record.dbStatus, (record as SeedRecord).passcode || "", (record as SeedRecord).affiliatedCode || ""
           ]
         });
       }
@@ -248,10 +273,26 @@ app.get("/api/records", async (c) => {
 
 app.post("/api/create-checkout-session", async (c) => {
   try {
-    const { email } = await c.req.json();
+    const { email, type, billingCycle } = await c.req.json();
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey || stripeKey === "MY_STRIPE_SECRET_KEY") {
       return c.json({ error: "Stripe not configured" }, 500);
+    }
+    
+    const isYearly = billingCycle === "yearly";
+    
+    // Determine price per student type with annual billing support
+    let unitAmount = 1900; // default: $19/mo
+    let productName = 'Water Classroom Activation';
+    if (type === "independent-student" || type === "Independent Student") {
+      unitAmount = isYearly ? 15000 : 1500;
+      productName = isYearly ? 'Water Classroom — Independent Student (Yearly)' : 'Water Classroom — Independent Student';
+    } else if (type === "school-student" || type === "School Student") {
+      unitAmount = isYearly ? 12000 : 1200;
+      productName = isYearly ? 'Water Classroom — School Student (Yearly)' : 'Water Classroom — School Student';
+    } else if (type === "water-student" || type === "Water Student") {
+      unitAmount = isYearly ? 19000 : 1900;
+      productName = isYearly ? 'Water Classroom — Water School Student (Yearly)' : 'Water Classroom — Water School Student';
     }
     
     const stripeClient = new Stripe(stripeKey);
@@ -261,8 +302,8 @@ app.post("/api/create-checkout-session", async (c) => {
         {
           price_data: {
             currency: 'usd',
-            product_data: { name: 'Water Classroom Activation' },
-            unit_amount: 1900,
+            product_data: { name: productName },
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },
@@ -282,69 +323,102 @@ app.post("/api/register", async (c) => {
   try {
     const body = await c.req.json();
     const { type, name, email, representative, academicTrack, studentVolume, kindOfSchool, billingCycle, passcode, affiliatedCode } = body;
-    
-    if (!type || !email || !passcode || !name) {
-       return c.json({ error: "Type, email, password, and name are required." }, 400);   
+
+    // ─── Input sanitization ───
+    const trimmedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    const trimmedName = typeof name === 'string' ? name.trim() : '';
+    const trimmedPasscode = typeof passcode === 'string' ? passcode : '';
+    const trimmedRep = typeof representative === 'string' ? representative.trim() : '';
+    const trimmedType = typeof type === 'string' ? type.trim() : '';
+
+    // ─── Required field validation ───
+    if (!trimmedType || !trimmedEmail || !trimmedPasscode || !trimmedName) {
+       const missing = [];
+       if (!trimmedType) missing.push('type');
+       if (!trimmedEmail) missing.push('email');
+       if (!trimmedPasscode) missing.push('password');
+       if (!trimmedName) missing.push('name');
+       return c.json({ error: `Missing required fields: ${missing.join(', ')}.` }, 400);
     }
 
-    if (passcode.length < 6) {
-       return c.json({ error: "Password must be at least 6 characters." }, 400);   
+    // ─── Email format validation ───
+    if (!EMAIL_REGEX.test(trimmedEmail)) {
+      return c.json({ error: 'Invalid email format. Please provide a valid email address.' }, 400);
     }
 
-    if (type === "Institution" && !representative) {
-      return c.json({ error: "Name and representative are required field parameters" }, 400);
+    // ─── Password strength validation ───
+    if (trimmedPasscode.length < 6) {
+       return c.json({ error: 'Password must be at least 6 characters long.' }, 400);
+    }
+    if (trimmedPasscode.length > 128) {
+       return c.json({ error: 'Password must be under 128 characters.' }, 400);
+    }
+
+    // ─── Institution-specific validation ───
+    if (trimmedType === "Institution" && !trimmedRep) {
+      return c.json({ error: 'Representative name is required for institution registrations.' }, 400);
+    }
+
+    // ─── Valid type check ───
+    const VALID_TYPES = ['Water Student', 'Independent Student', 'School Student', 'Institution'];
+    if (!VALID_TYPES.includes(trimmedType)) {
+      return c.json({ error: `Invalid account type. Must be one of: ${VALID_TYPES.join(', ')}.` }, 400);
     }
     
-    // Check if email already exists
+    // ─── Check if email already exists ───
     try {
       const client = await getTursoClient();
       const existing = await client.execute({
         sql: "SELECT id FROM turso_records WHERE email = ?",
-        args: [email]
+        args: [trimmedEmail]
       });
       if (existing.rows.length > 0) {
-        return c.json({ error: "Email already registered" }, 409);
+        return c.json({ error: 'This email is already registered. Please sign in instead.' }, 409);
       }
     } catch (err: any) {
-      // Fallback for memory check
       const records = getTursoRecords();
-      if (records.some(r => (r as any).email === email)) {
-         return c.json({ error: "Email already registered" }, 409);
+      if (records.some((r: TursoRecord | SeedRecord) => r.email === trimmedEmail)) {
+         return c.json({ error: 'This email is already registered. Please sign in instead.' }, 409);
       }
     }
     
     const records = getTursoRecords();
     
-    // Server-side database price calculation
+    // Server-side database price calculation — three student tiers + institution
     let calculatedPriceStr = "";
     let totalCents = 1900;
-    if (type === "Institution") {
-      const vol = Math.max(1, parseInt(studentVolume) || 1);
-      const baseRate = 12; // $12 per student per month
+    
+    if (trimmedType === "Institution") {
+      const vol = Math.max(1, parseInt(typeof studentVolume === 'string' ? studentVolume : String(studentVolume)) || 1);
+      const baseRate = 12;
       let multiplier = 1.0;
       if (vol > 300) multiplier = 0.8;
       else if (vol > 100) multiplier = 0.9;
       
-      if (billingCycle === "Yearly") {
-        const annualPerStudent = baseRate * 12 * multiplier; // $144 * multiplier
+      const billingStr = typeof billingCycle === 'string' ? billingCycle.trim() : '';
+      if (billingStr === "Yearly") {
+        const annualPerStudent = baseRate * 12 * multiplier;
         const total = Math.floor(vol * annualPerStudent);
         calculatedPriceStr = `$${total.toLocaleString()} / Year`;
         totalCents = total * 100;
       } else {
-        const monthlyPerStudent = baseRate * multiplier; // $12 * multiplier
+        const monthlyPerStudent = baseRate * multiplier;
         const total = Math.floor(vol * monthlyPerStudent);
         calculatedPriceStr = `$${total.toLocaleString()} / Month`;
         totalCents = total * 100;
       }
-    } else {
-      // Individual student
-      if (billingCycle === "Yearly") {
-        calculatedPriceStr = "$149 / Year";
-        totalCents = 14900;
-      } else {
-        calculatedPriceStr = "$19 / Month";
-        totalCents = 1900;
-      }
+    } else if (trimmedType === "Water Student") {
+      // $19/mo — homeschool with certificate
+      calculatedPriceStr = "$19 / Month";
+      totalCents = 1900;
+    } else if (trimmedType === "Independent Student") {
+      // $15/mo — self-directed learning, no exams
+      calculatedPriceStr = "$15 / Month";
+      totalCents = 1500;
+    } else if (trimmedType === "School Student") {
+      // $12/mo — enrolled by a school
+      calculatedPriceStr = "$12 / Month";
+      totalCents = 1200;
     }
     
     // Check for Stripe
@@ -382,18 +456,18 @@ app.post("/api/register", async (c) => {
     
     const newRecord = {
       id: `turso-${Date.now()}`,
-      type,
-      email: email || "",
-      name,
-      representative: representative || name,
-      academicTrack: academicTrack || "Universal First-Principles Track",
+      type: trimmedType,
+      email: trimmedEmail,
+      name: trimmedName,
+      representative: trimmedRep || trimmedName,
+      academicTrack: (typeof academicTrack === 'string' ? academicTrack.trim() : '') || "Universal First-Principles Track",
       studentVolume: type === "Institution" ? Math.max(1, parseInt(studentVolume) || 1) : 1,
-      kindOfSchool: kindOfSchool || (type === "Institution" ? "Homeschool Co-Op" : "Homeschool Individual"),
-      billingCycle: billingCycle || "Monthly",
+      kindOfSchool: (typeof kindOfSchool === 'string' ? kindOfSchool.trim() : '') || (trimmedType === "Institution" ? "Homeschool Co-Op" : "Homeschool Individual"),
+      billingCycle: (typeof billingCycle === 'string' ? billingCycle.trim() : '') || "Monthly",
       calculatedPrice: calculatedPriceStr,
       registeredAt: new Date().toISOString(),
-      passcode: passcode || "",
-      affiliatedCode: affiliatedCode || "",
+      passcode: trimmedPasscode,
+      affiliatedCode: (typeof affiliatedCode === 'string' ? affiliatedCode.trim() : '') || "",
       isActivated: false
     };
     
@@ -426,13 +500,29 @@ app.post("/api/register", async (c) => {
 
 app.post("/api/login", async (c) => {
   try {
-    const { email, passcode } = await c.req.json();
+    const body = await c.req.json();
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const passcode = typeof body.passcode === 'string' ? body.passcode : '';
+
+    // ─── Required field validation ───
     if (!email || !passcode) {
-      return c.json({ error: "Email and password are required" }, 400);
+      const missing = [];
+      if (!email) missing.push('email');
+      if (!passcode) missing.push('password');
+      return c.json({ error: `Missing required fields: ${missing.join(', ')}.` }, 400);
     }
-    if (typeof email !== 'string' || typeof passcode !== 'string') {
-      return c.json({ error: "Invalid input types" }, 400);
+
+    // ─── Email format validation ───
+    if (!EMAIL_REGEX.test(email)) {
+      return c.json({ error: 'Invalid email format.' }, 400);
     }
+    
+    // Helper: search local JSON records for a matching user
+    const findLocalUser = (): TursoRecord | null => {
+      const records = getTursoRecords() as TursoRecord[];
+      const match = records.find((r: TursoRecord) => r.email === email && r.passcode === passcode);
+      return match || null;
+    };
     
     try {
       const client = await getTursoClient();
@@ -441,27 +531,33 @@ app.post("/api/login", async (c) => {
         args: [email, passcode]
       });
       if (result.rows.length > 0) {
-        const user = { ...result.rows[0] };
-        (user as any).isActivated = !!(user as any).isActivated;
+        const user = { ...result.rows[0] } as any;
+        user.isActivated = !!result.rows[0].isActivated;
         return c.json({ success: true, user });
-      } else {
-        return c.json({ error: "Invalid credentials" }, 401);
       }
+      // Turso returned no rows — fallback to local JSON before giving up
+      const localUser = findLocalUser();
+      if (localUser) {
+        console.warn("Turso login returned no rows, found user in local JSON fallback.");
+        return c.json({ success: true, user: localUser });
+      }
+      return c.json({ error: "Invalid email or password. Please check your credentials and try again." }, 401);
     } catch(err: any) {
       if (err.message && err.message.includes("TURSO_DATABASE_URL")) {
         console.warn("Turso not configured in .env, falling back to local memory records.");
+      } else {
+        console.error("Turso login error:", err);
       }
       // fallback to memory
-      const records = getTursoRecords();
-      const user = records.find(r => (r as any).email === email && (r as any).passcode === passcode);
-      if (user) {
-        return c.json({ success: true, user });
+      const localUser = findLocalUser();
+      if (localUser) {
+        return c.json({ success: true, user: localUser });
       } else {
-        return c.json({ error: "Invalid credentials" }, 401);
+        return c.json({ error: "Invalid email or password. Please check your credentials and try again." }, 401);
       }
     }
   } catch (err: any) {
-    return c.json({ error: "Invalid login payload" }, 400);
+    return c.json({ error: "Invalid login payload. Please send a valid JSON body." }, 400);
   }
 });
 
@@ -523,6 +619,76 @@ app.patch("/api/tasks/:id", async (c) => {
     }
   } catch (err) {
     return c.json({ error: "Invalid payload" }, 400);
+  }
+});
+
+// Update user onboarding info
+app.post("/api/update-user", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email, type, kindOfSchool, country, academicTrack, gradeLevel, enrollmentType, billingCycle } = body;
+    if (!email) return c.json({ error: "Email is required" }, 400);
+    
+    const trimmedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    
+    try {
+      const client = await getTursoClient();
+      await client.execute({
+        sql: `UPDATE turso_records SET
+          type = COALESCE(?, type),
+          kindOfSchool = COALESCE(?, kindOfSchool),
+          academicTrack = COALESCE(?, academicTrack),
+          billingCycle = COALESCE(?, billingCycle)
+          WHERE email = ?`,
+        args: [type || null, kindOfSchool || null, academicTrack || null, billingCycle || null, trimmedEmail]
+      });
+    } catch {
+      // fallback: update local records
+      const records = getTursoRecords() as any[];
+      const idx = records.findIndex((r: any) => r.email === trimmedEmail);
+      if (idx !== -1) {
+        if (type) records[idx].type = type;
+        if (kindOfSchool) records[idx].kindOfSchool = kindOfSchool;
+        if (academicTrack) records[idx].academicTrack = academicTrack;
+        if (billingCycle) records[idx].billingCycle = billingCycle;
+        saveTursoRecords(records);
+      }
+    }
+    
+    return c.json({ success: true });
+  } catch (err: any) {
+    return c.json({ error: "Invalid payload", details: err.message }, 400);
+  }
+});
+
+// Mark user as activated (called after successful Stripe payment)
+app.post("/api/activate-user", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email } = body;
+    if (!email) return c.json({ error: "Email is required" }, 400);
+    
+    const trimmedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    
+    try {
+      const client = await getTursoClient();
+      await client.execute({
+        sql: `UPDATE turso_records SET isActivated = 1 WHERE email = ?`,
+        args: [trimmedEmail]
+      });
+    } catch {
+      // fallback: update local records
+      const records = getTursoRecords() as any[];
+      const idx = records.findIndex((r: any) => r.email === trimmedEmail);
+      if (idx !== -1) {
+        records[idx].isActivated = true;
+        saveTursoRecords(records);
+      }
+    }
+    
+    return c.json({ success: true, activated: true });
+  } catch (err: any) {
+    return c.json({ error: "Invalid payload", details: err.message }, 400);
   }
 });
 
