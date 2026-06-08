@@ -1,14 +1,14 @@
 {
-  "name": "react-example",
+  "name": "water-classroom",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "mkdir -p dist && npx @tailwindcss/cli -i src/index.css -o dist/index.css --minify && esbuild src/main.tsx --bundle --minify --sourcemap --external:*.css --outfile=dist/index.js && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && cp index.html dist/index.html && cp -r public/* dist/",
-    "start": "node dist/server.cjs",
+    "dev": "bun run server.ts",
+    "build": "bun run build.ts",
+    "start": "bun run dist/server.js",
     "clean": "rm -rf dist server.js data",
-    "lint": "tsc --noEmit"
+    "lint": "bun run tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -25,10 +25,7 @@
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.14",
     "@types/node": "^22.14.0",
-    "autoprefixer": "^10.4.21",
-    "esbuild": "^0.25.0",
     "tailwindcss": "^4.1.14",
-    "tsx": "^4.21.0",
     "typescript": "~5.8.2"
   }
 }
