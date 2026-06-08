@@ -3,17 +3,16 @@ import { TOTAL_DURATION, DURATION, FPS } from "./theme";
 import {
   Bg,
   Particles,
-  SceneHero,
-  SceneStats,
+  SceneHook,
   SceneProblem,
-  SceneFeatures,
-  SceneLabs,
-  SceneExams,
-  ScenePricing,
+  SceneSolution,
+  SceneHowItWorks,
+  SceneExperience,
+  SceneTrust,
   SceneCTA,
-  SceneOutro,
 } from "./Scenes";
 import { FontLoader } from "./FontLoader";
+import { Voiceover } from "./Voiceover";
 
 interface WaterClassroomAdProps {
   portrait?: boolean;
@@ -27,90 +26,68 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       <FontLoader>
         <Bg />
         <Particles />
+        <Voiceover />
 
-      <Sequence from={0} durationInFrames={DURATION.SCENE_HERO}>
-        <SceneHero portrait={portrait} />
-      </Sequence>
+        <Sequence from={0} durationInFrames={DURATION.SCENE_HOOK}>
+          <SceneHook portrait={portrait} />
+        </Sequence>
 
-      <Sequence from={DURATION.SCENE_HERO} durationInFrames={DURATION.SCENE_STATS}>
-        <SceneStats portrait={portrait} />
-      </Sequence>
+        <Sequence from={DURATION.SCENE_HOOK} durationInFrames={DURATION.SCENE_PROBLEM}>
+          <SceneProblem portrait={portrait} />
+        </Sequence>
 
-      <Sequence from={DURATION.SCENE_HERO + DURATION.SCENE_STATS} durationInFrames={DURATION.SCENE_PROBLEM}>
-        <SceneProblem portrait={portrait} />
-      </Sequence>
+        <Sequence
+          from={DURATION.SCENE_HOOK + DURATION.SCENE_PROBLEM}
+          durationInFrames={DURATION.SCENE_SOLUTION}
+        >
+          <SceneSolution portrait={portrait} />
+        </Sequence>
 
-      <Sequence
-        from={DURATION.SCENE_HERO + DURATION.SCENE_STATS + DURATION.SCENE_PROBLEM}
-        durationInFrames={DURATION.SCENE_FEATURES}
-      >
-        <SceneFeatures portrait={portrait} />
-      </Sequence>
+        <Sequence
+          from={DURATION.SCENE_HOOK + DURATION.SCENE_PROBLEM + DURATION.SCENE_SOLUTION}
+          durationInFrames={DURATION.SCENE_HOW_IT_WORKS}
+        >
+          <SceneHowItWorks portrait={portrait} />
+        </Sequence>
 
-      <Sequence
-        from={DURATION.SCENE_HERO + DURATION.SCENE_STATS + DURATION.SCENE_PROBLEM + DURATION.SCENE_FEATURES}
-        durationInFrames={DURATION.SCENE_LABS}
-      >
-        <SceneLabs portrait={portrait} />
-      </Sequence>
+        <Sequence
+          from={
+            DURATION.SCENE_HOOK +
+            DURATION.SCENE_PROBLEM +
+            DURATION.SCENE_SOLUTION +
+            DURATION.SCENE_HOW_IT_WORKS
+          }
+          durationInFrames={DURATION.SCENE_EXPERIENCE}
+        >
+          <SceneExperience portrait={portrait} />
+        </Sequence>
 
-      <Sequence
-        from={
-          DURATION.SCENE_HERO +
-          DURATION.SCENE_STATS +
-          DURATION.SCENE_PROBLEM +
-          DURATION.SCENE_FEATURES +
-          DURATION.SCENE_LABS
-        }
-        durationInFrames={DURATION.SCENE_EXAMS}
-      >
-        <SceneExams portrait={portrait} />
-      </Sequence>
+        <Sequence
+          from={
+            DURATION.SCENE_HOOK +
+            DURATION.SCENE_PROBLEM +
+            DURATION.SCENE_SOLUTION +
+            DURATION.SCENE_HOW_IT_WORKS +
+            DURATION.SCENE_EXPERIENCE
+          }
+          durationInFrames={DURATION.SCENE_TRUST}
+        >
+          <SceneTrust portrait={portrait} />
+        </Sequence>
 
-      <Sequence
-        from={
-          DURATION.SCENE_HERO +
-          DURATION.SCENE_STATS +
-          DURATION.SCENE_PROBLEM +
-          DURATION.SCENE_FEATURES +
-          DURATION.SCENE_LABS +
-          DURATION.SCENE_EXAMS
-        }
-        durationInFrames={DURATION.SCENE_PRICING}
-      >
-        <ScenePricing portrait={portrait} />
-      </Sequence>
-
-      <Sequence
-        from={
-          DURATION.SCENE_HERO +
-          DURATION.SCENE_STATS +
-          DURATION.SCENE_PROBLEM +
-          DURATION.SCENE_FEATURES +
-          DURATION.SCENE_LABS +
-          DURATION.SCENE_EXAMS +
-          DURATION.SCENE_PRICING
-        }
-        durationInFrames={DURATION.SCENE_CTA}
-      >
-        <SceneCTA portrait={portrait} />
-      </Sequence>
-
-      <Sequence
-        from={
-          DURATION.SCENE_HERO +
-          DURATION.SCENE_STATS +
-          DURATION.SCENE_PROBLEM +
-          DURATION.SCENE_FEATURES +
-          DURATION.SCENE_LABS +
-          DURATION.SCENE_EXAMS +
-          DURATION.SCENE_PRICING +
-          DURATION.SCENE_CTA
-        }
-        durationInFrames={DURATION.SCENE_OUTRO}
-      >
-        <SceneOutro portrait={portrait} />
-      </Sequence>
+        <Sequence
+          from={
+            DURATION.SCENE_HOOK +
+            DURATION.SCENE_PROBLEM +
+            DURATION.SCENE_SOLUTION +
+            DURATION.SCENE_HOW_IT_WORKS +
+            DURATION.SCENE_EXPERIENCE +
+            DURATION.SCENE_TRUST
+          }
+          durationInFrames={DURATION.SCENE_CTA}
+        >
+          <SceneCTA portrait={portrait} />
+        </Sequence>
       </FontLoader>
     </AbsoluteFill>
   );

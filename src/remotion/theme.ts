@@ -37,19 +37,26 @@ export const FONTS = {
   mono: "'JetBrains Mono', monospace",
 };
 
-// Font size multiplier for bigger graphics (1.0 = original, 1.3 = 30% bigger)
-export const SCALE = 1.35;
+// Font size multiplier for bigger graphics (2.5 = 150% bigger)
+export const SCALE = 2.5;
+
+// ═══ 7-Scene Narrative Arc (60s at 30fps = 1800 frames) ═══
+// 1. HOOK: Emotional value proposition
+// 2. PROBLEM: Why education is broken
+// 3. SOLUTION: What Water Classroom is
+// 4. HOW IT WORKS: 3 simple steps
+// 5. EXPERIENCE: AI tutor, games, labs
+// 6. TRUST & PRICING: Stats + affordable plans
+// 7. CTA: Call to action
 
 export const DURATION = {
-  SCENE_HERO: 180,     // 6s — Brand intro with logo animation
-  SCENE_STATS: 210,    // 7s — Impressive platform metrics
-  SCENE_PROBLEM: 270,  // 9s — Education barriers detailed
-  SCENE_FEATURES: 390, // 13s — 6 key feature highlights
-  SCENE_LABS: 300,     // 10s — Innovation labs showcase
-  SCENE_EXAMS: 210,    // 7s — Verified exam system
-  SCENE_PRICING: 120,  // 4s — Pricing cards
-  SCENE_CTA: 60,       // 2s — Call to action
-  SCENE_OUTRO: 60,     // 2s — Logo + URL
+  SCENE_HOOK: 210,        // 7s  — Emotional hook: "School that adapts to you"
+  SCENE_PROBLEM: 210,     // 7s  — Why education is broken
+  SCENE_SOLUTION: 360,    // 12s — What Water Classroom is
+  SCENE_HOW_IT_WORKS: 360, // 12s — 3 simple steps
+  SCENE_EXPERIENCE: 300,  // 10s — AI tutor, games, labs
+  SCENE_TRUST: 210,       // 7s  — Stats + pricing
+  SCENE_CTA: 150,         // 5s  — Call to action
 };
 
 export const TOTAL_DURATION = Object.values(DURATION).reduce((a, b) => a + b, 0); // 1800 frames = 60s at 30fps
