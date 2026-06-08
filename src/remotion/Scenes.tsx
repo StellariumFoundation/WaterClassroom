@@ -398,7 +398,167 @@ export const SceneLabs: React.FC<{ portrait: boolean }> = ({ portrait }) => {
   );
 };
 
-// ─── Scene 5: Pricing ───
+// ─── Scene 3b: Stats (NEW) ───
+
+const statsData = [
+  { num: "500K+", label: "Concurrent Students" },
+  { num: "99.9%", label: "Platform Uptime" },
+  { num: "75+", label: "Curriculum Programs" },
+  { num: "28", label: "Countries Supported" },
+  { num: "6s", label: "AI Response Time" },
+  { num: "24/7", label: "AI Tutor Availability" },
+];
+
+export const SceneStats: React.FC<{ portrait: boolean }> = ({ portrait }) => {
+  const frame = useCurrentFrame();
+  const titleOpacity = fadeIn(frame, 0);
+
+  return (
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: portrait ? "0 24px" : "0 60px" }}>
+      <div style={{ opacity: titleOpacity, textAlign: "center", marginBottom: portrait ? 20 : 28 }}>
+        <div
+          style={{
+            display: "inline-block",
+            padding: "4px 12px",
+            borderRadius: 9999,
+            background: "rgba(6, 182, 212, 0.2)",
+            border: "1px solid rgba(6, 182, 212, 0.3)",
+            color: "#67e8f9",
+            fontSize: portrait ? 10 : 12,
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase" as const,
+            fontFamily: FONTS.mono,
+            marginBottom: portrait ? 12 : 16,
+          }}
+        >
+          📊 By the Numbers
+        </div>
+        <h2 style={{ fontSize: portrait ? 28 : 38, fontWeight: 800, color: "#fff", margin: 0, lineHeight: 1.15 }}>
+          Platform Scale &amp; Reach
+        </h2>
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: portrait ? "1fr 1fr" : "1fr 1fr 1fr",
+          gap: portrait ? 10 : 16,
+          width: "100%",
+          maxWidth: portrait ? 400 : 750,
+        }}
+      >
+        {statsData.map((s, i) => {
+          const cardOpacity = fadeIn(frame, 10 + i * 12);
+          const cardScale = spring({ frame: frame - 10 - i * 12, fps: 30, config: { damping: 14, mass: 0.4 } });
+          return (
+            <div
+              key={i}
+              style={{
+                opacity: cardOpacity,
+                transform: `scale(${cardScale})`,
+                background: COLORS.cardBg,
+                border: `1px solid ${COLORS.cardBorder}`,
+                borderRadius: 14,
+                padding: portrait ? "14px 10px" : "20px 16px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: portrait ? 24 : 34,
+                  fontWeight: 900,
+                  fontFamily: FONTS.mono,
+                  background: "linear-gradient(135deg, #60a5fa, #a78bfa)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {s.num}
+              </div>
+              <div style={{ fontSize: portrait ? 9 : 11, color: COLORS.textDim, marginTop: 4, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>
+                {s.label}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Scene 5b: Verified Exams (NEW) ───
+
+const examFeatures = [
+  { icon: "🛡️", title: "Camera Proctoring", desc: "VLM facial recognition & eye tracking — all processed locally for privacy" },
+  { icon: "🔐", title: "SHA-256 Ledger", desc: "Every certificate cryptographically hashed for tamper-proof verification" },
+  { icon: "📜", title: "Verifiable Transcripts", desc: "Share immutable credentials with any institution worldwide" },
+];
+
+export const SceneExams: React.FC<{ portrait: boolean }> = ({ portrait }) => {
+  const frame = useCurrentFrame();
+  const titleOpacity = fadeIn(frame, 0);
+
+  return (
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: portrait ? "0 24px" : "0 60px" }}>
+      <div style={{ opacity: titleOpacity, textAlign: "center", marginBottom: portrait ? 16 : 24 }}>
+        <div
+          style={{
+            display: "inline-block",
+            padding: "4px 12px",
+            borderRadius: 9999,
+            background: "rgba(99, 102, 241, 0.2)",
+            border: "1px solid rgba(99, 102, 241, 0.3)",
+            color: COLORS.purpleLight,
+            fontSize: portrait ? 10 : 12,
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase" as const,
+            fontFamily: FONTS.mono,
+            marginBottom: portrait ? 12 : 16,
+          }}
+        >
+          🎓 Verified Credentialing
+        </div>
+        <h2 style={{ fontSize: portrait ? 28 : 38, fontWeight: 800, color: "#fff", margin: 0, lineHeight: 1.15 }}>
+          Exams You Can Trust
+        </h2>
+        <p style={{ fontSize: portrait ? 13 : 16, color: COLORS.textDim, maxWidth: portrait ? 400 : 600, margin: "8px auto 0", lineHeight: 1.5, fontWeight: 300 }}>
+          Browser-based proctored exams with camera verification and blockchain-backed certificates
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: portrait ? "column" : "row", gap: portrait ? 10 : 16, width: "100%", maxWidth: portrait ? 450 : 700 }}>
+        {examFeatures.map((e, i) => {
+          const cardOpacity = fadeIn(frame, 15 + i * 18);
+          const cardY = slideUp(frame, 15 + i * 18);
+          return (
+            <div
+              key={i}
+              style={{
+                opacity: cardOpacity,
+                transform: `translateY(${(1 - cardY) * 25}px)`,
+                flex: 1,
+                background: COLORS.cardBg,
+                border: `1px solid ${COLORS.cardBorder}`,
+                borderRadius: 16,
+                padding: portrait ? "14px 16px" : "20px 24px",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: portrait ? 32 : 40, marginBottom: 8 }}>{e.icon}</div>
+              <h3 style={{ fontSize: portrait ? 13 : 16, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{e.title}</h3>
+              <p style={{ fontSize: portrait ? 10 : 12, color: COLORS.textDim, margin: 0, lineHeight: 1.5 }}>{e.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Scene 6: Pricing ───
 
 export const ScenePricing: React.FC<{ portrait: boolean }> = ({ portrait }) => {
   const frame = useCurrentFrame();

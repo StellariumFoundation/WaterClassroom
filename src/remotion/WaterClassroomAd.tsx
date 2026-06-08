@@ -4,9 +4,11 @@ import {
   Bg,
   Particles,
   SceneHero,
+  SceneStats,
   SceneProblem,
   SceneFeatures,
   SceneLabs,
+  SceneExams,
   ScenePricing,
   SceneCTA,
   SceneOutro,
@@ -28,7 +30,11 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
         <SceneHero portrait={portrait} />
       </Sequence>
 
-      <Sequence from={DURATION.SCENE_HERO} durationInFrames={DURATION.SCENE_PROBLEM}>
+      <Sequence from={DURATION.SCENE_HERO} durationInFrames={DURATION.SCENE_STATS}>
+        <SceneStats portrait={portrait} />
+      </Sequence>
+
+      <Sequence from={DURATION.SCENE_HERO + DURATION.SCENE_STATS} durationInFrames={DURATION.SCENE_PROBLEM}>
         <SceneProblem portrait={portrait} />
       </Sequence>
 
@@ -53,6 +59,20 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS
         }
+        durationInFrames={DURATION.SCENE_EXAMS}
+      >
+        <SceneExams portrait={portrait} />
+      </Sequence>
+
+      <Sequence
+        from={
+          DURATION.SCENE_HERO +
+          DURATION.SCENE_STATS +
+          DURATION.SCENE_PROBLEM +
+          DURATION.SCENE_FEATURES +
+          DURATION.SCENE_LABS +
+          DURATION.SCENE_EXAMS
+        }
         durationInFrames={DURATION.SCENE_PRICING}
       >
         <ScenePricing portrait={portrait} />
@@ -64,6 +84,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
           DURATION.SCENE_PROBLEM +
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS +
+          DURATION.SCENE_EXAMS +
           DURATION.SCENE_PRICING
         }
         durationInFrames={DURATION.SCENE_CTA}
@@ -77,6 +98,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
           DURATION.SCENE_PROBLEM +
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS +
+          DURATION.SCENE_EXAMS +
           DURATION.SCENE_PRICING +
           DURATION.SCENE_CTA
         }

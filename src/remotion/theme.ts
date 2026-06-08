@@ -38,15 +38,17 @@ export const FONTS = {
 };
 
 export const DURATION = {
-  SCENE_HERO: 90,      // 3s
-  SCENE_PROBLEM: 90,   // 3s
-  SCENE_FEATURES: 150, // 5s
-  SCENE_LABS: 120,     // 4s
-  SCENE_PRICING: 90,   // 3s
-  SCENE_CTA: 60,       // 2s
-  SCENE_OUTRO: 60,     // 2s
+  SCENE_HERO: 180,     // 6s — Brand intro with logo animation
+  SCENE_STATS: 210,    // 7s — Impressive platform metrics
+  SCENE_PROBLEM: 270,  // 9s — Education barriers detailed
+  SCENE_FEATURES: 390, // 13s — 6 key feature highlights
+  SCENE_LABS: 300,     // 10s — Innovation labs showcase
+  SCENE_EXAMS: 210,    // 7s — Verified exam system
+  SCENE_PRICING: 120,  // 4s — Pricing cards
+  SCENE_CTA: 60,       // 2s — Call to action
+  SCENE_OUTRO: 60,     // 2s — Logo + URL
 };
 
-export const TOTAL_DURATION = Object.values(DURATION).reduce((a, b) => a + b, 0); // ~20s at 30fps = 600 frames
+export const TOTAL_DURATION = Object.values(DURATION).reduce((a, b) => a + b, 0); // 1800 frames = 60s at 30fps
 
 export const FPS = 30;
