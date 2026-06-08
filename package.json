@@ -8,19 +8,26 @@
     "build": "bun run build.ts",
     "start": "bun run dist/server.js",
     "clean": "rm -rf dist server.js data",
-    "lint": "bun run tsc --noEmit"
+    "lint": "bun run tsc --noEmit",
+    "render-ad-landscape": "remotion render src/remotion/index.ts WaterClassroomAd-Landscape public/ads/remotion-landscape.mp4",
+    "render-ad-portrait": "remotion render src/remotion/index.ts WaterClassroomAd-Portrait public/ads/remotion-portrait.mp4",
+    "render-ads": "remotion render src/remotion/index.ts WaterClassroomAd-Landscape public/ads/remotion-landscape.mp4 && remotion render src/remotion/index.ts WaterClassroomAd-Portrait public/ads/remotion-portrait.mp4"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@hono/node-server": "^1.13.7",
     "@libsql/client": "^0.17.3",
+    "@remotion/bundler": "^4.0.474",
+    "@remotion/cli": "^4.0.474",
+    "@remotion/renderer": "^4.0.474",
     "dotenv": "^17.2.3",
     "hono": "^4.6.14",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "puppeteer-core": "^25.1.0",
-    "react": "^19.0.1",
+    "react": "^19.2.7",
     "react-dom": "^19.0.1",
+    "remotion": "^4.0.474",
     "stripe": "^22.2.0"
   },
   "devDependencies": {
