@@ -8,7 +8,7 @@
 
 | Resource | Link |
 |----------|------|
-| **Water Suite Investor Hub** | [water-enterprises-landing.onrender.com](https://water-enterprises-landing.onrender.com/) |
+| **Live App** | [waterclassroom.onrender.com](https://waterclassroom.onrender.com/) |
 | **GitHub Repository** | [github.com/StellariumFoundation/WaterClassroom](https://github.com/StellariumFoundation/WaterClassroom) |
 | **Water Suite Investor Hub** | [water-enterprises-landing.onrender.com](https://water-enterprises-landing.onrender.com/) |
 | **Support / Contact** | stellar.foundation.us@gmail.com |
@@ -301,6 +301,7 @@ Zero-cost basic access is available for self-taught or financially struggling st
 | **Address** | 50760-310, 223 — Brazil |
 | **Foundation (US)** | Stellarium Foundation, Inc. |
 | **Swiss Bureau** | CH-200.3.011.455-8 |
+| **Live App** | [waterclassroom.onrender.com](https://waterclassroom.onrender.com/) |
 | **Investor Hub** | [water-enterprises-landing.onrender.com](https://water-enterprises-landing.onrender.com/) |
 
 ---
@@ -313,7 +314,7 @@ Whether you are an **investor** looking for a high-impact edtech opportunity, a 
 
 > *"Together we can build an ocean of knowledge accessible to every learner."*
 
-**[🌊 Visit the Water Suite Investor Hub →](https://water-enterprises-landing.onrender.com/)**
+**[🌊 Launch the Water Classroom App →](https://waterclassroom.onrender.com/)** — or visit the [Water Suite Investor Hub →](https://water-enterprises-landing.onrender.com/)
 
 ---
 
