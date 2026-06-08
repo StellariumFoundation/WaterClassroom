@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Classroom — Investor Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif;
+    background: #0a1628;
+    color: #e2e8f0;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .slide {
+    width: 210mm;
+    height: 297mm;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* ─── Backgrounds ─── */
+  .bg-deep-space {
+    background: radial-gradient(ellipse at 50% 0%, #0f2b5e 0%, #0a1628 70%);
+  }
+  .bg-blue-gradient {
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%);
+  }
+  .bg-dark-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+  .bg-dark-card:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.08);
+  }
+
+  /* ─── Orbs ─── */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.12;
+  }
+  .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, #3b82f6, transparent); top: -100px; right: -100px; }
+  .orb-2 { width: 300px; height: 300px; background: radial-gradient(circle, #60a5fa, transparent); bottom: -50px; left: -80px; }
+  .orb-3 { width: 250px; height: 250px; background: radial-gradient(circle, #818cf8, transparent); top: 40%; right: -60px; }
+  .orb-4 { width: 350px; height: 350px; background: radial-gradient(circle, #1d4ed8, transparent); bottom: -80px; right: -50px; }
+
+  /* ─── Typography ─── */
+  h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 12px; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .subtitle { font-size: 16px; font-weight: 400; color: #94a3b8; line-height: 1.5; }
+  .label-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+  .label-blue { background: rgba(29, 78, 216, 0.3); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; }
+  .label-cyan { background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.3); color: #67e8f9; }
+  .label-emerald { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+  .label-amber { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.3); color: #fcd34d; }
+  .label-indigo { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc; }
+
+  .accent-line {
+    width: 50px; height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  /* ─── Grids ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+  /* ─── Tables ─── */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 8px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; font-weight: 700; border-bottom: 1px solid rgba(59, 130, 246, 0.15); }
+  td { padding: 8px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+  tr:last-child td { border-bottom: none; }
+
+  /* ─── Feature Cards ─── */
+  .feature-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: all 0.2s;
+  }
+  .feature-card .icon { font-size: 24px; margin-bottom: 8px; display: block; }
+  .feature-card h4 { color: #f1f5f9; }
+  .feature-card p { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+
+  /* ─── Pricing Card ─── */
+  .pricing-card {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    position: relative;
+  }
+  .pricing-card .price { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .pricing-card .period { font-size: 11px; color: #94a3b8; }
+  .pricing-card ul { list-style: none; padding: 0; margin: 12px 0 0; font-size: 11px; text-align: left; }
+  .pricing-card ul li { padding: 3px 0; color: #94a3b8; }
+  .pricing-card ul li::before { content: "✓ "; color: #3b82f6; font-weight: 700; }
+  .pricing-card .badge {
+    position: absolute; top: -10px; right: 12px;
+    padding: 2px 10px; border-radius: 999px;
+    font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .pricing-card.featured { border-color: rgba(59, 130, 246, 0.5); }
+
+  /* ─── Footer ─── */
+  .slide-footer {
+    margin-top: auto;
+    padding-top: 30px;
+    border-top: 1px solid rgba(59, 130, 246, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .slide-footer .page-num { color: #64748b; }
+
+  /* ─── Lists ─── */
+  .check-list { list-style: none; padding: 0; }
+  .check-list li { padding: 4px 0; font-size: 12px; color: #cbd5e1; }
+  .check-list li::before { content: "✅ "; margin-right: 6px; }
+
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li { padding: 5px 0 5px 20px; font-size: 12px; color: #cbd5e1; position: relative; }
+  .bullet-list li::before { content: "▸"; position: absolute; left: 0; color: #3b82f6; font-weight: 700; }
+
+  /* ─── Stats ─── */
+  .stat { text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat .label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  /* ─── Progress bars ─── */
+  .progress-bar { width: 100%; height: 6px; background: rgba(15, 23, 42, 0.6); border-radius: 999px; overflow: hidden; margin: 4px 0; }
+  .progress-bar .fill { height: 100%; border-radius: 999px; }
+
+  /* ─── Cover specific ─── */
+  .cover-slide { justify-content: center; align-items: center; text-align: center; }
+  .cover-slide h1 { font-size: 56px; margin-bottom: 12px; }
+  .cover-slide .tagline { font-size: 18px; color: #93c5fd; margin-bottom: 30px; }
+
+  /* ─── Section titles ─── */
+  .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .section-title .num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 1: COVER -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space cover-slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div style="position:relative;z-index:1;">
+    <div class="label-tag label-blue" style="margin-bottom:20px;">🌊 STELLARIUM FOUNDATION — INVESTOR DECK</div>
+    <h1 style="font-size:60px;background:linear-gradient(135deg,#60a5fa,#a5b4fc,#f0abfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;">Water Classroom</h1>
+    <p style="font-size:20px;color:#93c5fd;font-weight:300;max-width:600px;line-height:1.4;margin:0 auto 30px;">
+      A Complete AI-Powered School —<br>Interactive Content, Games, AI Tutoring &amp; Verified Exams
+    </p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;">
+      <span class="label-tag label-blue">K–12 &amp; Undergraduate</span>
+      <span class="label-tag label-cyan">28 Countries</span>
+      <span class="label-tag label-emerald">75+ Programs</span>
+      <span class="label-tag label-amber">AI-Powered</span>
+    </div>
+    <div style="margin-top:50px;">
+      <p style="font-size:13px;color:#64748b;font-family:'JetBrains Mono',monospace;">water-enterprises-landing.onrender.com</p>
+      <p style="font-size:11px;color:#475569;font-family:'JetBrains Mono',monospace;margin-top:4px;">stellar.foundation.us@gmail.com</p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL</span><span class="page-num">1</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 2: ELEVATOR PITCH -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-3"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-blue">🚀 ELEVATOR PITCH</div>
+    <div class="accent-line"></div>
+    <h2>Redefining Education in the AI Era</h2>
+    <p class="subtitle" style="margin-bottom:24px;">
+      <strong>Water Classroom</strong> is a comprehensive, AI-driven virtual school that democratizes high-quality education for K–12, undergraduate, and lifelong learners everywhere.
+    </p>
+
+    <div class="grid-3" style="margin-bottom:20px;flex:1;">
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">🧠</div>
+        <h4>AI-Tailored Curriculum</h4>
+        <p>75+ programs across 28 countries — U.S. Common Core, UK GCSE, IB, and more. Dynamic lessons adapt to every learning pace and style.</p>
+      </div>
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">🤖</div>
+        <h4>24/7 AI Tutoring</h4>
+        <p>Google Gemini-powered Socratic tutor. Always-on, context-aware, step-by-step guidance with real-time feedback and automated grading.</p>
+      </div>
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">✅</div>
+        <h4>Verified Proctored Exams</h4>
+        <p>Browser-based camera proctoring with VLM integrity checks. Verifiable certificate hashes for accredited transcript credentialing.</p>
+      </div>
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">🎮</div>
+        <h4>Gamified Motivation</h4>
+        <p>Achievement badges, learning streaks, XP levels, and leaderboards — inspired by Duolingo, designed to make learning genuinely addictive.</p>
+      </div>
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">📊</div>
+        <h4>Progress Analytics</h4>
+        <p>Real-time dashboards with XP tracking, study hours visualization, and customized reports for parents, teachers, and administrators.</p>
+      </div>
+      <div class="feature-card">
+        <div style="font-size:28px;margin-bottom:6px;">🎯</div>
+        <h4>Innovation Labs</h4>
+        <p>Interactive games — Trinity (ethics/economics), Robotics (bipedal simulation), Incentive Equation (energy markets). Project-based learning.</p>
+      </div>
+    </div>
+
+    <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);border-radius:12px;padding:14px 20px;">
+      <p style="font-size:12px;color:#93c5fd;font-style:italic;">
+        "The Elevation to Eden rests not only on automating labor but on unlocking human potential. True prosperity requires a foundation of knowledge."
+      </p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">2</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 3: THE PROBLEM -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-4"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-amber">💡 THE PROBLEM</div>
+    <div class="accent-line"></div>
+    <h2>Four Barriers That Hold Education Back</h2>
+    <p class="subtitle" style="margin-bottom:20px;">Traditional education systems fail millions of students worldwide. Here's how:</p>
+
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+      <div class="feature-card" style="display:flex;align-items:center;gap:18px;padding:16px 22px;">
+        <div style="font-size:36px;width:50px;text-align:center;">💰</div>
+        <div>
+          <h4>Cost</h4>
+          <p style="font-size:13px;color:#94a3b8;">Private schooling and tutoring are prohibitively expensive for most families worldwide. Average private school tuition exceeds $12,000/year in the US.</p>
+        </div>
+      </div>
+      <div class="feature-card" style="display:flex;align-items:center;gap:18px;padding:16px 22px;">
+        <div style="font-size:36px;width:50px;text-align:center;">🌍</div>
+        <div>
+          <h4>Geography</h4>
+          <p style="font-size:13px;color:#94a3b8;">Quality education is concentrated in wealthy urban areas. Rural and developing regions are systematically left behind.</p>
+        </div>
+      </div>
+      <div class="feature-card" style="display:flex;align-items:center;gap:18px;padding:16px 22px;">
+        <div style="font-size:36px;width:50px;text-align:center;">📐</div>
+        <div>
+          <h4>One-Size-Fits-All</h4>
+          <p style="font-size:13px;color:#94a3b8;">Standardized curricula fail to adapt to individual learning paces, styles, and gifted or struggling learners.</p>
+        </div>
+      </div>
+      <div class="feature-card" style="display:flex;align-items:center;gap:18px;padding:16px 22px;">
+        <div style="font-size:36px;width:50px;text-align:center;">📋</div>
+        <div>
+          <h4>Bureaucratic Inertia</h4>
+          <p style="font-size:13px;color:#94a3b8;">Outdated accreditation systems move slowly while innovative pedagogies (first-principles, Socratic, project-based) are stifled.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:14px 20px;text-align:center;margin-top:12px;">
+      <p style="font-size:14px;font-weight:600;color:#fcd34d;">The Result: <span style="color:#f8fafc;">Millions of students lack access to personalized, engaging, credential-validated education.</span></p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">3</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 4: TARGET AUDIENCES + PRICING -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-1" style="width:250px;height:250px;"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-emerald">👥 TARGET AUDIENCES</div>
+    <div class="accent-line"></div>
+    <h2>Four Segments, One Platform</h2>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="pricing-card featured" style="border-color:rgba(59,130,246,0.5);">
+        <div class="badge" style="background:#1d4ed8;color:white;">CERTIFICATE</div>
+        <div style="font-size:24px;margin-bottom:6px;">🌊</div>
+        <h4 style="font-size:12px;">Water Student</h4>
+        <p style="font-size:10px;color:#94a3b8;margin-bottom:8px;">Homeschool with credentials</p>
+        <div class="price" style="color:#3b82f6;">$19</div>
+        <div class="period">/ month | $190 / year</div>
+        <ul>
+          <li>Verified proctored exams</li>
+          <li>Valid school certificate</li>
+          <li>Full curriculum &amp; AI tutor</li>
+          <li>Robotics labs &amp; analytics</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <div style="font-size:24px;margin-bottom:6px;">🎓</div>
+        <h4 style="font-size:12px;">Independent</h4>
+        <p style="font-size:10px;color:#94a3b8;margin-bottom:8px;">Self-directed learners</p>
+        <div class="price" style="color:#10b981;">$15</div>
+        <div class="period">/ month | $150 / year</div>
+        <ul>
+          <li>Full curriculum access</li>
+          <li>24/7 AI tutor</li>
+          <li>Interactive labs &amp; games</li>
+          <li style="color:#475569;">✗ No proctored exams</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <div style="font-size:24px;margin-bottom:6px;">🏫</div>
+        <h4 style="font-size:12px;">School Student</h4>
+        <p style="font-size:10px;color:#94a3b8;margin-bottom:8px;">Sponsored by school</p>
+        <div class="price" style="color:#f59e0b;">$12</div>
+        <div class="period">/ student / month</div>
+        <ul>
+          <li>Full Water Classroom resources</li>
+          <li>AI tutor &amp; progress tracking</li>
+          <li>Curriculum-aligned content</li>
+          <li style="color:#475569;">✗ No proctored exams</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <div style="font-size:24px;margin-bottom:6px;">🏛️</div>
+        <h4 style="font-size:12px;">Institution</h4>
+        <p style="font-size:10px;color:#94a3b8;margin-bottom:8px;">Schools &amp; co-ops</p>
+        <div class="price" style="color:#818cf8;">$12</div>
+        <div class="period">/ student / month | $144 / year</div>
+        <ul>
+          <li>Bulk student deployments</li>
+          <li>Admin dashboard &amp; roster</li>
+          <li>Custom configuration</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);border-radius:12px;padding:14px 20px;margin-bottom:14px;">
+      <h4 style="font-size:11px;margin-bottom:4px;">💵 REVENUE DRIVERS</h4>
+      <div class="grid-3" style="gap:8px;">
+        <div style="font-size:11px;color:#94a3b8;">Direct-to-consumer <strong style="color:#e2e8f0;">monthly/yearly subscriptions</strong> (Stripe)</div>
+        <div style="font-size:11px;color:#94a3b8;">Institutional <strong style="color:#e2e8f0;">bulk licensing</strong> with volume discounts (100+ and 300+)</div>
+        <div style="font-size:11px;color:#94a3b8;">Stellarium Foundation <strong style="color:#e2e8f0;">grant program</strong> sponsoring free basic access</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:8px;"><div class="num">📊</div><h3 style="margin:0;">Unit Economics</h3></div>
+    <div class="grid-4" style="gap:10px;">
+      <div class="stat" style="background:rgba(15,23,42,0.4);border-radius:10px;padding:10px;">
+        <div class="num">~$15</div>
+        <div class="label">Blended ARPU / mo</div>
+      </div>
+      <div class="stat" style="background:rgba(15,23,42,0.4);border-radius:10px;padding:10px;">
+        <div class="num">~0%</div>
+        <div class="label">CAC (organic)</div>
+      </div>
+      <div class="stat" style="background:rgba(15,23,42,0.4);border-radius:10px;padding:10px;">
+        <div class="num">~85%</div>
+        <div class="label">Gross Margin</div>
+      </div>
+      <div class="stat" style="background:rgba(15,23,42,0.4);border-radius:10px;padding:10px;">
+        <div class="num">&lt;5%</div>
+        <div class="label">Churn (target)</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">4</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 5: REVENUE PROJECTIONS + TECH -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-2"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-cyan">📈 FINANCIAL MODEL</div>
+    <div class="accent-line"></div>
+    <h2>5-Year Revenue Projection (Conservative)</h2>
+    <p class="subtitle" style="margin-bottom:16px;">Scalable edtech with near-zero customer acquisition cost and expanding global TAM</p>
+
+    <div class="bg-dark-card" style="margin-bottom:20px;">
+      <table>
+        <thead>
+          <tr><th>Year</th><th>Paid Students</th><th>Monthly Revenue</th><th>Annual Run Rate</th><th style="text-align:right;">Growth</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Year 1</strong></td><td>500</td><td>$7,500</td><td><strong>$90,000</strong></td><td style="text-align:right;color:#3b82f6;">—</td></tr>
+          <tr><td><strong>Year 2</strong></td><td>2,500</td><td>$37,500</td><td><strong>$450,000</strong></td><td style="text-align:right;color:#10b981;">5×</td></tr>
+          <tr><td><strong>Year 3</strong></td><td>10,000</td><td>$150,000</td><td><strong>$1,800,000</strong></td><td style="text-align:right;color:#10b981;">4×</td></tr>
+          <tr><td><strong>Year 4</strong></td><td>50,000</td><td>$750,000</td><td><strong>$9,000,000</strong></td><td style="text-align:right;color:#10b981;">5×</td></tr>
+          <tr><td><strong>Year 5</strong></td><td>150,000</td><td>$2,250,000</td><td><strong style="font-size:15px;color:#60a5fa;">$27,000,000</strong></td><td style="text-align:right;color:#10b981;">3×</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2" style="flex:1;">
+      <div class="bg-dark-card">
+        <h4 style="font-size:11px;display:flex;align-items:center;gap:6px;">🛠️ Technology Stack</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;">
+          <div><span style="color:#64748b;">Runtime:</span> <strong>Bun</strong></div>
+          <div><span style="color:#64748b;">Server:</span> <strong>Hono</strong></div>
+          <div><span style="color:#64748b;">Frontend:</span> <strong>React 19 + Tailwind 4</strong></div>
+          <div><span style="color:#64748b;">AI:</span> <strong>Google Gemini</strong></div>
+          <div><span style="color:#64748b;">Database:</span> <strong>Turso (libSQL)</strong></div>
+          <div><span style="color:#64748b;">Payments:</span> <strong>Stripe</strong></div>
+        </div>
+      </div>
+      <div class="bg-dark-card">
+        <h4 style="font-size:11px;display:flex;align-items:center;gap:6px;">📊 Traction &amp; Metrics</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;">
+          <div><span style="color:#64748b;">Curricula:</span> <strong>75+</strong></div>
+          <div><span style="color:#64748b;">Countries:</span> <strong>28</strong></div>
+          <div><span style="color:#64748b;">Student Tiers:</span> <strong>3 + Institution</strong></div>
+          <div><span style="color:#64748b;">Interactive Games:</span> <strong>3</strong></div>
+          <div><span style="color:#64748b;">Price Range:</span> <strong>$0–$190/yr</strong></div>
+          <div><span style="color:#64748b;">Institutional:</span> <strong>From $12/stud/mo</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">5</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 6: COMPETITIVE ADVANTAGE -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-1"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-indigo">🏆 COMPETITIVE MOAT</div>
+    <div class="accent-line"></div>
+    <h2>Why Water Classroom Wins</h2>
+
+    <div class="bg-dark-card" style="flex:1;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22%;">Feature</th>
+            <th style="width:22%;color:#3b82f6;">🌊 Water Classroom</th>
+            <th style="width:18%;">Khan Academy</th>
+            <th style="width:18%;">Outschool</th>
+            <th style="width:20%;">Traditional Schools</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AI Tutoring 24/7</strong></td>
+            <td style="color:#3b82f6;">✅ Gemini-powered</td>
+            <td>❌ No live tutor</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+          <tr>
+            <td><strong>Proctored Exams</strong></td>
+            <td style="color:#3b82f6;">✅ Camera VLM</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>✅ In-person</td>
+          </tr>
+          <tr>
+            <td><strong>Gamified Learning</strong></td>
+            <td style="color:#3b82f6;">✅ Badges, XP, streaks</td>
+            <td>✅ Partial</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-Curriculum</strong></td>
+            <td style="color:#3b82f6;">✅ 75+ programs / 28 countries</td>
+            <td>❌ US-focused</td>
+            <td>❌ Marketplace</td>
+            <td>✅ Regional only</td>
+          </tr>
+          <tr>
+            <td><strong>Institution Dashboard</strong></td>
+            <td style="color:#3b82f6;">✅ Roster, analytics</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>✅ Limited</td>
+          </tr>
+          <tr>
+            <td><strong>Annual Pricing</strong></td>
+            <td style="color:#3b82f6;">$12–$19/mo</td>
+            <td>Free</td>
+            <td>$10–$40/class</td>
+            <td>$10k+/yr</td>
+          </tr>
+          <tr>
+            <td><strong>Innovation Labs</strong></td>
+            <td style="color:#3b82f6;">✅ Robotics, Trinity, Incentive</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:16px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:12px;padding:14px 20px;">
+      <div class="grid-3" style="gap:12px;">
+        <div>
+          <h4 style="font-size:10px;color:#a5b4fc;">🌊 Water Suite Ecosystem</h4>
+          <p style="font-size:10px;color:#94a3b8;">Cornerstone of a coordinated ecosystem — Water AI, Water Robotics, and Water Gov — designed for post-scarcity automation and human elevation.</p>
+        </div>
+        <div>
+          <h4 style="font-size:10px;color:#a5b4fc;">🧠 First-Principles Pedagogy</h4>
+          <p style="font-size:10px;color:#94a3b8;">Socratic tutoring, incentive engineering, and the Trinity Test (Do Good, Make Money, Have Fun) — a proprietary philosophical framework.</p>
+        </div>
+        <div>
+          <h4 style="font-size:10px;color:#a5b4fc;">🔐 Privacy-First Architecture</h4>
+          <p style="font-size:10px;color:#94a3b8;">No external marketing surveillance. SHA-256 ledger for certificates. Camera proctoring runs client-side. GDPR/COPPA/FERPA compliant.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">6</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 7: ROADMAP -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space">
+  <div class="orb orb-3"></div>
+  <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-amber">📈 PRODUCT ROADMAP</div>
+    <div class="accent-line"></div>
+    <h2>Milestones — Past, Present &amp; Future</h2>
+
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div class="bg-dark-card" style="padding:14px 20px;border-left:3px solid #10b981;">
+        <h4 style="font-size:11px;color:#6ee7b7;">✅ COMPLETED (v0.5)</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:10px;color:#94a3b8;margin-top:6px;">
+          <span>✓ Landing, auth &amp; pricing pages</span>
+          <span>✓ 6-step onboarding wizard (Country → Track → Program → Grade → Enrollment → Pay)</span>
+          <span>✓ 28 countries with curriculum filtering</span>
+          <span>✓ Annual billing toggle (all tiers)</span>
+          <span>✓ Stripe checkout integration</span>
+          <span>✓ Login with role restoration</span>
+          <span>✓ School admin dashboard (roster, analytics)</span>
+          <span>✓ AI Tutor (Gemini + fallback)</span>
+          <span>✓ Gamified dashboard (XP, badges, streaks)</span>
+          <span>✓ Verified proctored exam system</span>
+          <span>✓ Interactive games (Trinity, Robotics, Incentive)</span>
+          <span>✓ Forums, Tasks board, contact system</span>
+        </div>
+      </div>
+      <div class="bg-dark-card" style="padding:14px 20px;border-left:3px solid #f59e0b;">
+        <h4 style="font-size:11px;color:#fcd34d;">🔜 IN PROGRESS (v0.7)</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;color:#94a3b8;margin-top:6px;">
+          <span>📱 Mobile apps (React Native / Flutter)</span>
+          <span>🎤 Real-time streaming AI tutor (voice + video)</span>
+          <span>🔬 Full VLM proctoring pipeline</span>
+          <span>📚 RAG-based content generation engine</span>
+          <span>🌐 Multi-language interface (ES, FR, PT, ZH)</span>
+        </div>
+      </div>
+      <div class="bg-dark-card" style="padding:14px 20px;border-left:3px solid #3b82f6;">
+        <h4 style="font-size:11px;color:#93c5fd;">🚀 FUTURE (v1.0+)</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;color:#94a3b8;margin-top:6px;">
+          <span>📴 Full offline mode with local caching</span>
+          <span>⛓️ Blockchain-based transcript issuance</span>
+          <span>✏️ AI curriculum authoring for educators</span>
+          <span>🔗 LMS integration (Canvas, Google Classroom)</span>
+          <span>🧠 Adaptive difficulty engine (RL)</span>
+          <span>👨‍👩‍👧‍👦 Parent/guardian companion app</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:10px;display:flex;justify-content:center;gap:30px;padding:10px;background:rgba(15,23,42,0.3);border-radius:12px;">
+      <div><span style="color:#10b981;">●</span> <span style="font-size:11px;color:#94a3b8;">18 features shipped</span></div>
+      <div><span style="color:#f59e0b;">●</span> <span style="font-size:11px;color:#94a3b8;">5 in development</span></div>
+      <div><span style="color:#3b82f6;">●</span> <span style="font-size:11px;color:#94a3b8;">6 on roadmap</span></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL — Water Classroom</span><span class="page-num">7</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SLIDE 8: TEAM + SOCIAL IMPACT + CTA -->
+<!-- ═══════════════════════════════════════ -->
+<div class="slide bg-deep-space cover-slide" style="justify-content:flex-start;padding-top:50px;">
+  <div class="orb orb-2"></div>
+  <div style="position:relative;z-index:1;width:100%;flex:1;display:flex;flex-direction:column;">
+    <div class="label-tag label-blue" style="align-self:center;">🌍 THE MOVEMENT</div>
+    <div class="accent-line" style="margin:0 auto 20px;"></div>
+
+    <div style="text-align:center;margin-bottom:24px;">
+      <h2 style="font-size:32px;max-width:600px;margin:0 auto;">Join the Water Classroom Movement</h2>
+      <p class="subtitle" style="text-align:center;max-width:500px;margin:8px auto 0;">
+        "The Water Classroom is not just a product — it's a movement to redefine education in the AI era."
+      </p>
+    </div>
+
+    <div class="grid-2" style="flex:1;gap:14px;">
+      <div class="bg-dark-card" style="display:flex;flex-direction:column;">
+        <h4 style="display:flex;align-items:center;gap:6px;">👨‍👩‍👧‍👦 The Team</h4>
+        <p style="font-size:11px;color:#94a3b8;flex:1;">
+          <strong>Water Classroom</strong> is a flagship project of the <strong>Stellarium Foundation</strong> — a registered non-profit dedicated to promoting global knowledge access, decentralized ledgers, and free STEM sandboxes.
+        </p>
+        <div style="background:rgba(15,23,42,0.5);border-radius:8px;padding:10px;margin-top:6px;font-size:10px;color:#64748b;font-family:'JetBrains Mono',monospace;">
+          US ID: DE-6421-ST &nbsp;|&nbsp; Swiss ID: CH-200.3.011.455-8
+        </div>
+      </div>
+      <div class="bg-dark-card" style="display:flex;flex-direction:column;">
+        <h4 style="display:flex;align-items:center;gap:6px;">🌎 Social Impact</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:10px;flex:1;">
+          <div style="background:rgba(16,185,129,0.06);border-radius:8px;padding:8px;text-align:center;">
+            <strong style="color:#6ee7b7;font-size:12px;">Students</strong><br>
+            <span style="color:#94a3b8;">Personalized education adapted to unique needs</span>
+          </div>
+          <div style="background:rgba(59,130,246,0.06);border-radius:8px;padding:8px;text-align:center;">
+            <strong style="color:#93c5fd;font-size:12px;">Educators</strong><br>
+            <span style="color:#94a3b8;">Tools to enhance teaching efficiency</span>
+          </div>
+          <div style="background:rgba(245,158,11,0.06);border-radius:8px;padding:8px;text-align:center;">
+            <strong style="color:#fcd34d;font-size:12px;">Society</strong><br>
+            <span style="color:#94a3b8;">Scalable solution to reduce educational inequality</span>
+          </div>
+          <div style="background:rgba(99,102,241,0.06);border-radius:8px;padding:8px;text-align:center;">
+            <strong style="color:#a5b4fc;font-size:12px;">Grant Program</strong><br>
+            <span style="color:#94a3b8;">Free basic access for struggling students</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:16px 0 8px;">
+      <p style="font-size:13px;color:#f1f5f9;font-weight:600;margin-bottom:14px;">
+        🙏 We invite investors, school administrators, homeschool families, and engineers to partner with us.
+      </p>
+      <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <p style="font-size:11px;color:#94a3b8;">📧 stellar.foundation.us@gmail.com</p>
+          <p style="font-size:11px;color:#94a3b8;">📞 +55 81 99395-3560</p>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <a href="https://water-enterprises-landing.onrender.com/" style="display:inline-block;padding:10px 28px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;letter-spacing:0.04em;">
+          🌊 Visit Water Suite Investor Hub →
+        </a>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;text-align:center;padding-top:20px;border-top:1px solid rgba(59,130,246,0.08);">
+      <p style="font-size:14px;font-weight:600;font-style:italic;color:#60a5fa;">
+        "Together we can build an ocean of knowledge accessible to every learner."
+      </p>
+      <p style="font-size:10px;color:#475569;margin-top:8px;font-family:'JetBrains Mono',monospace;">
+        © 2026 Water Classroom Global &amp; Stellarium Foundation, Inc.
+      </p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CONFIDENTIAL</span><span class="page-num">8</span></div>
+</div>
+
+</body>
+</html>
