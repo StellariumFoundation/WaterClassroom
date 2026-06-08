@@ -13,6 +13,7 @@ import {
   SceneCTA,
   SceneOutro,
 } from "./Scenes";
+import { FontLoader } from "./FontLoader";
 
 interface WaterClassroomAdProps {
   portrait?: boolean;
@@ -23,8 +24,9 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
 
   return (
     <AbsoluteFill style={{ width, height, overflow: "hidden" }}>
-      <Bg />
-      <Particles />
+      <FontLoader>
+        <Bg />
+        <Particles />
 
       <Sequence from={0} durationInFrames={DURATION.SCENE_HERO}>
         <SceneHero portrait={portrait} />
@@ -39,14 +41,14 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       </Sequence>
 
       <Sequence
-        from={DURATION.SCENE_HERO + DURATION.SCENE_PROBLEM}
+        from={DURATION.SCENE_HERO + DURATION.SCENE_STATS + DURATION.SCENE_PROBLEM}
         durationInFrames={DURATION.SCENE_FEATURES}
       >
         <SceneFeatures portrait={portrait} />
       </Sequence>
 
       <Sequence
-        from={DURATION.SCENE_HERO + DURATION.SCENE_PROBLEM + DURATION.SCENE_FEATURES}
+        from={DURATION.SCENE_HERO + DURATION.SCENE_STATS + DURATION.SCENE_PROBLEM + DURATION.SCENE_FEATURES}
         durationInFrames={DURATION.SCENE_LABS}
       >
         <SceneLabs portrait={portrait} />
@@ -55,6 +57,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       <Sequence
         from={
           DURATION.SCENE_HERO +
+          DURATION.SCENE_STATS +
           DURATION.SCENE_PROBLEM +
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS
@@ -81,6 +84,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       <Sequence
         from={
           DURATION.SCENE_HERO +
+          DURATION.SCENE_STATS +
           DURATION.SCENE_PROBLEM +
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS +
@@ -95,6 +99,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       <Sequence
         from={
           DURATION.SCENE_HERO +
+          DURATION.SCENE_STATS +
           DURATION.SCENE_PROBLEM +
           DURATION.SCENE_FEATURES +
           DURATION.SCENE_LABS +
@@ -106,6 +111,7 @@ export const WaterClassroomAd: React.FC<WaterClassroomAdProps> = ({ portrait = f
       >
         <SceneOutro portrait={portrait} />
       </Sequence>
+      </FontLoader>
     </AbsoluteFill>
   );
 };

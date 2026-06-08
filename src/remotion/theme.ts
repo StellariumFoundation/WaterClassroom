@@ -33,9 +33,12 @@ export const COLORS = {
 } as const;
 
 export const FONTS = {
-  sans: "'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif",
+  display: "'Neue Frutiger World', 'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif",
   mono: "'JetBrains Mono', monospace",
 };
+
+// Font size multiplier for bigger graphics (1.0 = original, 1.3 = 30% bigger)
+export const SCALE = 1.35;
 
 export const DURATION = {
   SCENE_HERO: 180,     // 6s — Brand intro with logo animation
