@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Neue Frutiger World';
+  src: url('/neue_frutiger_world_regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Neue Frutiger World", "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-primary-start: #081a36;
+  --color-primary-mid: #1d4ed8;
+  --color-primary-end: #3b82f6;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #051329;
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Premium Dark space gradients */
+.deep-space-bg {
+  background: radial-gradient(circle at 50% 0%, #10346c 0%, #051329 70%);
+}
+
+.blue-gradient-bg {
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%);
+}
+
+.radial-glow {
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+}
+
+/* Glassmorphism */
+.frosted-glass {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.frosted-glass:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.1);
+}
+
+.frosted-glass-dark {
+  background: rgba(8, 15, 30, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Shiny & Glossy items */
+.shiny-glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.shiny-border {
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+  height: 1px;
+}
+
+/* Pulsing aura */
+@keyframes neon-pulse {
+  0%, 100% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(59,130,246,0.6));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(96,165,250,0.9));
+  }
+}
+
+.neon-glow-icon {
+  animation: neon-pulse 3s infinite ease-in-out;
+}
+
+/* Custom scrollbar for onboarding dropdowns */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0f172a;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "water-classroom",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run dev.ts",
+    "build": "bun run build.ts",
+    "start": "bun run server.ts",
+    "lint": "bunx svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@hono/node-server": "^1.13.7",
+    "@libsql/client": "^0.17.3",
+    "bcryptjs": "^3.0.3",
+    "hono": "^4.6.14",
+    "lucide-svelte": "^1.0.1",
+    "phaser": "^4.2.0",
+    "stripe": "^22.2.0",
+    "svelte": "^5.56.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.1",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/bun": "latest",
+    "bun-plugin-svelte": "^0.0.6",
+    "tailwindcss": "^4.3.1",
+    "typescript": "~5.8.2"
+  },
+  "trustedDependencies": [
+    "@google/genai",
+    "@parcel/watcher",
+    "protobufjs"
+  ]
+}

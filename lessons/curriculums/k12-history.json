@@ -1,0 +1,88 @@
+{
+  "program": "K-12",
+  "subject": "History",
+  "description": "Full K-12 History curriculum with interactive scenario-driven lessons",
+  "lessons": [
+    {
+      "hash": "history-g5-ancient-egypt-quest-1a2b3",
+      "title": "Ancient Egypt Tomb Raider",
+      "grade": "5",
+      "subject": "History",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You are an archaeologist who just discovered a hidden tomb. Collect hieroglyphs and answer history questions to unlock its secrets."
+    },
+    {
+      "hash": "history-g5-american-revolution-choices-4c5d6",
+      "title": "Revolutionary Decisions",
+      "grade": "5",
+      "subject": "History",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a printer in Boston, 1773. The British are coming — your choices shape the revolution."
+    },
+    {
+      "hash": "history-g6-medieval-kingdom-7d8e9",
+      "title": "Medieval Kingdom Builder",
+      "grade": "6",
+      "subject": "History",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a newly crowned king/queen. Make feudal decisions that affect your kingdom's prosperity."
+    },
+    {
+      "hash": "history-g7-renaissance-master-0f1a2",
+      "title": "Renaissance Workshop",
+      "grade": "7",
+      "subject": "History",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 15,
+      "storyHook": "You are an artist apprentice in Leonardo's workshop. Complete commissions to earn your master's seal."
+    },
+    {
+      "hash": "history-g8-industrial-revolution-3b4c5",
+      "title": "Industrial Revolution Factory",
+      "grade": "8",
+      "subject": "History",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a factory owner in 1850. Balance worker welfare with profit to survive the Industrial Revolution."
+    },
+    {
+      "hash": "history-g9-world-war-stories-6e7f8",
+      "title": "World War Correspondent",
+      "grade": "9",
+      "subject": "History",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 18,
+      "storyHook": "You are a war correspondent. Your dispatches shape how people understand the conflict."
+    },
+    {
+      "hash": "history-g10-civil-rights-march-9i0j1",
+      "title": "Civil Rights Marcher",
+      "grade": "10",
+      "subject": "History",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 17,
+      "storyHook": "You are a young activist in 1963. Your decisions influence the march's outcome and safety."
+    },
+    {
+      "hash": "history-g11-cold-war-spy-2k3l4",
+      "title": "Cold War Spy",
+      "grade": "11",
+      "subject": "History",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 18,
+      "storyHook": "You are a spy during the Cuban Missile Crisis. Gather intelligence and make choices that prevent — or start — a war."
+    },
+    {
+      "hash": "history-g12-modern-global-5m6n7",
+      "title": "Modern Global Leader",
+      "grade": "12",
+      "subject": "History",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 20,
+      "storyHook": "You are a newly elected world leader. Navigate 2024 geopolitical tensions through historical lens."
+    }
+  ]
+}

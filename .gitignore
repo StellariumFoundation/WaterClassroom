@@ -1,0 +1,53 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+nul
+/dist
+/dist
+dist/index.js
+dist/index.css
+dist/index.js.map
+
+# TypeScript / Bun
+*.tsbuildinfo
+bun.lockb
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+dist/icon.png
+dist/index.css
+dist/index.html
+dist/index.js
+dist/index.js.map
+dist/manifest.json
+dist/neue_frutiger_world_regular.ttf
+dist/server.js
+dist/server.js.map
+dist/sw.js
+*.cfg
+/dist
+dist/index.css

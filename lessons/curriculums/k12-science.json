@@ -1,0 +1,115 @@
+{
+  "program": "K-12",
+  "subject": "Science",
+  "description": "Full K-12 Science curriculum with interactive Phaser-backed lessons",
+  "lessons": [
+    {
+      "hash": "science-g1-animals-adventure-1a2b3",
+      "title": "Animal Safari Adventure",
+      "grade": "1",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 10,
+      "storyHook": "You are a wildlife photographer on safari. Take pictures of animals by answering questions about their habitats."
+    },
+    {
+      "hash": "science-g3-plants-quiz-9b2e4",
+      "title": "Plant Lifecycle Quest",
+      "grade": "3",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 12,
+      "storyHook": "You are a botanist exploring the Amazon rainforest. Grow plants by answering lifecycle questions correctly."
+    },
+    {
+      "hash": "science-g3-solar-system-flappy-2e5f7",
+      "title": "Solar System Navigator",
+      "grade": "3",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 13,
+      "storyHook": "You are a space pilot. Navigate the asteroid belt by ordering planets correctly."
+    },
+    {
+      "hash": "science-g4-weather-station-3c4d5",
+      "title": "Weather Station Manager",
+      "grade": "4",
+      "subject": "Science",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 11,
+      "storyHook": "You run a weather station. Predict storms by analyzing cloud patterns and temperature data."
+    },
+    {
+      "hash": "science-g5-human-body-quest-6e7f8",
+      "title": "Human Body Expedition",
+      "grade": "5",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a tiny explorer inside the human body. Navigate organs by answering biology questions."
+    },
+    {
+      "hash": "science-g6-ecosystem-balance-9g0h1",
+      "title": "Ecosystem Balancer",
+      "grade": "6",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You are an ecologist. Restore balance to a damaged ecosystem by making the right intervention choices."
+    },
+    {
+      "hash": "science-g7-chemistry-lab-2i3j4",
+      "title": "Chemistry Lab Escape",
+      "grade": "7",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 16,
+      "storyHook": "You are trapped in a chemistry lab. Solve reaction puzzles to unlock the exit."
+    },
+    {
+      "hash": "science-g8-physics-tower-5k6l7",
+      "title": "Physics Tower Builder",
+      "grade": "8",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You are an engineer. Build a tower that withstands earthquakes using physics principles."
+    },
+    {
+      "hash": "science-g9-genetics-match-8m9n0",
+      "title": "Genetics Match",
+      "grade": "9",
+      "subject": "Science",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a genetic counselor. Match traits to genotypes to help families understand heredity."
+    },
+    {
+      "hash": "science-g10-climate-change-1o2p3",
+      "title": "Climate Change Strategist",
+      "grade": "10",
+      "subject": "Science",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a UN climate advisor. Make policy decisions that balance economy and environment."
+    },
+    {
+      "hash": "science-g11-astronomy-voyage-4q5r6",
+      "title": "Astronomy Voyage",
+      "grade": "11",
+      "subject": "Science",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 17,
+      "storyHook": "You are an astronaut on a deep-space mission. Navigate by identifying stars and galaxies."
+    },
+    {
+      "hash": "science-g12-neuroscience-lab-7s8t9",
+      "title": "Neuroscience Lab",
+      "grade": "12",
+      "subject": "Science",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 18,
+      "storyHook": "You are a neuroscientist. Design experiments to understand how the brain learns."
+    }
+  ]
+}

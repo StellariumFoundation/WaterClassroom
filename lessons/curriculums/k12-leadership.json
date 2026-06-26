@@ -1,0 +1,79 @@
+{
+  "program": "K-12",
+  "subject": "Leadership",
+  "description": "K-12 Leadership & Problem-Solving curriculum with scenario-driven lessons",
+  "lessons": [
+    {
+      "hash": "leadership-g6-teamwork-scenario-5c6d7",
+      "title": "Captain of the Storm",
+      "grade": "6",
+      "subject": "Leadership",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 12,
+      "storyHook": "You are the captain of a research vessel caught in a deadly storm. Your crew looks to you for decisions that will save everyone."
+    },
+    {
+      "hash": "leadership-g6-problem-solving-escape-8f9g0",
+      "title": "Laboratory Escape",
+      "grade": "6",
+      "subject": "Leadership",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 14,
+      "storyHook": "You are an inventor trapped in your own laboratory. Solve logic puzzles to escape before the self-destruct sequence completes."
+    },
+    {
+      "hash": "leadership-g7-mediation-crisis-1h2i3",
+      "title": "Crisis Mediator",
+      "grade": "7",
+      "subject": "Leadership",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 13,
+      "storyHook": "Two rival student councils are on the brink of violence. Your mediation skills will determine the outcome."
+    },
+    {
+      "hash": "leadership-g8-innovation-challenge-4j5k6",
+      "title": "Innovation Challenge",
+      "grade": "8",
+      "subject": "Leadership",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You lead a startup team. Design a product pitch that solves a real community problem."
+    },
+    {
+      "hash": "leadership-g9-ethics-dilemma-7l8m9",
+      "title": "Ethics Dilemma",
+      "grade": "9",
+      "subject": "Leadership",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a CEO facing a moral crossroads. Your choices define your leadership legacy."
+    },
+    {
+      "hash": "leadership-g10-debate-champion-0n1o2",
+      "title": "Debate Champion",
+      "grade": "10",
+      "subject": "Leadership",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 15,
+      "storyHook": "You are training for the national debate championship. Persuade the judges with logical arguments."
+    },
+    {
+      "hash": "leadership-g11-peace-builder-3p4q5",
+      "title": "Peace Builder",
+      "grade": "11",
+      "subject": "Leadership",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a UN peacekeeper. Negotiate a ceasefire between two warring factions."
+    },
+    {
+      "hash": "leadership-g12-visionary-founder-6r7s8",
+      "title": "Visionary Founder",
+      "grade": "12",
+      "subject": "Leadership",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 18,
+      "storyHook": "You are building the next world-changing company. Recruit a team, pitch investors, and scale globally."
+    }
+  ]
+}

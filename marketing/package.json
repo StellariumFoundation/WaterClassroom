@@ -1,0 +1,28 @@
+{
+  "name": "water-classroom-marketing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "bunx remotion studio index.ts",
+    "render:landscape": "bunx remotion render index.ts WaterClassroomAd-Landscape public/ads/remotion-landscape.mp4",
+    "render:portrait": "bunx remotion render index.ts WaterClassroomAd-Portrait public/ads/remotion-portrait.mp4",
+    "render:ads": "bun run render:landscape && bun run render:portrait",
+    "render:hypermotion": "bun run render-hypermotion.ts",
+    "render:hypermotion:portrait": "bun run render-hypermotion-portrait.ts",
+    "generate-pdf": "bun run generate-pdf.ts"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.0.1",
+    "remotion": "^4.0.474",
+    "@remotion/cli": "^4.0.474",
+    "@remotion/bundler": "^4.0.474",
+    "@remotion/renderer": "^4.0.474",
+    "puppeteer-core": "^25.1.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.0.0",
+    "typescript": "~5.8.2"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "program": "K-12",
+  "subject": "Geography",
+  "description": "Full K-12 Geography curriculum with interactive map and exploration lessons",
+  "lessons": [
+    {
+      "hash": "geography-g4-capitals-flappy-7e8f9",
+      "title": "Capital Cities Globe Trot",
+      "grade": "4",
+      "subject": "Geography",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 11,
+      "storyHook": "You are a globe-trotting reporter. Fly between countries and identify their capitals to file your stories."
+    },
+    {
+      "hash": "geography-g4-continents-quiz-3a4b5",
+      "title": "Continent Cartographer",
+      "grade": "4",
+      "subject": "Geography",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 10,
+      "storyHook": "A mysterious sea-level rise has redrawn the world map. Place each continent in its correct location."
+    },
+    {
+      "hash": "geography-g5-landforms-explorer-6b7c8",
+      "title": "Landforms Explorer",
+      "grade": "5",
+      "subject": "Geography",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 12,
+      "storyHook": "You are a geologist. Identify mountains, valleys, and plateaus to complete your expedition map."
+    },
+    {
+      "hash": "geography-g6-climate-zones-9d0e1",
+      "title": "Climate Zone Pilot",
+      "grade": "6",
+      "subject": "Geography",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 13,
+      "storyHook": "You are a cargo pilot. Route shipments through the correct climate zones to deliver aid worldwide."
+    },
+    {
+      "hash": "geography-g7-biomes-ranger-2f3g4",
+      "title": "Biome Ranger",
+      "grade": "7",
+      "subject": "Geography",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a national park ranger. Restore endangered biomes by answering ecology questions."
+    },
+    {
+      "hash": "geography-g8-population-mapper-5h6i7",
+      "title": "Population Mapper",
+      "grade": "8",
+      "subject": "Geography",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 13,
+      "storyHook": "You are a demographer. Analyze population data to plan sustainable cities."
+    },
+    {
+      "hash": "geography-g9-tectonic-defender-8j9k0",
+      "title": "Tectonic Defender",
+      "grade": "9",
+      "subject": "Geography",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You are a earthquake-preparedness coordinator. Reinforce buildings by answering plate-tectonics questions."
+    },
+    {
+      "hash": "geography-g10-global-trade-1l2m3",
+      "title": "Global Trade Strategist",
+      "grade": "10",
+      "subject": "Geography",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a trade minister. Negotiate routes and tariffs to grow your nation's economy."
+    },
+    {
+      "hash": "geography-g11-urban-planner-4n5o6",
+      "title": "Urban Planner",
+      "grade": "11",
+      "subject": "Geography",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 17,
+      "storyHook": "You are redesigning a megacity. Place zones (residential, commercial, industrial) to maximize livability."
+    },
+    {
+      "hash": "geography-g12-climate-diplomat-7p8q9",
+      "title": "Climate Diplomat",
+      "grade": "12",
+      "subject": "Geography",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 18,
+      "storyHook": "You are a climate diplomat at the UN. Broker agreements between nations to limit global warming."
+    }
+  ]
+}

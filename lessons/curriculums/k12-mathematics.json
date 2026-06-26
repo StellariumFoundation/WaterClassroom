@@ -1,0 +1,151 @@
+{
+  "program": "K-12",
+  "subject": "Mathematics",
+  "description": "Full K-12 Mathematics curriculum with interactive Phaser-backed lessons",
+  "lessons": [
+    {
+      "hash": "math-g1-numbers-flappy-3a7f1",
+      "title": "Numbers Take Flight",
+      "grade": "1",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 10,
+      "storyHook": "You are a young pilot learning to fly through a sky of numbers. Each correct answer keeps you soaring higher!"
+    },
+    {
+      "hash": "math-g1-counting-quiz-9b2e4",
+      "title": "Counting Cloud City",
+      "grade": "1",
+      "subject": "Mathematics",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 8,
+      "storyHook": "You are the mayor of Cloud City. Citizens need your help counting their treasures to build the next tower."
+    },
+    {
+      "hash": "math-g1-shapes-identify-4c1d8",
+      "title": "Shape Detective",
+      "grade": "1",
+      "subject": "Mathematics",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 9,
+      "storyHook": "A mysterious thief has stolen the geometry jewels! Identify shapes to recover them and solve the case."
+    },
+    {
+      "hash": "math-g2-addition-quest-2b3c4",
+      "title": "Addition Treasure Hunt",
+      "grade": "2",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 12,
+      "storyHook": "You are a pirate captain. Addition problems are the treasure maps that lead you to the hidden gold."
+    },
+    {
+      "hash": "math-g2-subtraction-island-5d6e7",
+      "title": "Subtraction Island",
+      "grade": "2",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 11,
+      "storyHook": "Stranded on Subtraction Island, you must solve problems to build a raft and escape."
+    },
+    {
+      "hash": "math-g3-multiplication-asteroids-8f9g0",
+      "title": "Multiplication Asteroid Field",
+      "grade": "3",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 13,
+      "storyHook": "You are a space navigator. Destroy asteroids by answering multiplication problems correctly."
+    },
+    {
+      "hash": "math-g3-division-mission-1h2i3",
+      "title": "Division Rescue Mission",
+      "grade": "3",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 13,
+      "storyHook": "You are a rescue pilot. Divide supplies fairly among stranded astronauts to complete your mission."
+    },
+    {
+      "hash": "math-g4-fractions-cook-4j5k6",
+      "title": "Fraction Chef",
+      "grade": "4",
+      "subject": "Mathematics",
+      "interactiveType": "quiz",
+      "estimatedMinutes": 10,
+      "storyHook": "You are the head chef of a magical restaurant. Every recipe requires exact fractions."
+    },
+    {
+      "hash": "math-g5-decimals-racer-7l8m9",
+      "title": "Decimal Racer",
+      "grade": "5",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 12,
+      "storyHook": "You are a race car driver. Decelerate and accelerate using decimal precision to win the Grand Prix."
+    },
+    {
+      "hash": "math-g6-percent-survivor-0n1o2",
+      "title": "Percent Survivor",
+      "grade": "6",
+      "subject": "Mathematics",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 15,
+      "storyHook": "You are the leader of a jungle expedition. Use percentages to allocate resources and keep your team alive."
+    },
+    {
+      "hash": "math-g7-algebra-garden-3p4q5",
+      "title": "Algebra Garden",
+      "grade": "7",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 14,
+      "storyHook": "You are a botanist. Solve algebraic equations to grow the perfect garden and unlock rare plants."
+    },
+    {
+      "hash": "math-g8-geometry-architect-6r7s8",
+      "title": "Geometry Architect",
+      "grade": "8",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 15,
+      "storyHook": "You are a master architect. Use geometry to design buildings that withstand earthquakes."
+    },
+    {
+      "hash": "math-g9-trigonometry-summit-9t0u1",
+      "title": "Trigonometry Summit",
+      "grade": "9",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 16,
+      "storyHook": "You are a mountain climber. Use trigonometry to calculate the safest climbing route."
+    },
+    {
+      "hash": "math-g10-statistics-cafe-2v3w4",
+      "title": "Statistics Cafe",
+      "grade": "10",
+      "subject": "Mathematics",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 14,
+      "storyHook": "You run a cafe. Use statistics to understand customer preferences and grow your business."
+    },
+    {
+      "hash": "math-g11-calculus-rocket-5x6y7",
+      "title": "Calculus Rocket Launch",
+      "grade": "11",
+      "subject": "Mathematics",
+      "interactiveType": "phaser-game",
+      "estimatedMinutes": 18,
+      "storyHook": "You are a rocket scientist. Use calculus to calculate the perfect trajectory for Mars."
+    },
+    {
+      "hash": "math-g12-advanced-finance-8z9a0",
+      "title": "Advanced Finance Simulator",
+      "grade": "12",
+      "subject": "Mathematics",
+      "interactiveType": "scenario",
+      "estimatedMinutes": 20,
+      "storyHook": "You are a financial advisor. Use advanced math to build investment portfolios."
+    }
+  ]
+}

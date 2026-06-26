@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: WaterClassroom          # changed from "Water Party"
+    runtime: node
+    buildCommand: bun install && bun run build
+    startCommand: bun run start
+    envVars:
+      - fromGroup: Water Classroom Environment   # changed group name
+      - key: NODE_ENV
+        value: production          # optional – keep only if you need it
